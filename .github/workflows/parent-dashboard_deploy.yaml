@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd /var/www/dash.petoman.com/admin-dashboard
-          npm ci
+          npm install
 
       - name: Build Vue app
         run: |
