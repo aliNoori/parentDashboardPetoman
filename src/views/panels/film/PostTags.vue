@@ -1,0 +1,402 @@
+<template>
+  <div class="p-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900 mb-2">برچسب‌های نوشته‌ها</h1>
+        <p class="text-gray-600">مدیریت برچسب‌های نوشته‌ها و مقالات</p>
+      </div>
+      <button 
+        @click="openAddModal"
+        class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-all duration-200 flex items-center gap-2 shadow-lg"
+      >
+        <i class="ti ti-plus text-xl"></i>
+        <span class="font-semibold">برچسب جدید</span>
+      </button>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm mb-1">کل برچسب‌ها</p>
+            <p class="text-2xl font-bold text-gray-900">{{ stats.total }}</p>
+          </div>
+          <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+            <i class="ti ti-tags text-2xl text-purple-600"></i>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm mb-1">برچسب‌های فعال</p>
+            <p class="text-2xl font-bold text-gray-900">{{ stats.active }}</p>
+          </div>
+          <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+            <i class="ti ti-check text-2xl text-green-600"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm mb-1">کل استفاده</p>
+            <p class="text-2xl font-bold text-gray-900">{{ stats.totalUsage }}</p>
+          </div>
+          <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+            <i class="ti ti-article text-2xl text-blue-600"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tags Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div v-for="tag in tags" :key="tag.id" class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-all duration-200">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center"
+                 :style="{ backgroundColor: tag.color + '20', color: tag.color }">
+              <i class="ti ti-tag text-lg"></i>
+            </div>
+            <h3 class="font-semibold text-gray-900">{{ tag.name }}</h3>
+          </div>
+          <div class="flex items-center gap-1">
+            <button 
+              @click="editTag(tag)"
+              class="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-all duration-200"
+              title="ویرایش"
+            >
+              <i class="ti ti-edit text-sm"></i>
+            </button>
+            <button 
+              @click="deleteTag(tag)"
+              class="p-1.5 text-red-600 hover:bg-red-50 rounded transition-all duration-200"
+              title="حذف"
+            >
+              <i class="ti ti-trash text-sm"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-600">نامک:</span>
+            <span class="font-mono text-gray-900 bg-gray-100 px-2 py-0.5 rounded text-xs">{{ tag.slug }}</span>
+          </div>
+          
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-600">استفاده:</span>
+            <span class="font-semibold text-gray-900">{{ tag.count }} نوشته</span>
+          </div>
+          
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-600">وضعیت:</span>
+            <span v-if="tag.status === 'active'" class="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs font-medium">
+              <i class="ti ti-check text-xs"></i>
+              فعال
+            </span>
+            <span v-else class="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs font-medium">
+              <i class="ti ti-x text-xs"></i>
+              غیرفعال
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <Teleport to="body">
+      <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4" @click.self="closeModal">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <!-- Modal Header -->
+          <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+            <h2 class="text-xl font-bold text-gray-900">
+              {{ editMode ? 'ویرایش برچسب' : 'افزودن برچسب جدید' }}
+            </h2>
+            <button @click="closeModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+              <i class="ti ti-x text-2xl"></i>
+            </button>
+          </div>
+
+          <!-- Modal Body -->
+          <div class="p-6 space-y-6">
+            <!-- Name -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">
+                نام برچسب <span class="text-red-500">*</span>
+              </label>
+              <input
+                v-model="form.name"
+                @input="generateSlug"
+                type="text"
+                placeholder="مثال: معرفی فیلم، نقد و بررسی، مصاحبه"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                :class="{ 'border-red-500': errors.name }"
+              />
+              <p v-if="errors.name" class="mt-1 text-sm text-red-600">{{ errors.name }}</p>
+            </div>
+
+            <!-- Slug -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">
+                نامک (Slug) <span class="text-red-500">*</span>
+              </label>
+              <input
+                v-model="form.slug"
+                type="text"
+                placeholder="movie-review"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all font-mono"
+                :class="{ 'border-red-500': errors.slug }"
+              />
+              <p v-if="errors.slug" class="mt-1 text-sm text-red-600">{{ errors.slug }}</p>
+              <p class="mt-1 text-xs text-gray-500">نامک به صورت خودکار از نام برچسب ایجاد می‌شود</p>
+            </div>
+
+            <!-- Color -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">
+                رنگ برچسب <span class="text-red-500">*</span>
+              </label>
+              <div class="flex items-center gap-4">
+                <input
+                  v-model="form.color"
+                  type="color"
+                  class="w-16 h-12 border border-gray-300 rounded-lg cursor-pointer"
+                />
+                <input
+                  v-model="form.color"
+                  type="text"
+                  class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all font-mono"
+                  placeholder="#9333ea"
+                />
+                <div class="flex items-center gap-2 px-4 py-2 rounded-lg border-2"
+                     :style="{ borderColor: form.color, color: form.color }">
+                  <i class="ti ti-tag"></i>
+                  <span class="font-medium">پیش‌نمایش</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">
+                توضیحات
+              </label>
+              <textarea
+                v-model="form.description"
+                rows="2"
+                placeholder="توضیحات مختصری درباره این برچسب..."
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
+              ></textarea>
+            </div>
+
+            <!-- Status -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">
+                وضعیت
+              </label>
+              <div class="flex items-center gap-4">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    v-model="form.status"
+                    type="radio"
+                    value="active"
+                    class="w-4 h-4 text-purple-600 focus:ring-purple-500"
+                  />
+                  <span class="text-sm text-gray-700">فعال</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    v-model="form.status"
+                    type="radio"
+                    value="inactive"
+                    class="w-4 h-4 text-purple-600 focus:ring-purple-500"
+                  />
+                  <span class="text-sm text-gray-700">غیرفعال</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex items-center justify-end gap-3">
+            <button
+              @click="closeModal"
+              type="button"
+              class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-all duration-200"
+            >
+              انصراف
+            </button>
+            <button
+              @click="saveTag"
+              type="button"
+              class="px-6 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all duration-200 flex items-center gap-2"
+            >
+              <i class="ti ti-check"></i>
+              <span>{{ editMode ? 'بروزرسانی' : 'افزودن' }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+  </div>
+</template>
+
+<script setup>
+import { ref, inject } from 'vue'
+
+const toast = inject('toast')
+
+// Stats
+const stats = ref({
+  total: 12,
+  active: 11,
+  totalUsage: 342
+})
+
+// Tags data
+const tags = ref([
+  { id: 1, name: 'معرفی فیلم', slug: 'movie-intro', color: '#3b82f6', count: 45, status: 'active', description: 'معرفی و بررسی فیلم‌ها' },
+  { id: 2, name: 'نقد و بررسی', slug: 'review', color: '#8b5cf6', count: 38, status: 'active', description: 'نقد و تحلیل فیلم و سریال' },
+  { id: 3, name: 'مصاحبه', slug: 'interview', color: '#10b981', count: 12, status: 'active', description: 'مصاحبه با هنرمندان' },
+  { id: 4, name: 'پشت صحنه', slug: 'behind-scenes', color: '#f59e0b', count: 28, status: 'active', description: 'پشت صحنه فیلم‌ها' },
+  { id: 5, name: 'اخبار', slug: 'news', color: '#ef4444', count: 56, status: 'active', description: 'اخبار سینما و تلویزیون' },
+  { id: 6, name: 'تریلر', slug: 'trailer', color: '#ec4899', count: 42, status: 'active', description: 'معرفی تریلرها' },
+  { id: 7, name: 'داستان', slug: 'story', color: '#06b6d4', count: 19, status: 'active', description: 'داستان و خلاصه' },
+  { id: 8, name: 'بازیگران', slug: 'actors', color: '#a855f7', count: 34, status: 'active', description: 'معرفی بازیگران' },
+  { id: 9, name: 'کارگردان', slug: 'director', color: '#f97316', count: 21, status: 'active', description: 'معرفی کارگردانان' },
+  { id: 10, name: 'جوایز', slug: 'awards', color: '#eab308', count: 15, status: 'active', description: 'جوایز و افتخارات' },
+  { id: 11, name: 'توصیه', slug: 'recommendation', color: '#84cc16', count: 32, status: 'active', description: 'پیشنهاد تماشا' },
+  { id: 12, name: 'رتبه‌بندی', slug: 'ranking', color: '#0ea5e9', count: 0, status: 'inactive', description: 'لیست و رتبه‌بندی' }
+])
+
+// Modal state
+const showModal = ref(false)
+const editMode = ref(false)
+
+// Form data
+const form = ref({
+  name: '',
+  slug: '',
+  color: '#9333ea',
+  description: '',
+  status: 'active'
+})
+
+const errors = ref({})
+
+// Generate slug from name
+const generateSlug = () => {
+  const persianToEnglish = {
+    'ا': 'a', 'ب': 'b', 'پ': 'p', 'ت': 't', 'ث': 's', 'ج': 'j', 'چ': 'ch',
+    'ح': 'h', 'خ': 'kh', 'د': 'd', 'ذ': 'z', 'ر': 'r', 'ز': 'z', 'ژ': 'zh',
+    'س': 's', 'ش': 'sh', 'ص': 's', 'ض': 'z', 'ط': 't', 'ظ': 'z', 'ع': 'a',
+    'غ': 'gh', 'ف': 'f', 'ق': 'gh', 'ک': 'k', 'گ': 'g', 'ل': 'l', 'م': 'm',
+    'ن': 'n', 'و': 'v', 'ه': 'h', 'ی': 'i', 'ئ': 'i', 'ة': 'e', 'ى': 'a'
+  }
+  
+  let slug = form.value.name.toLowerCase()
+  for (const [persian, english] of Object.entries(persianToEnglish)) {
+    slug = slug.replace(new RegExp(persian, 'g'), english)
+  }
+  slug = slug.replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+  form.value.slug = slug
+}
+
+// Open add modal
+const openAddModal = () => {
+  editMode.value = false
+  form.value = {
+    name: '',
+    slug: '',
+    color: '#9333ea',
+    description: '',
+    status: 'active'
+  }
+  errors.value = {}
+  showModal.value = true
+}
+
+// Edit tag
+const editTag = (tag) => {
+  editMode.value = true
+  form.value = { ...tag }
+  errors.value = {}
+  showModal.value = true
+}
+
+// Validate form
+const validateForm = () => {
+  errors.value = {}
+  
+  if (!form.value.name) {
+    errors.value.name = 'نام برچسب الزامی است'
+  }
+  
+  if (!form.value.slug) {
+    errors.value.slug = 'نامک الزامی است'
+  }
+  
+  return Object.keys(errors.value).length === 0
+}
+
+// Save tag
+const saveTag = () => {
+  if (!validateForm()) {
+    toast.warning('لطفا فیلدهای الزامی را تکمیل کنید')
+    return
+  }
+  
+  if (editMode.value) {
+    const index = tags.value.findIndex(t => t.id === form.value.id)
+    if (index !== -1) {
+      tags.value[index] = { ...form.value }
+      toast.success('برچسب با موفقیت بروزرسانی شد')
+    }
+  } else {
+    const newTag = {
+      ...form.value,
+      id: tags.value.length + 1,
+      count: 0
+    }
+    tags.value.push(newTag)
+    stats.value.total++
+    if (form.value.status === 'active') stats.value.active++
+    toast.success('برچسب جدید با موفقیت اضافه شد')
+  }
+  
+  closeModal()
+}
+
+// Delete tag
+const deleteTag = (tag) => {
+  if (tag.count > 0) {
+    if (!confirm(`این برچسب در ${tag.count} نوشته استفاده شده است. آیا از حذف آن اطمینان دارید؟`)) {
+      return
+    }
+  }
+  
+  if (confirm(`آیا از حذف برچسب "${tag.name}" اطمینان دارید؟`)) {
+    const index = tags.value.findIndex(t => t.id === tag.id)
+    if (index !== -1) {
+      const deletedCount = tag.count
+      tags.value.splice(index, 1)
+      stats.value.total--
+      stats.value.totalUsage -= deletedCount
+      if (tag.status === 'active') stats.value.active--
+      toast.success('برچسب با موفقیت حذف شد')
+    }
+  }
+}
+
+// Close modal
+const closeModal = () => {
+  showModal.value = false
+}
+</script>
