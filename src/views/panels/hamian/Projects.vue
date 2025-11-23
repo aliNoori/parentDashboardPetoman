@@ -835,12 +835,16 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                       دسته‌بندی
                     </label>
-                    <input
+                    <select
                         v-model="editForm.category"
-                        type="text"
-                        placeholder="حمایت مالی، درمان، تغذیه و غیره"
-                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                     >
+                      <option value="">انتخاب دسته‌بندی</option>
+                      <option v-for="cat in categories" :key="cat.id" :value="cat.title">
+                        {{ cat.title }}
+                      </option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -871,6 +875,7 @@ import {useRouter} from 'vue-router'
 import {useKindnessMeetingStore} from "@/stores/kindness-meeting.ts";
 import PersianDatePicker from "@/components/PersianDatePicker.vue";
 import {toGregorianDate} from "@/utils/date.ts";
+import {useCategoryStore} from "@/stores/category.ts";
 
 const router = useRouter()
 const kindnessStore = useKindnessMeetingStore();
@@ -882,7 +887,8 @@ const showEditModal = ref(false)
 const selectedProject = ref(null)
 const imageFile = ref(null)
 const fileInput = ref(null)
-
+const categoryStore = useCategoryStore()
+const categories=computed(()=>categoryStore.categories)
 const timerPreview = computed(() => {
   if (!editForm.value.endDate || !editForm.value.showTimer) return null
 
@@ -1230,7 +1236,7 @@ const editProject = (project) => {
     eventTime: project.eventTime,
     eventDate: project.eventDate,
     showOnHomepage:project.showOnHomepage,
-    category:project.category,
+    category:project.category.title,
     status: project.status
   }
 }
@@ -1347,8 +1353,19 @@ const handleClickOutside = () => {
 
 onMounted(async () => {
   await kindnessStore.fetchKindnessMeetings()
+  await categoryTypeStore.fetchType('danim')
   document.addEventListener('click', handleClickOutside)
 })
+
+watch(
+    () => categoryTypeStore.selectedType,
+    async (type) => {
+      if (type?.id) {
+        await categoryStore.fetchCategories({typeId: type.id})
+      }
+    },
+    {immediate: true}
+)
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
