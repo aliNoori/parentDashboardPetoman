@@ -9,7 +9,7 @@ export default {
     install(app: App) {
         const instance = axios.create({
             //baseURL: 'http://127.0.0.1:3000/api',
-            baseURL: 'https://api.petoman.com/',
+            baseURL: 'https://api.petoman.com/api',
         })
 
         instance.interceptors.request.use(
