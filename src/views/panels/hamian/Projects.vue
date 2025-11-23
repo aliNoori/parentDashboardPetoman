@@ -1242,9 +1242,19 @@ const editProject = (project) => {
 }
 
 const saveEditProject = () => {
-  const { id,duration, image, ...raw } = editForm.value
+
+  const selectedCategory = categories.value.find(
+      c => c.slug === editForm.value.category || c.title === editForm.value.category
+  )
+
+  if (!selectedCategory) {
+    alert('لطفاً یک دسته‌بندی معتبر انتخاب کنید!')
+    return
+  }
+  const { id,duration,category, image, ...raw } = editForm.value
   const payload = {
     ...raw,
+    categoryId: selectedCategory.id,
     startDate: raw.startDate ? toGregorianDate(raw.startDate) : undefined,
     endDate: raw.endDate ? toGregorianDate(raw.endDate) : undefined,
     eventDate: raw.eventDate ? toGregorianDate(raw.eventDate) : undefined,
