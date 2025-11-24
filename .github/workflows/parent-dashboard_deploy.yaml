@@ -18,7 +18,6 @@ jobs:
           sudo rsync -avz --delete --exclude='.git' ./ /var/www/dash.petoman.com/admin-dashboard
           sudo chmod -R 770 /var/www/dash.petoman.com/admin-dashboard
           sudo chown -R www-data:www-data /var/www/dash.petoman.com/admin-dashboard
-          #sudo chown -R www-data:www-data /var/www/dash.petoman.com/admin-dashboard/dist
 
       - name: Install dependencies
         run: |
@@ -28,7 +27,11 @@ jobs:
       - name: Build Vue app
         run: |
           cd /var/www/dash.petoman.com/admin-dashboard
-          npm run build    
+          npm run build
+
+      - name: Build Vue app
+        run: |       
+          sudo chown -R www-data:www-data /var/www/dash.petoman.com/admin-dashboard/dist
 
       - name: Check application health
         run: |
