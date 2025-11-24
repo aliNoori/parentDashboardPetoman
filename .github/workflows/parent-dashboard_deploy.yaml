@@ -29,7 +29,7 @@ jobs:
           cd /var/www/dash.petoman.com/admin-dashboard
           npm run build
 
-      - name: Build Vue app
+      - name: Add Permission
         run: |       
           sudo chown -R www-data:www-data /var/www/dash.petoman.com/admin-dashboard/dist
 

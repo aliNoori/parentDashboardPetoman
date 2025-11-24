@@ -921,7 +921,8 @@ const saveCategory = async () => {
       image: newCategory.image,
       cover: newCategory.cover
     })
-    categories.value.push(newCategory)
+    await categoryStore.fetchCategoryTree( categoryTypeStore.selectedType.id)
+
   }
   closeModal()
 }
@@ -952,6 +953,7 @@ const toggleStatus = async (category) => {
 const deleteCategory = async (category) => {
   if (confirm(`آیا از حذف دسته‌بندی "${category.title}" اطمینان دارید؟`)) {
     await categoryStore.removeCategory(category.id)
+    await categoryStore.fetchCategoryTree( categoryTypeStore.selectedType.id)
     const index = categories.value.findIndex(cat => cat.id === category.id)
     if (index !== -1) {
       categories.value.splice(index, 1)
@@ -1006,7 +1008,7 @@ watch(
     async (type) => {
       if (type?.id) {
         categoryForm.typeId = type.id
-        await categoryStore.fetchCategories({typeId: type.id})
+        await categoryStore.fetchCategoryTree( type.id)
       }
     },
     {immediate: true}

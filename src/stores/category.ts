@@ -137,7 +137,7 @@ export const useCategoryStore = defineStore('categoryStore', () => {
             // ارسال به API
             const { data } = await axios.post('/categories', payload)
 
-            categories.value.unshift(data)
+            //categories.value.unshift(data)
 
             console.log('✅ دسته‌بندی با فایل‌ها ثبت شد')
             return data
