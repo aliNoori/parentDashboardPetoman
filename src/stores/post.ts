@@ -369,8 +369,14 @@ export const usePostStore = defineStore('postStore', () => {
             .slice(0, 5)
     })
 
-
-
+    const deleteImage = async (url: string) => {
+        try {
+            await axios.delete('/v1/uploads', { data: { url } })
+            console.log('✅ Image deleted on server')
+        } catch (error) {
+            console.error('❌ Error deleting image:', error)
+        }
+    }
 
 
     return {
@@ -384,6 +390,7 @@ export const usePostStore = defineStore('postStore', () => {
         updatePost,
         deletePost,
         uploadImage,
+        deleteImage,
 
         // computed
         totalPosts,

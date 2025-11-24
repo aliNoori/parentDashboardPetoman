@@ -149,6 +149,15 @@ export const usePageStore = defineStore('pageStore', () => {
     const publishedPages = computed(() => pages.value.filter(p => p.status === 'published').length)
     const totalPages = computed(() => pages.value.length)
 
+    const deleteImage = async (url: string) => {
+        try {
+            await axios.delete('/v1/uploads', { data: { url } })
+            console.log('✅ Image deleted on server')
+        } catch (error) {
+            console.error('❌ Error deleting image:', error)
+        }
+    }
+
     return {
         pages,
         page,
@@ -160,6 +169,7 @@ export const usePageStore = defineStore('pageStore', () => {
         updatePage,
         deletePage,
         uploadImage,
+        deleteImage,
         publishedPages,
         totalPages
     }

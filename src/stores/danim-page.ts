@@ -205,6 +205,15 @@ export const useDanimPageStore = defineStore('danimPageStore', () => {
         }
     }
 
+    const deleteImage = async (url: string) => {
+        try {
+            await axios.delete('/v1/uploads', { data: { url } })
+            console.log('✅ Image deleted on server')
+        } catch (error) {
+            console.error('❌ Error deleting image:', error)
+        }
+    }
+
     // -----------------------------
     // COMPUTED
     // -----------------------------
@@ -283,6 +292,7 @@ export const useDanimPageStore = defineStore('danimPageStore', () => {
         updatePage,
         deletePage,
         uploadImage,
+        deleteImage,
 
         publishedPages,
         totalPages,

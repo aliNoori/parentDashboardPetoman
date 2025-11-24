@@ -27,6 +27,7 @@ const emit = defineEmits(['update:modelValue'])
 const pageStore = usePageStore()
 const editorId = ref(`tinymce-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`)
 let editorInstance = null
+let lastImages = []
 
 // --- Load TinyMCE if not loaded ---
 const loadTinyMCE = () => {
@@ -138,6 +139,31 @@ const initEditor = async () => {
         editor.on('change input undo redo keyup', () => {
           const content = editor.getContent()
           emit('update:modelValue', content)
+        })
+
+        editor.on('change input undo redo keyup', async () => {
+          const content = editor.getContent()
+          emit('update:modelValue', content)
+
+          // لیست تصاویر فعلی
+          const currentImages = Array.from(editor.dom.select('img')).map(img => img.src)
+
+          // پیدا کردن تصاویر حذف‌شده
+          const removed = lastImages.filter(src => !currentImages.includes(src))
+
+          if (removed.length > 0) {
+            for (const src of removed) {
+              try {
+                await pageStore.deleteImage(src)
+                console.log('✅ Image deleted from storage:', src)
+              } catch (err) {
+                console.error('❌ Failed to delete image from storage', err)
+              }
+            }
+          }
+
+          // به‌روزرسانی لیست آخرین تصاویر
+          lastImages = currentImages
         })
       }
     }
