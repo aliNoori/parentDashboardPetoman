@@ -18,7 +18,7 @@ jobs:
           sudo rsync -avz --delete --exclude='.git' ./ /var/www/dash.petoman.com/admin-dashboard
           sudo chmod -R 770 /var/www/dash.petoman.com/admin-dashboard
           sudo chown -R www-data:www-data /var/www/dash.petoman.com/admin-dashboard
-          sudo chown -R www-data:www-data /var/www/dash.petoman.com/admin-dashboard/dist
+          #sudo chown -R www-data:www-data /var/www/dash.petoman.com/admin-dashboard/dist
 
       - name: Install dependencies
         run: |
