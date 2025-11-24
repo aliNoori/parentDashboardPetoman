@@ -35,182 +35,182 @@ const routes = [
         path: 'danim',
         name: 'DanimDashboard',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'danim' }
+        meta: { activePanel: 'danim', role: 'danim_admin' }
       },
       {
         path: 'danim/posts',
         name: 'DanimPosts',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'danim', activeSection: 'posts' }
+        meta: { activePanel: 'danim', activeSection: 'posts', role: 'danim_admin' }
       },
       {
         path: 'danim/posts/create',
         name: 'DanimPostCreate',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'danim', activeSection: 'posts', activeView: 'create' }
+        meta: { activePanel: 'danim', activeSection: 'posts', activeView: 'create', role: 'danim_admin' }
       },
       {
         path: 'danim/posts/edit/:id',
         name: 'DanimPostEdit',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'danim', activeSection: 'posts', activeView: 'edit' }
+        meta: { activePanel: 'danim', activeSection: 'posts', activeView: 'edit', role: 'danim_admin' }
       },
       {
         path: 'danim/pages',
         name: 'DanimPages',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'danim', activeSection: 'pages' }
+        meta: { activePanel: 'danim', activeSection: 'pages', role: 'danim_admin' }
       },
       {
         path: 'danim/pages/create',
         name: 'DanimPageCreate',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'danim', activeSection: 'pages', activeView: 'create' }
+        meta: { activePanel: 'danim', activeSection: 'pages', activeView: 'create', role: 'danim_admin' }
       },
       {
         path: 'danim/pages/edit/:id',
         name: 'DanimPageEdit',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'danim', activeSection: 'pages', activeView: 'edit' }
+        meta: { activePanel: 'danim', activeSection: 'pages', activeView: 'edit', role: 'danim_admin' }
       },
       {
         path: 'danim/categories',
         name: 'DanimCategories',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'danim', activeSection: 'categories' }
+        meta: { activePanel: 'danim', activeSection: 'categories', role: 'danim_admin' }
       },
       {
         path: 'danim/tags',
         name: 'DanimTags',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'danim', activeSection: 'tags' }
+        meta: { activePanel: 'danim', activeSection: 'tags', role: 'danim_admin' }
       },
       {
         path: 'danim/users',
         name: 'DanimUsers',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'danim', activeSection: 'users' }
+        meta: { activePanel: 'danim', activeSection: 'users', role: 'danim_admin' }
       },
       {
         path: 'danim/settings',
         name: 'DanimSettings',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'danim', activeSection: 'settings' }
+        meta: { activePanel: 'danim', activeSection: 'settings', role: 'danim_admin' }
       },
       // Hamian Routes
       {
         path: 'hamian',
         name: 'HamianDashboard',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian' }
+        meta: { activePanel: 'hamian', role: 'supporter_admin' }
       },
       {
         path: 'hamian/donations',
         name: 'HamianDonations',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian', activeSection: 'donations' }
+        meta: { activePanel: 'hamian', activeSection: 'donations', role: 'supporter_admin' }
       },
       {
         path: 'hamian/donations/create',
         name: 'HamianDonationCreate',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian', activeSection: 'donations', activeView: 'create' }
+        meta: { activePanel: 'hamian', activeSection: 'donations', activeView: 'create', role: 'supporter_admin' }
       },
       {
         path: 'hamian/projects',
         name: 'HamianProjects',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian', activeSection: 'projects' }
+        meta: { activePanel: 'hamian', activeSection: 'projects', role: 'supporter_admin' }
       },
       {
         path: 'hamian/projects/create',
         name: 'HamianProjectCreate',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian', activeSection: 'projects', activeView: 'create' }
+        meta: { activePanel: 'hamian', activeSection: 'projects', activeView: 'create', role: 'supporter_admin' }
       },
       {
         path: 'hamian/supporters',
         name: 'HamianSupporters',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian', activeSection: 'supporters' }
+        meta: { activePanel: 'hamian', activeSection: 'supporters', role: 'supporter_admin' }
       },
       {
         path: 'hamian/supporters/create',
         name: 'HamianSupporterCreate',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian', activeSection: 'supporters', activeView: 'create' }
+        meta: { activePanel: 'hamian', activeSection: 'supporters', activeView: 'create', role: 'supporter_admin' }
       },
       {
         path: 'hamian/faqs',
         name: 'HamianFaqs',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian', activeSection: 'faqs' }
+        meta: { activePanel: 'hamian', activeSection: 'faqs', role: 'supporter_admin' }
       },
       {
         path: 'hamian/faqs/categories',
         name: 'HamianFaqCategories',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian', activeSection: 'faq-categories' }
+        meta: { activePanel: 'hamian', activeSection: 'faq-categories', role: 'supporter_admin' }
       },
       {
         path: 'hamian/documentaries',
         name: 'HamianDocumentaries',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian', activeSection: 'documentaries' }
+        meta: { activePanel: 'hamian', activeSection: 'documentaries', role: 'supporter_admin' }
       },
       {
         path: 'hamian/documentaries/categories',
         name: 'HamianDocumentaryCategories',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian', activeSection: 'documentary-categories' }
+        meta: { activePanel: 'hamian', activeSection: 'documentary-categories', role: 'supporter_admin' }
       },
       {
         path: 'hamian/documentaries/create',
         name: 'HamianDocumentaryCreate',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian', activeSection: 'documentaries', activeView: 'create' }
+        meta: { activePanel: 'hamian', activeSection: 'documentaries', activeView: 'create', role: 'supporter_admin' }
       },
       {
         path: 'hamian/documentaries/edit',
         name: 'HamianDocumentaryEdit',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian', activeSection: 'documentaries', activeView: 'edit' }
+        meta: { activePanel: 'hamian', activeSection: 'documentaries', activeView: 'edit', role: 'supporter_admin' }
       },
       {
         path: 'hamian/pages',
         name: 'HamianPages',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian', activeSection: 'pages' }
+        meta: { activePanel: 'hamian', activeSection: 'pages', role: 'supporter_admin' }
       },
       {
         path: 'hamian/pages/create',
         name: 'HamianPageCreate',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian', activeSection: 'pages', activeView: 'create' }
+        meta: { activePanel: 'hamian', activeSection: 'pages', activeView: 'create', role: 'supporter_admin' }
       },
       {
         path: 'hamian/pages/edit/:id',
         name: 'HamianPageEdit',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian', activeSection: 'pages', activeView: 'edit' }
+        meta: { activePanel: 'hamian', activeSection: 'pages', activeView: 'edit', role: 'supporter_admin' }
       },
       {
         path: 'hamian/users',
         name: 'HamianUsers',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian', activeSection: 'users' }
+        meta: { activePanel: 'hamian', activeSection: 'users', role: 'supporter_admin' }
       },
       {
         path: 'hamian/reports',
         name: 'HamianReports',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian', activeSection: 'reports' }
+        meta: { activePanel: 'hamian', activeSection: 'reports', role: 'supporter_admin' }
       },
       {
         path: 'hamian/settings',
         name: 'HamianSettings',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'hamian', activeSection: 'settings' }
+        meta: { activePanel: 'hamian', activeSection: 'settings', role: 'supporter_admin' }
       },
       // Film Routes
       {
@@ -382,14 +382,37 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
+  const userData = JSON.parse(localStorage.getItem('user') || '{}')
+  const userRoles = userData.roles || []
 
+  // اگر احراز هویت لازم دارد و توکن نیست
   if (to.meta.requiresAuth && !token) {
-    next('/')
-  } else if (to.path === '/' && token) {
-    next('/dashboard')
-  } else {
-    next()
+    return next('/')
   }
+
+  // اگر وارد صفحه لاگین شده ولی قبلاً لاگین بوده
+  if (to.path === '/' && token) {
+    // هدایت بر اساس نقش
+    if (userRoles.includes('supporter_admin')) {
+      return next('/dashboard/hamian')
+    }
+
+    if (userRoles.includes('danim_admin')) {
+      return next('/dashboard/danim')
+    }
+
+    if (userRoles.includes('film_admin')) {
+      return next('/dashboard/film')
+    }
+
+  }
+
+  // بررسی نقش مسیر (اختیاری)
+  if (to.meta.role && !userRoles.includes(to.meta.role)) {
+    return next('/')
+  }
+
+  next()
 })
 
 const app = createApp(App)

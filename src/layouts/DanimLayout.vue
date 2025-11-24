@@ -16,7 +16,7 @@
           <!-- Profile Button -->
           <button @click="showProfileBottomSheet = true" class="flex items-center gap-2 p-1 hover:bg-gray-100 rounded-lg transition-colors">
             <div class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
-              <span class="text-white text-sm font-medium">م ح</span>
+              <span class="text-white text-sm font-medium">{{ getUserInitials(user.fullName) }}</span>
             </div>
           </button>
           <button @click="$emit('back')" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
@@ -78,12 +78,12 @@
           </ul>
         </nav>
 
-        <div class="p-4 border-t border-gray-200">
+<!--        <div class="p-4 border-t border-gray-200">
           <button @click="$emit('back')" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
             <i class="ti ti-arrow-right text-xl"></i>
             <span>بازگشت به داشبورد اصلی</span>
           </button>
-        </div>
+        </div>-->
       </div>
     </aside>
 
@@ -215,11 +215,11 @@
                   class="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
-                    <span class="text-white text-sm font-medium">م ح</span>
+                    <span class="text-white text-sm font-medium">{{ getUserInitials(user.fullName) }}</span>
                   </div>
                   <div class="text-right">
                     <p class="text-sm font-medium text-gray-900">{{ user.fullName }}</p>
-                    <p class="text-xs text-gray-500">{{ user.roles?.[0] }}</p>
+                    <p class="text-xs text-gray-500">مدیر</p>
                   </div>
                   <i class="ti ti-chevron-down text-gray-600"></i>
                 </button>
@@ -230,7 +230,7 @@
                     <div class="px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-orange-50 to-red-50">
                       <div class="flex items-center gap-3">
                         <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
-                          <span class="text-white font-medium">م ح</span>
+                          <span class="text-white font-medium">{{ getUserInitials(user.fullName) }}</span>
                         </div>
                         <div>
                           <p class="font-bold text-gray-900">{{ user?.fullName }}</p>
@@ -300,11 +300,11 @@
           <div class="px-6 py-4 border-b border-gray-100">
             <div class="flex items-center gap-4">
               <div class="w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
-                <span class="text-white text-lg font-medium">م ح</span>
+                <span class="text-white text-lg font-medium">{{ getUserInitials(user.fullName) }}</span>
               </div>
               <div>
-                <h3 class="text-lg font-bold text-gray-900">محمد حسینزاده</h3>
-                <p class="text-sm text-gray-500">admin@danim.com</p>
+                <h3 class="text-lg font-bold text-gray-900">user.fullName</h3>
+                <p class="text-sm text-gray-500">user.email</p>
                 <p class="text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded-full inline-block mt-1">مدیر ارشد</p>
               </div>
             </div>
@@ -381,11 +381,12 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {useUserStore} from "@/stores/user.ts";
+import {useAuthStore} from "@/stores/auth.ts";
 
 const router = useRouter()
 const route = useRoute()
 const emit = defineEmits(['back'])
-
+const authStore = useAuthStore()
 const mobileSidebarOpen = ref(false)
 const showProfileMenu = ref(false)
 const showProfileBottomSheet = ref(false)
@@ -422,12 +423,17 @@ const notifications = ref([
 ])
 
 // Logout function
-const logout = () => {
+const logout = async () => {
   // Add logout logic here
-  console.log('Logging out...')
+  await authStore.logout()
+  await router.push('/')
   showProfileDropdown.value = false
 }
-
+const getUserInitials = (fullName) => {
+  if (!fullName) return ''
+  const parts = fullName.split(' ')
+  return parts.map(p => p[0]).join(' ').toUpperCase()
+}
 // Get current view from route
 const currentView = computed(() => {
   const activeSection = route.meta?.activeSection

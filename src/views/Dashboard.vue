@@ -28,7 +28,7 @@
             <div class="flex items-center gap-3 px-3 py-2 bg-gray-50 rounded-lg">
               <div
                   class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
-                <span class="text-white text-sm font-medium">م ح</span>
+                <span class="text-white text-sm font-medium">{{ getUserInitials(user.fullName) }}</span>
               </div>
               <span class="text-sm font-medium text-gray-900 hidden sm:inline">{{ user.fullName }}</span>
             </div>
@@ -192,6 +192,11 @@ const menuItems = [
     textColor: 'text-purple-600'
   }
 ]
+const getUserInitials = (fullName) => {
+  if (!fullName) return ''
+  const parts = fullName.split(' ')
+  return parts.map(p => p[0]).join(' ').toUpperCase()
+}
 
 const handleLogout = async () => {
   await authStore.logout()
