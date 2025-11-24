@@ -217,159 +217,159 @@ const routes = [
         path: 'film',
         name: 'FilmDashboard',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film' }
+        meta: { activePanel: 'film' , role: 'film_admin' }
       },
       {
         path: 'film/videos',
         name: 'FilmVideos',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'videos' }
+        meta: { activePanel: 'film', activeSection: 'videos', role: 'film_admin' }
       },
       {
         path: 'film/video-add',
         name: 'FilmVideoAdd',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'video-add' }
+        meta: { activePanel: 'film', activeSection: 'video-add', role: 'film_admin' }
       },
       {
         path: 'film/categories',
         name: 'FilmCategories',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'categories' }
+        meta: { activePanel: 'film', activeSection: 'categories', role: 'film_admin' }
       },
       {
         path: 'film/series',
         name: 'FilmSeries',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'series' }
+        meta: { activePanel: 'film', activeSection: 'series', role: 'film_admin' }
       },
       {
         path: 'film/series/create',
         name: 'FilmSeriesCreate',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'series', activeView: 'create' }
+        meta: { activePanel: 'film', activeSection: 'series', activeView: 'create', role: 'film_admin' }
       },
       {
         path: 'film/series/edit/:id',
         name: 'FilmSeriesEdit',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'series', activeView: 'edit' }
+        meta: { activePanel: 'film', activeSection: 'series', activeView: 'edit', role: 'film_admin' }
       },
       {
         path: 'film/movies',
         name: 'FilmMovies',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'movies' }
+        meta: { activePanel: 'film', activeSection: 'movies', role: 'film_admin' }
       },
       {
         path: 'film/movies/create',
         name: 'FilmMovieCreate',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'movies', activeView: 'create' }
+        meta: { activePanel: 'film', activeSection: 'movies', activeView: 'create', role: 'film_admin' }
       },
       {
         path: 'film/movies/edit/:id',
         name: 'FilmMovieEdit',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'movies', activeView: 'edit' }
+        meta: { activePanel: 'film', activeSection: 'movies', activeView: 'edit', role: 'film_admin' }
       },
       {
         path: 'film/movies/categories',
         name: 'FilmMovieCategories',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'movie-categories' }
+        meta: { activePanel: 'film', activeSection: 'movie-categories', role: 'film_admin' }
       },
       {
         path: 'film/movies/tags',
         name: 'FilmMovieTags',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'movie-tags' }
+        meta: { activePanel: 'film', activeSection: 'movie-tags', role: 'film_admin' }
       },
       {
         path: 'film/movies/faq',
         name: 'FilmMovieFAQ',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'movie-faq' }
+        meta: { activePanel: 'film', activeSection: 'movie-faq', role: 'film_admin' }
       },
       {
         path: 'film/comments',
         name: 'FilmComments',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'comments' }
+        meta: { activePanel: 'film', activeSection: 'comments', role: 'film_admin' }
       },
       {
         path: 'film/posts',
         name: 'FilmPosts',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'posts' }
+        meta: { activePanel: 'film', activeSection: 'posts', role: 'film_admin' }
       },
       {
         path: 'film/posts/create',
         name: 'FilmPostCreate',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'posts', activeView: 'create' }
+        meta: { activePanel: 'film', activeSection: 'posts', activeView: 'create', role: 'film_admin' }
       },
       {
         path: 'film/posts/edit/:id',
         name: 'FilmPostEdit',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'posts', activeView: 'edit' }
+        meta: { activePanel: 'film', activeSection: 'posts', activeView: 'edit', role: 'film_admin' }
       },
       {
         path: 'film/posts/categories',
         name: 'FilmPostCategories',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'post-categories' }
+        meta: { activePanel: 'film', activeSection: 'post-categories', role: 'film_admin' }
       },
       {
         path: 'film/posts/tags',
         name: 'FilmPostTags',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'post-tags' }
+        meta: { activePanel: 'film', activeSection: 'post-tags' , role: 'film_admin'}
       },
       {
         path: 'film/pages',
         name: 'FilmPages',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'pages' }
+        meta: { activePanel: 'film', activeSection: 'pages', role: 'film_admin' }
       },
       {
         path: 'film/pages/create',
         name: 'FilmPageCreate',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'pages', activeView: 'create' }
+        meta: { activePanel: 'film', activeSection: 'pages', activeView: 'create', role: 'film_admin' }
       },
       {
         path: 'film/pages/edit/:id',
         name: 'FilmPageEdit',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'pages', activeView: 'edit' }
+        meta: { activePanel: 'film', activeSection: 'pages', activeView: 'edit', role: 'film_admin' }
       },
       {
         path: 'film/users',
         name: 'FilmUsers',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'users' }
+        meta: { activePanel: 'film', activeSection: 'users', role: 'film_admin' }
       },
       {
         path: 'film/settings',
         name: 'FilmSettings',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'film', activeSection: 'settings' }
+        meta: { activePanel: 'film', activeSection: 'settings', role: 'film_admin' }
       },
       // Dampezeshki Routes
       {
         path: 'dampezeshki',
         name: 'DampezeshkiDashboard',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'dampezeshki' }
+        meta: { activePanel: 'dampezeshki', role: 'vet_admin' }
       },
       // Market Routes
       {
         path: 'market',
         name: 'MarketDashboard',
         component: { template: '<div></div>' },
-        meta: { activePanel: 'market' }
+        meta: { activePanel: 'market', role: 'market_admin' }
       }
     ]
   }
@@ -403,6 +403,12 @@ router.beforeEach((to, from, next) => {
 
     if (userRoles.includes('film_admin')) {
       return next('/dashboard/film')
+    }
+    if (userRoles.includes('vet_admin')) {
+      return next('/dashboard/dampezeshki')
+    }
+    if (userRoles.includes('market_admin')) {
+      return next('/dashboard/market')
     }
 
   }
