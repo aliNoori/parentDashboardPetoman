@@ -906,6 +906,8 @@ const saveCategory = async () => {
       id: updatedCategory.id,
     })
 
+    await categoryStore.fetchCategoryTree( categoryTypeStore.selectedType.id)
+
     // جایگزینی در لیست محلی
     const index = categories.value.findIndex(cat => cat.id === updatedCategory.id)
     if (index !== -1) {
