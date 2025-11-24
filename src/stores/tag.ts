@@ -129,6 +129,38 @@ export const useTagStore = defineStore('tagStore', () => {
         }
     }
 
+    const incrementTagCount = async (tagName: string) => {
+        try {
+            const tagObj = tags.value.find(t => t.name === tagName)
+            if (tagObj) {
+                tagObj.count++
+
+                await axios.patch(`/tags/${tagObj.id}/increment`, {
+                    count: tagObj.count,
+                    lastUsed: new Date().toISOString(),
+                })
+            }
+        } catch (error) {
+            console.error('❌ خطا در افزایش شمارنده‌ی تگ:', error)
+        }
+    }
+    const decrementTagCount = async (id: number) => {
+        try {
+            const tagObj = tags.value.find(t => t.id === id)
+            if (tagObj && tagObj.count > 0) {
+                tagObj.count--
+
+                // سمت سرور هم به‌روز کن
+                await axios.patch(`/tags/${id}/decrement`, {
+                    count: tagObj.count,
+                    lastUsed: new Date().toISOString(),
+                })
+            }
+        } catch (error) {
+            console.error('❌ خطا در کاهش شمارنده‌ی تگ:', error)
+        }
+    }
+
     return {
         tags,
         tag,
@@ -138,5 +170,7 @@ export const useTagStore = defineStore('tagStore', () => {
         addTag,
         editTag,
         removeTag,
+        incrementTagCount,
+        decrementTagCount
     }
 })

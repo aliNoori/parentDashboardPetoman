@@ -416,11 +416,16 @@
                 <!-- Date -->
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">تاریخ <span class="text-red-500">*</span></label>
-                  <input v-model="editForm.date"
-                         required
-                         :disabled="isLocked"
-                         type="text"
-                         class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <PersianDatePicker
+                      v-model="editForm.date"
+                      :type="'date'"
+                      :editable="!isLocked"
+                      :display-format="'jYYYY/jMM/jDD'"
+                      :format="'YYYY/MM/DD'"
+                      placeholder="انتخاب تاریخ ..."
+                      :auto-submit="true"
+                  />
+                  <p class="text-xs text-gray-500 mt-1">با کلیک روی فیلد، تقویم شمسی باز می‌شود</p>
                 </div>
 
                 <!-- Time -->
@@ -487,6 +492,7 @@ import {ref, computed, onMounted, onUnmounted} from 'vue'
 import {useRouter} from 'vue-router'
 import {useUserStore} from "@/stores/user.ts";
 import {useDonationStore} from "@/stores/donation.ts";
+import PersianDatePicker from "@/components/PersianDatePicker.vue";
 
 const isLocked = ref(false)
 const router = useRouter()
@@ -597,7 +603,7 @@ const visiblePages = computed(() => {
 
 // Methods
 const formatCurrency = (amount) => {
-  return (amount / 10).toLocaleString('fa-IR')
+  return (amount).toLocaleString('fa-IR')
 }
 
 const getStatusLabel = (status) => {

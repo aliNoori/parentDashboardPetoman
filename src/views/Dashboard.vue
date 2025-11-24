@@ -201,7 +201,7 @@ const handleLogout = async () => {
 onMounted(async () => {
   await userStore.fetchUser()
   if (!user.value) return
-  switch (user.value.roles[0]) {
+  switch (user.value.roles?.[0]) {
     case 'supporter_admin':
       await router.push('/dashboard/hamian')
       break

@@ -199,15 +199,16 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
               تاریخ برگزاری <span class="text-red-500">*</span>
             </label>
-            <input
-              v-model="form.eventDate"
-              type="text"
-              :required="form.type === 'volunteer'"
-              placeholder="مثال: 1404/02/28"
-              class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              dir="ltr"
-            >
-            <p class="text-xs text-gray-500 mt-1">تاریخ شمسی - مثال: 28 اردیبهشت 1404</p>
+            <PersianDatePicker
+                v-model="form.eventDate"
+                :type="'date'"
+                :required="form.type === 'volunteer'"
+                :display-format="'jYYYY/jMM/jDD'"
+                :format="'YYYY/MM/DD'"
+                placeholder="انتخاب تاریخ برگزاری..."
+                :auto-submit="true"
+            />
+            <p class="text-xs text-gray-500 mt-1">با کلیک روی فیلد، تقویم شمسی باز می‌شود</p>
           </div>
 
           <!-- Event Time -->

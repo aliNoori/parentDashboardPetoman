@@ -556,15 +556,16 @@
                       <label class="block text-sm font-medium text-gray-700 mb-2">
                         تاریخ برگزاری <span class="text-red-500">*</span>
                       </label>
-                      <input
+                      <PersianDatePicker
                           v-model="editForm.eventDate"
-                          type="text"
+                          :type="'date'"
                           :required="editForm.type === 'volunteer'"
-                          placeholder="مثال: 1404/02/28"
-                          class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          dir="ltr"
-                      >
-                      <p class="text-xs text-gray-500 mt-1">تاریخ شمسی - مثال: 28 اردیبهشت 1404</p>
+                          :display-format="'jYYYY/jMM/jDD'"
+                          :format="'YYYY/MM/DD'"
+                          placeholder="انتخاب تاریخ شروع..."
+                          :auto-submit="true"
+                      />
+                      <p class="text-xs text-gray-500 mt-1">با کلیک روی فیلد، تقویم شمسی باز می‌شود</p>
                     </div>
 
                     <!-- Event Time -->
@@ -876,8 +877,10 @@ import {useKindnessMeetingStore} from "@/stores/kindness-meeting.ts";
 import PersianDatePicker from "@/components/PersianDatePicker.vue";
 import {toGregorianDate} from "@/utils/date.ts";
 import {useCategoryStore} from "@/stores/category.ts";
+import {useCategoryTypeStore} from "@/stores/category-type.ts";
 
 const router = useRouter()
+const categoryTypeStore = useCategoryTypeStore()
 const kindnessStore = useKindnessMeetingStore();
 // State
 const showStatusDropdown = ref(false)
@@ -1236,7 +1239,7 @@ const editProject = (project) => {
     eventTime: project.eventTime,
     eventDate: project.eventDate,
     showOnHomepage:project.showOnHomepage,
-    category:project.category.title,
+    category:project.category,
     status: project.status
   }
 }

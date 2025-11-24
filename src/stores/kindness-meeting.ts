@@ -109,6 +109,7 @@ export const useKindnessMeetingStore = defineStore('kindnessMeetingStore', () =>
 
                 return {
                     ...item,
+                    category:item.category?.title??'',
                     donations: item.donations,
                     supporters: item.donations.length,
                     progress,            // ← اینجا اضافه شد
