@@ -56,7 +56,7 @@
           <!-- Apps Grid -->
           <div class="flex-1 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 content-center overflow-hidden px-2">
             <div
-                v-for="item in menuItems"
+                v-for="item in filteredMenuItems"
                 :key="item.id"
                 @click="goToPanel(item.id)"
                 class="group relative bg-white rounded-3xl p-5 transition-all duration-300 cursor-pointer border border-gray-100"
@@ -130,7 +130,6 @@ const userStore = useUserStore()
 const user = computed(() => userStore.user)
 // Get active panel from route
 const activePanel = computed(() => route.meta?.activePanel || null)
-
 // Navigation functions
 const goToPanel = (panelId) => {
   router.push(`/dashboard/${panelId}`)
@@ -149,7 +148,8 @@ const menuItems = [
     users: 247,
     progress: 75,
     iconBg: 'bg-gradient-to-br from-rose-400 to-rose-600',
-    textColor: 'text-rose-600'
+    textColor: 'text-rose-600',
+    role: 'supporter_admin'
   },
   {
     id: 'danim',
@@ -159,7 +159,8 @@ const menuItems = [
     users: 342,
     progress: 85,
     iconBg: 'bg-gradient-to-br from-orange-400 to-orange-600',
-    textColor: 'text-orange-600'
+    textColor: 'text-orange-600',
+    role: 'danim_admin'
   },
   {
     id: 'film',
@@ -169,7 +170,9 @@ const menuItems = [
     users: 567,
     progress: 60,
     iconBg: 'bg-gradient-to-br from-yellow-400 to-yellow-600',
-    textColor: 'text-yellow-600'
+    textColor: 'text-yellow-600',
+    role: 'film_admin'
+
   },
   {
     id: 'dampezeshki',
@@ -179,7 +182,8 @@ const menuItems = [
     users: 156,
     progress: 92,
     iconBg: 'bg-gradient-to-br from-sky-400 to-sky-600',
-    textColor: 'text-sky-600'
+    textColor: 'text-sky-600',
+    role: 'vet_admin'
   },
   {
     id: 'market',
@@ -189,9 +193,15 @@ const menuItems = [
     users: 456,
     progress: 68,
     iconBg: 'bg-gradient-to-br from-purple-400 to-purple-600',
-    textColor: 'text-purple-600'
+    textColor: 'text-purple-600',
+    role: 'market_admin'
   }
 ]
+const userData = JSON.parse(localStorage.getItem('user') || '{}')
+const userRoles = userData.roles || []
+const filteredMenuItems = computed(() =>
+    menuItems.filter(item => userRoles.includes(item.role))
+)
 const getUserInitials = (fullName) => {
   if (!fullName) return ''
   const parts = fullName.split(' ')
@@ -205,23 +215,5 @@ const handleLogout = async () => {
 
 onMounted(async () => {
   await userStore.fetchUser()
-  if (!user.value) return
-  switch (user.value.roles?.[0]) {
-    case 'supporter_admin':
-      await router.push('/dashboard/hamian')
-      break
-    case 'danim_admin':
-      await router.push('/dashboard/danim')
-      break
-    case 'vet_admin':
-      await router.push('/dashboard/dampezeshki')
-      break
-    case 'market_admin':
-      await router.push('/dashboard/market')
-      break
-    default:
-      await authStore.logout()
-      await router.push('/')
-  }
 })
 </script>
