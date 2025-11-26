@@ -967,6 +967,7 @@ const statusOptions = ref([
 
 const userForm = ref({
   name: '',
+  username:'',
   email: '',
   phone: '',
   password: '',
@@ -999,57 +1000,6 @@ const users = computed(() =>
       }
     })
 )
-
-/*const users = ref([
-  {
-    id: 1,
-    name: 'علی احمدی',
-    email: 'ali@example.com',
-    phone: '09123456789',
-    role: 'admin',
-    status: 'active',
-    isOnline: true,
-    lastLogin: '1403/08/05 14:30',
-    joinDate: '1403/05/10',
-    avatar: 'https://via.placeholder.com/40x40'
-  },
-  {
-    id: 2,
-    name: 'فاطمه محمدی',
-    email: 'fateme@example.com',
-    phone: '09123456790',
-    role: 'editor',
-    status: 'active',
-    isOnline: false,
-    lastLogin: '1403/08/04 09:15',
-    joinDate: '1403/06/15',
-    avatar: 'https://via.placeholder.com/40x40'
-  },
-  {
-    id: 3,
-    name: 'حسن رضایی',
-    email: 'hassan@example.com',
-    phone: '09123456791',
-    role: 'author',
-    status: 'active',
-    isOnline: true,
-    lastLogin: '1403/08/05 11:20',
-    joinDate: '1403/07/20',
-    avatar: 'https://via.placeholder.com/40x40'
-  },
-  {
-    id: 4,
-    name: 'مریم کریمی',
-    email: 'maryam@example.com',
-    phone: '09123456792',
-    role: 'subscriber',
-    status: 'pending',
-    isOnline: false,
-    lastLogin: 'هرگز',
-    joinDate: '1403/08/05',
-    avatar: 'https://via.placeholder.com/40x40'
-  }
-])*/
 
 const adminCount = computed(() => {
   return users.value.filter(user => user.role === 'admin').length
@@ -1424,25 +1374,36 @@ const deleteUser = (user) => {
   )
 }
 
-const addUser = () => {
-  const newUser = {
-    id: Date.now(),
-    ...userForm.value,
-    status: 'active',
-    isOnline: false,
-    lastLogin: 'هرگز',
-    joinDate: new Date().toLocaleDateString('fa-IR'),
-    avatar: 'https://via.placeholder.com/40x40'
-  }
+const addUser = async () => {
+  try {
+    const payload = {
+      fullName: userForm.value.name,
+      username: userForm.value.username,
+      email: userForm.value.email,
+      password: userForm.value.password,
+      phoneNumber: userForm.value.phone,
+      roles: [userForm.value.role],
+      isActive: true,
+    };
+      // CREATE
+      await userStore.addUser(payload);
+      showSuccessMessage("کاربر جدید با موفقیت اضافه شد");
 
-  users.value.push(newUser)
-  closeAddModal()
+    // Refresh user list
+    await userStore.fetchAllUsers();
+
+    closeAddModal();
+  } catch (e) {
+    showErrorMessage("خطا در ذخیره کاربر");
+    console.error(e);
+  }
 }
 
 const closeAddModal = () => {
   showAddModal.value = false
   userForm.value = {
     name: '',
+    username:'',
     email: '',
     phone: '',
     password: '',
