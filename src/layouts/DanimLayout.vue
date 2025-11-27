@@ -459,18 +459,7 @@ const showProfileDropdown = ref(false)
 const userStore = useUserStore()
 const user = computed(() => userStore.user)
 const notifications = computed(() => notificationStore.notifications)
-const toastNotification = ref(
-    {
-      id: '',
-      type: '',
-      title: '',
-      message: '',
-      time: '',
-      isRead: false,
-      icon: '',
-      color: ''
-    }
-)
+const toastNotification = ref(null)
 // Logout function
 const logout = async () => {
   // Add logout logic here

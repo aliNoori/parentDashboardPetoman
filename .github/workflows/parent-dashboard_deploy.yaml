@@ -15,7 +15,7 @@ jobs:
 
       - name: Deploy dist to Nginx
         run: |
-          sudo rsync -avz --delete --exclude='.git' ./ /var/www/dash.petoman.com/admin-dashboard
+          sudo rsync -avz --delete --exclude='.git' --exclude='.env' ./ /var/www/dash.petoman.com/admin-dashboard
           sudo chmod -R 770 /var/www/dash.petoman.com/admin-dashboard
           sudo chown -R www-data:www-data /var/www/dash.petoman.com/admin-dashboard
 

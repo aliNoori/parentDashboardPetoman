@@ -9,7 +9,8 @@ export const useSocketStore = defineStore("socket", {
     actions: {
         connect(token) {
             if (!this.socket) {
-                this.socket = io("http://localhost:3000", {
+                const socketUrl = import.meta.env.VITE_SOCKET_URL;
+                this.socket = io(socketUrl, {
                     path: "/socket.io",
                     query: { token },
                     transports: ["websocket"],

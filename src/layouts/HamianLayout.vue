@@ -705,18 +705,7 @@ const handleNavigateToDonationEdit = (event) => {
 const handleNavigateToDonations = () => {
   navigateTo('donations')
 }
-const toastNotification = ref(
-    {
-      id: '',
-      type: '',
-      title: '',
-      message: '',
-      time: '',
-      isRead: false,
-      icon: '',
-      color: ''
-    }
-)
+const toastNotification = ref(null)
 const socketStore = useSocketStore();
 const isConnected = ref(false);
 onMounted(async () => {
