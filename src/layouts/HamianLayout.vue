@@ -224,6 +224,26 @@
                     </div>
                   </div>
                 </Transition>
+                <!-- Toast Bubble -->
+                <Transition name="fade">
+                  <div v-if="toastNotification"
+                       class="absolute left-5 mt-2 top-4 w-80 bg-white shadow-lg rounded-lg border border-gray-200 p-4 z-50">
+                    <div class="flex items-start gap-3">
+                      <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                           :class="toastNotification.color">
+                        <i :class="toastNotification.icon" class="text-lg"></i>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900">{{ toastNotification.title }}</p>
+                        <p class="text-xs text-gray-600 mt-1">{{ toastNotification.message }}</p>
+                        <p class="text-xs text-gray-400 mt-1">{{ toastNotification.time }}</p>
+                      </div>
+                      <button @click="toastNotification = null" class="text-gray-400 hover:text-gray-600">
+                        <i class="ti ti-x"></i>
+                      </button>
+                    </div>
+                  </div>
+                </Transition>
               </div>
 
               <!-- Profile Dropdown -->
@@ -685,6 +705,18 @@ const handleNavigateToDonationEdit = (event) => {
 const handleNavigateToDonations = () => {
   navigateTo('donations')
 }
+const toastNotification = ref(
+    {
+      id: '',
+      type: '',
+      title: '',
+      message: '',
+      time: '',
+      isRead: false,
+      icon: '',
+      color: ''
+    }
+)
 const socketStore = useSocketStore();
 const isConnected = ref(false);
 onMounted(async () => {
@@ -714,6 +746,14 @@ onMounted(async () => {
     }
 
     notifications.value.push(enrichedPayload)
+
+    // نمایش به صورت Toast
+    toastNotification.value = enrichedPayload
+
+    // بستن خودکار بعد از چند ثانیه (اختیاری)
+    setTimeout(() => {
+      toastNotification.value = null
+    }, 5000)
 
   });
   socketStore.socket.on("connect_error", (err) => {
@@ -836,5 +876,15 @@ defineExpose({
 
 .bottom-sheet-leave-to > div {
   transform: translateY(100%);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px); /* حرکت حبابی از بالا */
 }
 </style>

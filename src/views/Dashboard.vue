@@ -17,18 +17,16 @@
 
           <!-- Header Actions -->
           <div class="flex items-center gap-3">
-            <!-- Notifications -->
-            <button class="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
-              <i class="ti ti-bell text-xl text-gray-600"></i>
-              <span
-                  class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-medium">3</span>
-            </button>
-
             <!-- Profile -->
             <div class="flex items-center gap-3 px-3 py-2 bg-gray-50 rounded-lg">
               <div
                   class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
-                <span class="text-white text-sm font-medium">{{ getUserInitials(user.fullName) }}</span>
+                <img v-if="user?.avatar"
+                     :src="user?.avatar"
+                     :alt="user?.name"
+                     class="w-8 h-8 rounded-full object-cover"
+                >
+                <span v-else class="text-white text-sm font-medium">{{ user.name?.charAt(0) }}</span>
               </div>
               <span class="text-sm font-medium text-gray-900 hidden sm:inline">{{ user.fullName }}</span>
             </div>

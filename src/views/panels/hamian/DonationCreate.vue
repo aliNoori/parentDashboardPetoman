@@ -332,7 +332,7 @@ const handleSubmit = async () => {
   }
 
   await donationStore.addDonation(payload)
-  alert('✅ کمک با موفقیت ثبت شد!')
+
   await router.push('/dashboard/hamian/donations')
 }
 

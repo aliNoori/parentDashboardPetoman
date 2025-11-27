@@ -14,8 +14,10 @@
         </div>
         <div class="flex items-center gap-2">
           <!-- Profile Button -->
-          <button @click="showProfileBottomSheet = true" class="flex items-center gap-2 p-1 hover:bg-gray-100 rounded-lg transition-colors">
-            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+          <button @click="showProfileBottomSheet = true"
+                  class="flex items-center gap-2 p-1 hover:bg-gray-100 rounded-lg transition-colors">
+            <div
+                class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
               <img v-if="user?.avatar"
                    :src="user?.avatar"
                    :alt="user?.name"
@@ -36,7 +38,8 @@
       <div class="flex flex-col h-full">
         <div class="p-6 border-b border-gray-200">
           <div class="flex items-center gap-3 mb-2">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+            <div
+                class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
               <i class="ti ti-book text-white text-xl"></i>
             </div>
             <div>
@@ -51,27 +54,28 @@
             <li v-for="item in menuItems" :key="item.id">
               <!-- Main Menu Item -->
               <button
-                v-if="!item.isSubmenu"
-                @click="toggleMenuItem(item.id)"
-                class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-gray-50"
-                :class="currentView === item.id || (item.children && item.children.some(child => child.id === currentView)) ? 'bg-orange-50 text-orange-600 font-medium' : 'text-gray-700 hover:text-gray-900'"
+                  v-if="!item.isSubmenu"
+                  @click="toggleMenuItem(item.id)"
+                  class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-gray-50"
+                  :class="currentView === item.id || (item.children && item.children.some(child => child.id === currentView)) ? 'bg-orange-50 text-orange-600 font-medium' : 'text-gray-700 hover:text-gray-900'"
               >
                 <i :class="item.icon" class="text-xl"></i>
                 <span>{{ item.label }}</span>
                 <span v-if="item.badge" class="mr-auto bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full">
                   {{ item.badge }}
                 </span>
-                <i v-if="item.children" :class="item.isOpen ? 'ti ti-chevron-up' : 'ti ti-chevron-down'" class="mr-auto text-sm"></i>
+                <i v-if="item.children" :class="item.isOpen ? 'ti ti-chevron-up' : 'ti ti-chevron-down'"
+                   class="mr-auto text-sm"></i>
               </button>
-              
+
               <!-- Submenu Items -->
               <Transition name="submenu">
                 <ul v-if="item.children && item.isOpen" class="mt-2 mr-6 space-y-1">
                   <li v-for="child in item.children" :key="child.id">
                     <button
-                      @click="navigateTo(child.id)"
-                      class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 hover:bg-gray-50 text-sm"
-                      :class="currentView === child.id ? 'bg-orange-50 text-orange-600 font-medium' : 'text-gray-600 hover:text-gray-900'"
+                        @click="navigateTo(child.id)"
+                        class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 hover:bg-gray-50 text-sm"
+                        :class="currentView === child.id ? 'bg-orange-50 text-orange-600 font-medium' : 'text-gray-600 hover:text-gray-900'"
                     >
                       <i :class="child.icon" class="text-lg"></i>
                       <span>{{ child.label }}</span>
@@ -83,26 +87,29 @@
           </ul>
         </nav>
 
-<!--        <div class="p-4 border-t border-gray-200">
-          <button @click="$emit('back')" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
-            <i class="ti ti-arrow-right text-xl"></i>
-            <span>بازگشت به داشبورد اصلی</span>
-          </button>
-        </div>-->
+        <!--        <div class="p-4 border-t border-gray-200">
+                  <button @click="$emit('back')" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
+                    <i class="ti ti-arrow-right text-xl"></i>
+                    <span>بازگشت به داشبورد اصلی</span>
+                  </button>
+                </div>-->
       </div>
     </aside>
 
     <!-- Mobile Sidebar -->
     <Transition name="fade">
-      <div v-if="mobileSidebarOpen" @click="toggleMobileSidebar" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[55] lg:hidden"></div>
+      <div v-if="mobileSidebarOpen" @click="toggleMobileSidebar"
+           class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[55] lg:hidden"></div>
     </Transition>
 
     <Transition name="slide-right">
-      <aside v-if="mobileSidebarOpen" class="fixed top-0 right-0 w-64 h-screen bg-white z-[60] lg:hidden overflow-y-auto">
+      <aside v-if="mobileSidebarOpen"
+             class="fixed top-0 right-0 w-64 h-screen bg-white z-[60] lg:hidden overflow-y-auto">
         <div class="flex flex-col h-full">
           <div class="flex items-center justify-between p-4 border-b border-gray-200">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+              <div
+                  class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
                 <i class="ti ti-book text-white text-xl"></i>
               </div>
               <div>
@@ -120,27 +127,28 @@
               <li v-for="item in menuItems" :key="item.id">
                 <!-- Main Menu Item -->
                 <button
-                  v-if="!item.isSubmenu"
-                  @click="toggleMenuItem(item.id)"
-                  class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200"
-                  :class="currentView === item.id || (item.children && item.children.some(child => child.id === currentView)) ? 'bg-orange-50 text-orange-600 font-medium' : 'text-gray-700 hover:bg-gray-50'"
+                    v-if="!item.isSubmenu"
+                    @click="toggleMenuItem(item.id)"
+                    class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200"
+                    :class="currentView === item.id || (item.children && item.children.some(child => child.id === currentView)) ? 'bg-orange-50 text-orange-600 font-medium' : 'text-gray-700 hover:bg-gray-50'"
                 >
                   <i :class="item.icon" class="text-xl"></i>
                   <span>{{ item.label }}</span>
                   <span v-if="item.badge" class="mr-auto bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full">
                     {{ item.badge }}
                   </span>
-                  <i v-if="item.children" :class="item.isOpen ? 'ti ti-chevron-up' : 'ti ti-chevron-down'" class="mr-auto text-sm"></i>
+                  <i v-if="item.children" :class="item.isOpen ? 'ti ti-chevron-up' : 'ti ti-chevron-down'"
+                     class="mr-auto text-sm"></i>
                 </button>
-                
+
                 <!-- Submenu Items -->
                 <Transition name="submenu">
                   <ul v-if="item.children && item.isOpen" class="mt-2 mr-6 space-y-1">
                     <li v-for="child in item.children" :key="child.id">
                       <button
-                        @click="navigateTo(child.id)"
-                        class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm"
-                        :class="currentView === child.id ? 'bg-orange-50 text-orange-600 font-medium' : 'text-gray-600 hover:bg-gray-50'"
+                          @click="navigateTo(child.id)"
+                          class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm"
+                          :class="currentView === child.id ? 'bg-orange-50 text-orange-600 font-medium' : 'text-gray-600 hover:bg-gray-50'"
                       >
                         <i :class="child.icon" class="text-lg"></i>
                         <span>{{ child.label }}</span>
@@ -153,7 +161,8 @@
           </nav>
 
           <div class="p-4 border-t border-gray-200">
-            <button @click="$emit('back')" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
+            <button @click="$emit('back')"
+                    class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
               <i class="ti ti-arrow-right text-xl"></i>
               <span>بازگشت به داشبورد اصلی</span>
             </button>
@@ -178,9 +187,9 @@
 
               <!-- Notifications -->
               <div class="relative" data-dropdown="notifications">
-                <button 
-                  @click.stop="showNotifications = !showNotifications"
-                  class="relative p-2.5 hover:bg-gray-100 rounded-lg transition-colors"
+                <button
+                    @click.stop="showNotifications = !showNotifications"
+                    class="relative p-2.5 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <i class="ti ti-bell text-xl text-gray-700"></i>
                   <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
@@ -188,14 +197,17 @@
 
                 <!-- Notifications Dropdown -->
                 <Transition name="dropdown">
-                  <div v-if="showNotifications" @click.stop class="absolute left-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50">
+                  <div v-if="showNotifications" @click.stop
+                       class="absolute left-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50">
                     <div class="px-4 py-3 border-b border-gray-100">
                       <h3 class="font-bold text-gray-900">اعلان‌ها</h3>
                     </div>
                     <div class="max-h-96 overflow-y-auto">
-                      <div v-for="notif in notifications" :key="notif.id" class="px-4 py-3 hover:bg-gray-50 border-b border-gray-100 cursor-pointer">
+                      <div v-for="notif in notifications" :key="notif.id"
+                           class="px-4 py-3 hover:bg-gray-50 border-b border-gray-100 cursor-pointer">
                         <div class="flex items-start gap-3">
-                          <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" :class="notif.color">
+                          <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                               :class="notif.color">
                             <i :class="notif.icon" class="text-lg"></i>
                           </div>
                           <div class="flex-1 min-w-0">
@@ -211,15 +223,36 @@
                     </div>
                   </div>
                 </Transition>
+                <!-- Toast Bubble -->
+                <Transition name="fade">
+                  <div v-if="toastNotification"
+                       class="absolute left-4 top-4 mt-2 w-80 bg-white shadow-lg rounded-lg border border-gray-200 p-4 z-50">
+                    <div class="flex items-start gap-3">
+                      <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                           :class="toastNotification.color">
+                        <i :class="toastNotification.icon" class="text-lg"></i>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900">{{ toastNotification.title }}</p>
+                        <p class="text-xs text-gray-600 mt-1">{{ toastNotification.message }}</p>
+                        <p class="text-xs text-gray-400 mt-1">{{ toastNotification.time }}</p>
+                      </div>
+                      <button @click="toastNotification = null" class="text-gray-400 hover:text-gray-600">
+                        <i class="ti ti-x"></i>
+                      </button>
+                    </div>
+                  </div>
+                </Transition>
               </div>
 
               <!-- Profile Dropdown -->
               <div class="relative" data-dropdown="profile">
-                <button 
-                  @click.stop="showProfileDropdown = !showProfileDropdown"
-                  class="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 rounded-lg transition-colors"
+                <button
+                    @click.stop="showProfileDropdown = !showProfileDropdown"
+                    class="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
-                  <div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                  <div
+                      class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
                     <img v-if="user?.avatar"
                          :src="user?.avatar"
                          :alt="user?.name"
@@ -236,10 +269,12 @@
 
                 <!-- Profile Dropdown Menu -->
                 <Transition name="dropdown">
-                  <div v-if="showProfileDropdown" @click.stop class="absolute left-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50">
+                  <div v-if="showProfileDropdown" @click.stop
+                       class="absolute left-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50">
                     <div class="px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-orange-50 to-red-50">
                       <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                        <div
+                            class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
                           <img v-if="user?.avatar"
                                :src="user?.avatar"
                                :alt="user?.name"
@@ -254,11 +289,13 @@
                       </div>
                     </div>
                     <div class="py-2">
-                      <button @click="navigateTo('settings')" class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors">
+                      <button @click="navigateTo('settings')"
+                              class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors">
                         <i class="ti ti-settings text-gray-600"></i>
                         <span class="text-sm text-gray-700">تنظیمات</span>
                       </button>
-                      <button @click="navigateTo('profile')" class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors">
+                      <button @click="navigateTo('profile')"
+                              class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors">
                         <i class="ti ti-user text-gray-600"></i>
                         <span class="text-sm text-gray-700">پروفایل من</span>
                       </button>
@@ -268,7 +305,8 @@
                       </button>
                     </div>
                     <div class="border-t border-gray-100 py-2">
-                      <button @click="logout" class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-red-50 transition-colors text-red-600">
+                      <button @click="logout"
+                              class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-red-50 transition-colors text-red-600">
                         <i class="ti ti-logout"></i>
                         <span class="text-sm font-medium">خروج از حساب</span>
                       </button>
@@ -282,7 +320,7 @@
       </header>
 
       <div class="p-4">
-        <slot :currentView="currentView" />
+        <slot :currentView="currentView"/>
       </div>
     </main>
 
@@ -290,11 +328,11 @@
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 lg:hidden">
       <div class="flex items-center justify-around px-2 py-2">
         <button
-          v-for="item in bottomNavItems"
-          :key="item.id"
-          @click="navigateTo(item.id)"
-          class="flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all duration-200 min-w-[60px]"
-          :class="currentView === item.id ? 'text-orange-600' : 'text-gray-600'"
+            v-for="item in bottomNavItems"
+            :key="item.id"
+            @click="navigateTo(item.id)"
+            class="flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all duration-200 min-w-[60px]"
+            :class="currentView === item.id ? 'text-orange-600' : 'text-gray-600'"
         >
           <i :class="item.icon" class="text-2xl"></i>
           <span class="text-xs font-medium">{{ item.label }}</span>
@@ -304,17 +342,19 @@
 
     <!-- Mobile Profile Bottom Sheet -->
     <Transition name="bottom-sheet">
-      <div v-if="showProfileBottomSheet" @click="showProfileBottomSheet = false" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[70] lg:hidden flex items-end">
+      <div v-if="showProfileBottomSheet" @click="showProfileBottomSheet = false"
+           class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[70] lg:hidden flex items-end">
         <div @click.stop class="w-full bg-white rounded-t-3xl overflow-hidden">
           <!-- Handle -->
           <div class="flex justify-center pt-3 pb-2">
             <div class="w-10 h-1 bg-gray-300 rounded-full"></div>
           </div>
-          
+
           <!-- Profile Header -->
           <div class="px-6 py-4 border-b border-gray-100">
             <div class="flex items-center gap-4">
-              <div class="w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+              <div
+                  class="w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
                 <img v-if="user?.avatar"
                      :src="user?.avatar"
                      :alt="user?.name"
@@ -405,6 +445,7 @@ import {useAuthStore} from "@/stores/auth.ts";
 import {usePostStore} from "@/stores/post.ts";
 import {useNotificationStore} from "@/stores/notification.ts";
 import {useSocketStore} from "@/stores/socket.js";
+
 const notificationStore = useNotificationStore()
 const router = useRouter()
 const route = useRoute()
@@ -418,7 +459,18 @@ const showProfileDropdown = ref(false)
 const userStore = useUserStore()
 const user = computed(() => userStore.user)
 const notifications = computed(() => notificationStore.notifications)
-
+const toastNotification = ref(
+    {
+      id: '',
+      type: '',
+      title: '',
+      message: '',
+      time: '',
+      isRead: false,
+      icon: '',
+      color: ''
+    }
+)
 // Logout function
 const logout = async () => {
   // Add logout logic here
@@ -435,7 +487,7 @@ const getUserInitials = (fullName) => {
 const currentView = computed(() => {
   const activeSection = route.meta?.activeSection
   const activeView = route.meta?.activeView
-  
+
   if (activeView) {
     if (activeSection === 'posts' && activeView === 'create') {
       return 'post-create'
@@ -450,14 +502,14 @@ const currentView = computed(() => {
       return 'page-edit'
     }
   }
-  
+
   // اگر activeSection موجود باشه از اون استفاده کن، وگرنه dashboard نشون بده
   return activeSection || 'dashboard'
 })
 
 // Navigation function
 const navigateTo = (viewId) => {
-  switch(viewId) {
+  switch (viewId) {
     case 'dashboard':
       router.push('/dashboard/danim')
       break
@@ -524,32 +576,32 @@ const toggleMenuItem = (itemId) => {
 }
 
 const menuItems = ref([
-  { id: 'dashboard', label: 'داشبورد', icon: 'ti ti-dashboard' },
-  { 
-    id: 'posts', 
-    label: 'نوشته‌ها', 
-    icon: 'ti ti-article', 
+  {id: 'dashboard', label: 'داشبورد', icon: 'ti ti-dashboard'},
+  {
+    id: 'posts',
+    label: 'نوشته‌ها',
+    icon: 'ti ti-article',
     badge: '24',
     isOpen: false,
     children: [
-      { id: 'posts', label: 'مدیریت نوشته‌ها', icon: 'ti ti-list' },
-      { id: 'add-post', label: 'افزودن پست جدید', icon: 'ti ti-plus' },
-      { id: 'categories', label: 'دسته‌بندی‌ها', icon: 'ti ti-category' },
-      { id: 'tags', label: 'برچسب‌ها', icon: 'ti ti-tags' }
+      {id: 'posts', label: 'مدیریت نوشته‌ها', icon: 'ti ti-list'},
+      {id: 'add-post', label: 'افزودن پست جدید', icon: 'ti ti-plus'},
+      {id: 'categories', label: 'دسته‌بندی‌ها', icon: 'ti ti-category'},
+      {id: 'tags', label: 'برچسب‌ها', icon: 'ti ti-tags'}
     ]
   },
-  { 
-    id: 'pages', 
-    label: 'صفحات', 
+  {
+    id: 'pages',
+    label: 'صفحات',
     icon: 'ti ti-file-text',
     isOpen: false,
     children: [
-      { id: 'pages', label: 'مدیریت صفحات', icon: 'ti ti-list' },
-      { id: 'add-page', label: 'افزودن صفحه جدید', icon: 'ti ti-plus' }
+      {id: 'pages', label: 'مدیریت صفحات', icon: 'ti ti-list'},
+      {id: 'add-page', label: 'افزودن صفحه جدید', icon: 'ti ti-plus'}
     ]
   },
-  { id: 'users', label: 'مدیریت کاربران', icon: 'ti ti-users' },
-  { id: 'settings', label: 'تنظیمات', icon: 'ti ti-settings' }
+  {id: 'users', label: 'مدیریت کاربران', icon: 'ti ti-users'},
+  {id: 'settings', label: 'تنظیمات', icon: 'ti ti-settings'}
 ])
 const postStore = usePostStore()
 const badge = computed(() => postStore.totalPosts)
@@ -561,10 +613,10 @@ watchEffect(() => {
   }
 })
 const bottomNavItems = ref([
-  { id: 'dashboard', label: 'خانه', icon: 'ti ti-home' },
-  { id: 'posts', label: 'نوشته‌ها', icon: 'ti ti-article' },
-  { id: 'add-post', label: 'افزودن', icon: 'ti ti-plus' },
-  { id: 'settings', label: 'تنظیمات', icon: 'ti ti-settings' }
+  {id: 'dashboard', label: 'خانه', icon: 'ti ti-home'},
+  {id: 'posts', label: 'نوشته‌ها', icon: 'ti ti-article'},
+  {id: 'add-post', label: 'افزودن', icon: 'ti ti-plus'},
+  {id: 'settings', label: 'تنظیمات', icon: 'ti ti-settings'}
 ])
 
 const toggleMobileSidebar = () => {
@@ -578,7 +630,7 @@ const handleClickOutside = (event) => {
   if (!notifButton && showNotifications.value) {
     showNotifications.value = false
   }
-  
+
   // Close profile dropdown
   const profileButton = event.target.closest('[data-dropdown="profile"]')
   if (!profileButton && showProfileDropdown.value) {
@@ -624,7 +676,6 @@ onMounted(async () => {
 
 
   ///
-
   socketStore.connect(authStore.token);
   socketStore.socket.on("connect", () => {
     console.log("✅ Connected to server");
@@ -639,6 +690,14 @@ onMounted(async () => {
     }
 
     notifications.value.push(enrichedPayload)
+
+    // نمایش به صورت Toast
+    toastNotification.value = enrichedPayload
+
+    // بستن خودکار بعد از چند ثانیه (اختیاری)
+    setTimeout(() => {
+      toastNotification.value = null
+    }, 5000)
 
   });
   socketStore.socket.on("connect_error", (err) => {
@@ -699,6 +758,7 @@ defineExpose({
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.3s ease;
 }
+
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
 }
@@ -706,6 +766,7 @@ defineExpose({
 .slide-right-enter-active, .slide-right-leave-active {
   transition: transform 0.3s ease;
 }
+
 .slide-right-enter-from, .slide-right-leave-to {
   transform: translateX(100%);
 }
@@ -713,10 +774,12 @@ defineExpose({
 .submenu-enter-active, .submenu-leave-active {
   transition: all 0.2s ease;
 }
+
 .submenu-enter-from, .submenu-leave-to {
   opacity: 0;
   max-height: 0;
 }
+
 .submenu-enter-to, .submenu-leave-from {
   opacity: 1;
   max-height: 200px;
@@ -725,6 +788,7 @@ defineExpose({
 .dropdown-enter-active, .dropdown-leave-active {
   transition: all 0.2s ease;
 }
+
 .dropdown-enter-from, .dropdown-leave-to {
   opacity: 0;
   transform: translateY(-10px);
@@ -733,19 +797,35 @@ defineExpose({
 .bottom-sheet-enter-active {
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
+
 .bottom-sheet-leave-active {
   transition: all 0.3s cubic-bezier(0.55, 0.055, 0.675, 0.19);
 }
+
 .bottom-sheet-enter-from {
   opacity: 0;
 }
+
 .bottom-sheet-enter-from > div {
   transform: translateY(100%);
 }
+
 .bottom-sheet-leave-to {
   opacity: 0;
 }
+
 .bottom-sheet-leave-to > div {
   transform: translateY(100%);
 }
+
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}/* حرکت حبابی از بالا */
 </style>
