@@ -114,7 +114,8 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {useAuthStore} from "@/stores/auth.ts";
-
+import {useNotificationStore} from "@/stores/notification.ts";
+const notificationStore = useNotificationStore()
 const router = useRouter()
 const username = ref('')
 const password = ref('')

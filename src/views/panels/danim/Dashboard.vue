@@ -238,6 +238,7 @@
 import { ref, computed, onMounted } from 'vue'
 import {usePostStore} from "@/stores/post.ts";
 import {useDanimPageStore} from "@/stores/danim-page.ts";
+import {useUserStore} from "@/stores/user.ts";
 
 const emit = defineEmits(['navigate'])
 const filter = ref('weekly')
@@ -467,7 +468,6 @@ const isThisYear = (date) => {
   const now = new Date()
   return d.getFullYear() === now.getFullYear()
 }
-
 
 
 onMounted(async () => {

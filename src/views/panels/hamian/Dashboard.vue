@@ -202,9 +202,13 @@
               :key="supporter.id"
               class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer"
           >
-            <div
-                class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-medium text-sm flex-shrink-0">
-              {{ supporter.initials }}
+            <div  class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-medium text-sm flex-shrink-0">
+              <img v-if="supporter.avatar"
+                   :src="supporter.avatar"
+                   :alt="supporter.name"
+                   class="w-10 h-10 rounded-full object-cover"
+              >
+              <span v-else class="text-white text-sm font-medium">{{ supporter.initials.charAt(0) }}</span>
             </div>
             <div class="flex-1 min-w-0">
               <h3 class="text-sm font-semibold text-gray-900">{{ supporter.name }}</h3>
@@ -450,7 +454,7 @@ onMounted(async () => {
   await projectStore.fetchKindnessMeetings()
   await donationStore.fetchDonations()
   await supporterStore.fetchSupporters()
-})
+});
 // Helper Functions
 const formatNumber = (num) => {
   return num?.toLocaleString('fa-IR') || '0'

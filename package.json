@@ -26,8 +26,10 @@
     "axios": "^1.13.2",
     "jalaali-js": "^1.2.8",
     "pinia": "^3.0.4",
+    "socket.io-client": "^4.8.1",
     "tinymce": "^8.2.1",
     "vue": "^3.4.0",
+    "vue-advanced-cropper": "^2.8.9",
     "vue-router": "^4.2.5",
     "vue3-persian-datetime-picker": "^1.2.2",
     "vuedraggable": "^4.1.0"

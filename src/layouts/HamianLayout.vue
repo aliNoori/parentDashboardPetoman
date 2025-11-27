@@ -18,7 +18,12 @@
                   class="flex items-center gap-2 p-1 hover:bg-gray-100 rounded-lg transition-colors">
             <div
                 class="w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
-              <span class="text-white text-sm font-medium">{{ getUserInitials(user.fullName) }}</span>
+              <img v-if="user?.avatar"
+                   :src="user?.avatar"
+                   :alt="user?.name"
+                   class="w-8 h-8 rounded-full object-cover"
+              >
+              <span v-else class="text-white text-sm font-medium">{{ user.name?.charAt(0) }}</span>
             </div>
           </button>
           <button @click="$emit('back')" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
@@ -82,13 +87,13 @@
           </ul>
         </nav>
 
-<!--        <div class="p-4 border-t border-gray-200">
-          <button @click="$emit('back')"
-                  class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
-            <i class="ti ti-arrow-right text-xl"></i>
-            <span>بازگشت به داشبورد اصلی</span>
-          </button>
-        </div>-->
+        <!--        <div class="p-4 border-t border-gray-200">
+                  <button @click="$emit('back')"
+                          class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
+                    <i class="ti ti-arrow-right text-xl"></i>
+                    <span>بازگشت به داشبورد اصلی</span>
+                  </button>
+                </div>-->
       </div>
     </aside>
 
@@ -229,7 +234,12 @@
                 >
                   <div
                       class="w-10 h-10 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
-                    <span class="text-white text-sm font-medium">{{ getUserInitials(user.fullName) }}</span>
+                    <img v-if="user?.avatar"
+                         :src="user?.avatar"
+                         :alt="user?.name"
+                         class="w-10 h-10 rounded-full object-cover"
+                    >
+                    <span v-else class="text-white text-sm font-medium">{{ user.name?.charAt(0) }}</span>
                   </div>
                   <div class="text-right">
                     <p class="text-sm font-medium text-gray-900">{{ user.fullname }}</p>
@@ -246,7 +256,12 @@
                       <div class="flex items-center gap-3">
                         <div
                             class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
-                          <span class="text-white font-medium">{{ getUserInitials(user.fullName) }}</span>
+                          <img v-if="user?.avatar"
+                               :src="user?.avatar"
+                               :alt="user?.name"
+                               class="w-12 h-12 rounded-full object-cover"
+                          >
+                          <span v-else class="text-white text-sm font-medium">{{ user.name.charAt(0) }}</span>
                         </div>
                         <div>
                           <p class="font-bold text-gray-900">{{ user.fullName }}</p>
@@ -321,7 +336,12 @@
             <div class="flex items-center gap-4">
               <div
                   class="w-16 h-16 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
-                <span class="text-white text-lg font-medium">{{ getUserInitials(user.fullName) }}</span>
+                <img v-if="user?.avatar"
+                     :src="user?.avatar"
+                     :alt="user?.name"
+                     class="w-16 h-16 rounded-full object-cover"
+                >
+                <span v-else class="text-white text-sm font-medium">{{ user.name?.charAt(0) }}</span>
               </div>
               <div>
                 <h3 class="text-lg font-bold text-gray-900">{{ user.fullName }}</h3>
@@ -404,6 +424,8 @@ import {useRouter, useRoute} from 'vue-router'
 import {useDonationStore} from "@/stores/donation.ts";
 import {useUserStore} from "@/stores/user.ts";
 import {useAuthStore} from "@/stores/auth.ts";
+import {useSocketStore} from "@/stores/socket.js";
+import {useNotificationStore} from "@/stores/notification.ts";
 
 const router = useRouter()
 const route = useRoute()
@@ -417,33 +439,8 @@ const showProfileDropdown = ref(false)
 const authStore = useAuthStore()
 const userStore = useUserStore()
 const user = computed(() => userStore.user)
-// Notifications data
-const notifications = ref([
-  {
-    id: 1,
-    title: 'کمک جدید',
-    message: 'کمک مالی جدیدی دریافت شد',
-    time: '5 دقیقه پیش',
-    icon: 'ti ti-coin text-rose-600',
-    color: 'bg-rose-100'
-  },
-  {
-    id: 2,
-    title: 'قرار مهربانی تکمیل شد',
-    message: 'قرار "کمک به حیوانات خیابانی" به هدف رسید',
-    time: '1 ساعت پیش',
-    icon: 'ti ti-check text-green-600',
-    color: 'bg-green-100'
-  },
-  {
-    id: 3,
-    title: 'حامی جدید',
-    message: 'یک حامی جدید به سیستم اضافه شد',
-    time: '3 ساعت پیش',
-    icon: 'ti ti-user-plus text-blue-600',
-    color: 'bg-blue-100'
-  }
-])
+const notificationStore = useNotificationStore()
+const notifications = computed(() => notificationStore.notifications)
 
 // Logout function
 const logout = async () => {
@@ -688,18 +685,44 @@ const handleNavigateToDonationEdit = (event) => {
 const handleNavigateToDonations = () => {
   navigateTo('donations')
 }
-
+const socketStore = useSocketStore();
+const isConnected = ref(false);
 onMounted(async () => {
   await userStore.fetchUser()
-  console.log('user', userStore.user)
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const userId = user.id
+  await notificationStore.fetchNotifications(userId)
   window.addEventListener('navigate-to-supporters', handleNavigateToSupporters)
   window.addEventListener('navigate-to-donation-create', handleNavigateToDonationCreate)
   window.addEventListener('navigate-to-donation-edit', handleNavigateToDonationEdit)
   window.addEventListener('navigate-to-donations', handleNavigateToDonations)
   document.addEventListener('click', handleClickOutside)
+
+  ///
+
+  socketStore.connect(authStore.token);
+  socketStore.socket.on("connect", () => {
+    console.log("✅ Connected to server");
+    isConnected.value = true;
+  });
+
+  socketStore.socket.on("notification", (payload) => {
+    console.log("📩 Notification received:", payload);
+    const enrichedPayload = {
+      ...payload,
+      time: notificationStore.formatTime(new Date(payload.createdAt))
+    }
+
+    notifications.value.push(enrichedPayload)
+
+  });
+  socketStore.socket.on("connect_error", (err) => {
+    console.error("❌ Connection error:", err.message);
+  });
 })
 
 onUnmounted(() => {
+  socketStore.socket.off("notification");
   window.removeEventListener('navigate-to-supporters', handleNavigateToSupporters)
   window.removeEventListener('navigate-to-donation-create', handleNavigateToDonationCreate)
   window.removeEventListener('navigate-to-donation-edit', handleNavigateToDonationEdit)

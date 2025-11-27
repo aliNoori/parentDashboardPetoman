@@ -189,9 +189,14 @@
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center gap-3">
-                <div
-                    class="w-10 h-10 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
-                  <span class="text-white text-sm font-medium">{{ user.name.charAt(0) }}</span>
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
+
+                  <img v-if="user.avatar"
+                      :src="user.avatar"
+                      :alt="user.name"
+                      class="w-10 h-10 rounded-full object-cover"
+                  >
+                  <span v-else class="text-white text-sm font-medium">{{ user.name.charAt(0) }}</span>
                 </div>
                 <div>
                   <div class="text-sm font-medium text-gray-900">{{ user.name }}</div>
@@ -202,10 +207,10 @@
             <td class="px-6 py-4 whitespace-nowrap">
                 <span
                     class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
-                    :class="user.role === 'admin' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'"
+                    :class="user.role === 'supporter_admin' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'"
                 >
-                  <i :class="user.role === 'admin' ? 'ti ti-crown' : 'ti ti-user'"></i>
-                  {{ user.role === 'admin' ? 'مدیر' : 'کاربر عادی' }}
+                  <i :class="user.role === 'supporter_admin' ? 'ti ti-crown' : 'ti ti-user'"></i>
+                  {{ user.role === 'supporter_admin' ? 'مدیر' : 'کاربر عادی' }}
                 </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.email }}</td>
@@ -258,9 +263,13 @@
             >
             <div class="flex-1">
               <div class="flex items-center gap-3 mb-3">
-                <div
-                    class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
-                  <span class="text-white font-medium">{{ user.name.charAt(0) }}</span>
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
+                  <img v-if="user.avatar"
+                       :src="user.avatar"
+                       :alt="user.name"
+                       class="w-10 h-10 rounded-full object-cover"
+                  >
+                  <span v-else class="text-white text-sm font-medium">{{ user.name.charAt(0) }}</span>
                 </div>
                 <div class="flex-1">
                   <div class="font-medium text-gray-900">{{ user.name }}</div>
@@ -282,10 +291,10 @@
                 <div class="flex items-center gap-2">
                   <span
                       class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
-                      :class="user.role === 'admin' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'"
+                      :class="user.role === 'supporter_admin' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'"
                   >
-                    <i :class="user.role === 'admin' ? 'ti ti-crown' : 'ti ti-user'"></i>
-                    {{ user.role === 'admin' ? 'مدیر' : 'کاربر عادی' }}
+                    <i :class="user.role === 'supporter_admin' ? 'ti ti-crown' : 'ti ti-user'"></i>
+                    {{ user.role === 'supporter_admin' ? 'مدیر' : 'کاربر عادی' }}
                   </span>
                 </div>
                 <div class="text-gray-600">
@@ -353,6 +362,18 @@
           <div class="overflow-y-auto" style="max-height: calc(90vh - 80px);">
             <div class="p-6">
               <form @submit.prevent="saveUser" class="space-y-4">
+                <div class="flex flex-col items-center mb-6 w-full">
+                  <label class="block text-sm font-medium text-gray-700 mb-3">تصویر پروفایل</label>
+                  <ImageUploader
+                      label="عکس پروفایل"
+                      :image="formData.avatar"
+                      field="avatar"
+                      :aspectRatio="1"
+                      @select="handleImageUpload"
+                      @remove="removeImage"
+                      class="w-32 h-32 rounded-full overflow-hidden"
+                  />
+                </div>
                 <!-- Name -->
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">نام و نام خانوادگی *</label>
@@ -438,12 +459,12 @@
 
                     <label
                         class="relative flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-all"
-                        :class="formData.role === 'admin' ? 'border-rose-500 bg-rose-50' : 'border-gray-200 hover:border-gray-300'"
+                        :class="formData.role === 'supporter_admin' ? 'border-rose-500 bg-rose-50' : 'border-gray-200 hover:border-gray-300'"
                     >
                       <input
                           type="radio"
                           v-model="formData.role"
-                          value="admin"
+                          value="supporter_admin"
                           class="sr-only"
                       >
                       <div class="w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center">
@@ -491,7 +512,9 @@
         </div>
       </div>
     </Transition>
-
+    <!-- نمایش کراپر وقتی فایل انتخاب شد -->
+    <ImageCropper v-if="cropper.show" :show="cropper.show" :image-file="cropper.imageFile"
+                  :aspect-ratio="cropper.aspectRatio" @close="closeCropper" @save="saveCroppedImage"/>
     <!-- Toast Notification -->
     <Toast v-if="toast.show" :message="toast.message" :type="toast.type" @close="toast.show = false"/>
   </div>
@@ -502,6 +525,8 @@ import {ref, computed, onMounted, onUnmounted} from 'vue'
 import Toast from '../../../components/Toast.vue'
 import {useUserStore} from "@/stores/user.ts";
 import {toJalaliDate} from "@/utils/date.ts";
+import ImageUploader from "@/components/ImageUploader.vue";
+import ImageCropper from "@/components/ImageCropper.vue";
 
 // State
 const showAddModal = ref(false)
@@ -510,12 +535,29 @@ const showRoleDropdown = ref(false)
 const showStatusDropdown = ref(false)
 const searchQuery = ref('')
 const selectedUsers = ref([])
+const cropper = ref({show: false, imageFile: undefined, aspectRatio: 1, fieldName: ''})
+function saveCroppedImage(base64) {
 
+  if (!base64 || !cropper.value.fieldName) return
+  formData.value[cropper.value.fieldName] = base64
+  closeCropper()
+}
+
+function closeCropper() {
+  cropper.value = {show: false, imageFile: undefined, aspectRatio: 1, fieldName: ''}
+}
+function handleImageUpload({file, field, aspectRatio}) {
+  cropper.value = {show: true, imageFile: file, aspectRatio, fieldName: field}
+}
+function removeImage(field) {
+  formData.value[field] = null
+}
 // Form Data
 const formData = ref({
   id: null,
   name: '',
   username: '',
+  avatar:null,
   email: '',
   phone: '',
   password: '',
@@ -527,18 +569,19 @@ const users = computed(() =>
     userStore.users.map(u => {
       // بررسی نقش‌ها
       const rolesArray = Array.isArray(u.roles) ? u.roles : []
-      let role = 'user' // پیش‌فرض
+      let role = 'subscriber' // پیش‌فرض
 
-      if (rolesArray.includes('admin')) {
-        role = 'admin'
-      } else if (rolesArray.includes('user')) {
-        role = 'user'
+      if (rolesArray.includes('supporter_admin')) {
+        role = 'supporter_admin'
+      } else if (rolesArray.includes('subscriber')) {
+        role = 'subscriber'
       }
 
       return {
         id: u.id,
         name: u.fullName,
         username: u.username || '',
+        avatar:u.avatar,
         email: u.email,
         phone: u.phoneNumber,
         role,
@@ -549,59 +592,11 @@ const users = computed(() =>
     })
 )
 
-// Sample Users Data
-/*const users = ref([
-  {
-    id: 1,
-    name: 'محبوب حسین‌زاده',
-    username: 'mahboub',
-    email: 'mahboub@petoman.com',
-    phone: '09123456789',
-    role: 'admin',
-    isActive: true,
-    createdAt: '1403/01/15',
-    lastLogin: '2 ساعت پیش'
-  },
-  {
-    id: 2,
-    name: 'علی احمدی',
-    username: 'ali_ahmadi',
-    email: 'ali@example.com',
-    phone: '09121234567',
-    role: 'user',
-    isActive: true,
-    createdAt: '1403/02/10',
-    lastLogin: '1 روز پیش'
-  },
-  {
-    id: 3,
-    name: 'سارا کریمی',
-    username: 'sara_k',
-    email: 'sara@example.com',
-    phone: '09129876543',
-    role: 'admin',
-    isActive: true,
-    createdAt: '1403/02/20',
-    lastLogin: '5 دقیقه پیش'
-  },
-  {
-    id: 4,
-    name: 'رضا محمدی',
-    username: 'reza_m',
-    email: 'reza@example.com',
-    phone: '09131234567',
-    role: 'user',
-    isActive: false,
-    createdAt: '1403/03/05',
-    lastLogin: '1 هفته پیش'
-  }
-])*/
-
 // Filter Options
 const roleOptions = ref([
   {value: 'all', label: 'همه نقش‌ها'},
-  {value: 'admin', label: 'مدیران'},
-  {value: 'user', label: 'کاربران عادی'}
+  {value: 'supporter_admin', label: 'مدیران'},
+  {value: 'subscriber', label: 'کاربران عادی'}
 ])
 
 const statusOptions = ref([
@@ -621,7 +616,7 @@ const toast = ref({
 })
 
 // Computed
-const adminCount = computed(() => users.value.filter(u => u.role === 'admin').length)
+const adminCount = computed(() => users.value.filter(u => u.role === 'supporter_admin').length)
 const activeCount = computed(() => users.value.filter(u => u.isActive).length)
 const onlineCount = computed(() => users.value.filter(u => u.lastLogin.includes('دقیقه') || u.lastLogin.includes('ساعت')).length)
 
@@ -696,6 +691,7 @@ const closeModal = () => {
     id: null,
     name: '',
     username: '',
+    avatar:null,
     email: '',
     phone: '',
     password: '',
@@ -710,6 +706,7 @@ const saveUser = async () => {
     const payload = {
       fullName: formData.value.name,
       username: formData.value.username,
+      avatar:formData.value.avatar,
       email: formData.value.email,
       password: formData.value.password,
       phoneNumber: formData.value.phone,
@@ -729,6 +726,7 @@ const saveUser = async () => {
     const payload = {
       fullName: formData.value.name,
       username: formData.value.username,
+      avatar:formData.value.avatar,
       email: formData.value.email,
       password: formData.value.password,
       phoneNumber: formData.value.phone,
@@ -742,6 +740,7 @@ const saveUser = async () => {
       ...createdUser,
       name: createdUser.fullName,
       phone: createdUser.phoneNumber,
+      avatar:createdUser.avatar,
       role: createdUser.roles?.[0] || 'user',
       lastLogin: createdUser.lastLogin || new Date()
     })

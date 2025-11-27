@@ -20,6 +20,7 @@ export interface Supporter {
 export interface SupporterCase {
     id: string
     name: string
+    avatar:string
     initials: string
     type: 'financial' | 'volunteer' | 'both'
     typeLabel: string
@@ -86,7 +87,8 @@ export const useSupporterStore = defineStore('supporterStore', () => {
             .map(s => ({
                 id: s.id,
                 name: s.name || 'ناشناس',
-                initials: s.initialAmount,
+                avatar:s.avatar,
+                initials: s.initials,
                 date: s.createdAt,
                 type: typeMap[s.type],
                 status: s.status
@@ -114,6 +116,7 @@ export const useSupporterStore = defineStore('supporterStore', () => {
             supporterCases.value = data.map((item: any): SupporterCase => {
                 const fullName = item.user?.fullName || '---'
                 const initialAmount = Number(item.initialAmount ?? 0)
+                const avatar=item.user?.avatar||''
 
                 // ✅ مجموع کمک‌ها از donations
                 const donationSum = Array.isArray(item.donations)
@@ -148,6 +151,7 @@ export const useSupporterStore = defineStore('supporterStore', () => {
                 return {
                     id: item.id,
                     name: fullName,
+                    avatar:avatar,
                     initials,
                     type: item.type,
                     typeLabel,

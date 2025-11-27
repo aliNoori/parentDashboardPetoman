@@ -1,82 +1,67 @@
 // stores/notification.js
 import { defineStore } from 'pinia'
-import {ref, computed, getCurrentInstance} from 'vue'
-import type {AxiosInstance} from "axios";
-import type {NotificationApiResponse} from "@/types/notification";
-import type { Notification } from '@/types/notification'
+import { ref, computed, inject } from 'vue'
+import { axiosKey } from '../plugins/axiosPlugins'
+import { useAuthStore } from './auth'
+import {AxiosInstance} from "axios/index";
 
-const getActionsByType = (type:string, rawType:string) => {
-    if (type === 'subscription' && rawType === 'renewal_reminder') {
-        return [
-            { label: 'تمدید اشتراک', type: 'primary', action:'' },
-            { label: 'بعداً یادآوری کن', type: 'secondary', action: () => {} }
-        ]
-    }
-
-    if (type === 'subscription' && rawType === 'subscription_expired') {
-        return [
-            { label: 'تمدید فوری', type: 'primary', action: '' }
-        ]
-    }
-
-    if (type === 'subscription' && rawType === 'welcome') {
-        return [
-            { label: 'ایجاد پروفایل', type: 'primary', action: '' }
-        ]
-    }
-
-    if (type === 'payment' && rawType === 'payment_warning'||rawType === 'purchase_success') {
-        return [
-            { label: 'تمدید فوری', type: 'primary', action: '' }
-        ]
-    }
-
-    if (type === 'security' && rawType === 'new_login') {
-        return [
-            { label: 'این من بودم', type: 'secondary', action: () => {} },
-            { label: 'امنیت حساب', type: 'primary', action: '' }
-        ]
-    }
-
-    if (type === 'general' && rawType === 'login') {
-        return [
-            { label: 'مشاهده جزئیات', type: 'secondary', action: '' }
-        ]
-    }
-
-    return []
-}
 export const useNotificationStore = defineStore('notifications', () => {
-    const notifications = ref<Notification[]>([])
+    const notifications = ref([])
     const activeFilter = ref('all')
     const loading = ref(false)
-    const error = ref<string | null>(null)
-    const { appContext } = getCurrentInstance()!
-    const axios = appContext.config.globalProperties.$axios as AxiosInstance
+    const error = ref(null)
+    const authStore = useAuthStore()
 
-    const fetchNotifications = async () => {
+    const axios = inject<AxiosInstance>(axiosKey)
+    if (!axios) throw new Error('Axios instance not injected')
+
+    // دریافت نوتیفیکیشن‌ها
+    const fetchNotifications = async (userId:string) => {
 
         loading.value = true
         try {
-            const { data } = await axios.get('user/admin/notifications')
-            notifications.value = data.notifications.map((n: NotificationApiResponse) => ({
+            const { data } = await axios.get(`/notifications/user/${userId}`)
+            notifications.value = data.map((n:any) => ({
                 id: n.id,
                 type: n.type,
-                rawType: n.raw_type,
                 title: n.title,
-                description: n.message,
-                time:n.time,
-                createdAt: new Date(n.created_at),
-                isRead: !!n.read_at,
-                actions: getActionsByType(n.type, n.raw_type)
+                message: n.message,
+                time: formatTime(new Date(n.createdAt)),
+                isRead: !!n.readAt,
+                icon: n.icon,
+                color: n.color,
             }))
-        } catch (e) {
-            console.error('Error fetching notifications:', e)
+
+        } catch (e:any) {
+            console.error('❌ خطا در دریافت نوتیفیکیشن‌ها:', e)
+            error.value = e.message
         } finally {
             loading.value = false
         }
     }
+    const formatTime = (date: Date): string => {
+        const now = new Date()
+        const diff = now.getTime() - date.getTime()
+        const minutes = Math.floor(diff / (1000 * 60))
+        const hours = Math.floor(diff / (1000 * 60 * 60))
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24))
 
+        if (minutes < 60)
+        {
+            if(minutes<1){
+                return `لحظاتی پیش`
+            }else{
+                return `${minutes} دقیقه پیش`
+            }
+
+        } else if (hours < 24) {
+            return `${hours} ساعت پیش`
+        } else {
+            return `${days} روز پیش`
+        }
+    }
+
+    // فیلتر نوتیفیکیشن‌ها
     const filteredNotifications = computed(() => {
         if (activeFilter.value === 'all') {
             return notifications.value
@@ -84,27 +69,28 @@ export const useNotificationStore = defineStore('notifications', () => {
         return notifications.value.filter((n:any) => n.type === activeFilter.value)
     })
 
-
-    const markAsRead = async (id:any) => {
-        const notif = notifications.value.find((n: Notification) => n.id === id)
+    // خواندن یک نوتیفیکیشن
+    const markAsRead = async (id:string) => {
+        const notif:any = notifications.value.find((n:any) => n.id === id)
         if (notif && !notif.isRead) {
-            // optimistic update
-            notif.isRead = true
-
+            notif.isRead = true // optimistic update
             try {
-                await axios.post(`user/notifications/${id}/read`)
-            } catch (error) {
-                // اگه خطا داد برمی‌گردونیم به حالت قبلی
+                await axios.patch(`/notifications/read/${id}`)
+            } catch (err) {
                 notif.isRead = false
-                console.error('خطا در خواندن نوتیفیکیشن:', error)
+                console.error('❌ خطا در خواندن نوتیفیکیشن:', err)
             }
         }
     }
 
-
+    // خواندن همه نوتیفیکیشن‌ها
     const markAllAsRead = async () => {
         notifications.value.forEach((n:any) => (n.isRead = true))
-        await axios.post(`user/notifications/readAll`)
+        try {
+            await axios.patch(`/notifications/user/${authStore.user?.id}/readAll`)
+        } catch (err) {
+            console.error('❌ خطا در خواندن همه نوتیفیکیشن‌ها:', err)
+        }
     }
 
     return {
@@ -112,8 +98,10 @@ export const useNotificationStore = defineStore('notifications', () => {
         filteredNotifications,
         activeFilter,
         loading,
+        error,
         fetchNotifications,
         markAsRead,
-        markAllAsRead
+        markAllAsRead,
+        formatTime,
     }
 })

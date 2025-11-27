@@ -494,6 +494,19 @@
         </div>
 
         <form @submit.prevent="addUser" class="space-y-6">
+          <div class="flex flex-col items-center mb-6 w-full">
+            <label class="block text-sm font-medium text-gray-700 mb-3">تصویر پروفایل</label>
+            <ImageUploader
+                label="عکس پروفایل"
+                :image="userForm.avatar"
+                field="avatar"
+                :aspectRatio="1"
+                @select="handleImageUpload"
+                @remove="removeImage"
+                class="w-32 h-32 rounded-full overflow-hidden"
+            />
+          </div>
+
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-3">نام کامل</label>
@@ -605,6 +618,18 @@
         </div>
 
         <form @submit.prevent="updateUser" class="space-y-6">
+          <div class="flex flex-col items-center mb-6 w-full">
+            <label class="block text-sm font-medium text-gray-700 mb-3">تصویر پروفایل</label>
+            <ImageUploader
+                label="عکس پروفایل"
+                :image="editForm.avatar"
+                field="avatar"
+                :aspectRatio="1"
+                @select="handleImageUpload"
+                @remove="removeImage"
+                class="w-32 h-32 rounded-full overflow-hidden"
+            />
+          </div>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-3">نام کامل</label>
@@ -864,6 +889,9 @@
         </div>
       </div>
     </Transition>
+    <!-- نمایش کراپر وقتی فایل انتخاب شد -->
+    <ImageCropper v-if="cropper.show" :show="cropper.show" :image-file="cropper.imageFile"
+                  :aspect-ratio="cropper.aspectRatio" @close="closeCropper" @save="saveCroppedImage"/>
   </div>
 </template>
 
@@ -871,8 +899,11 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import {useUserStore} from "@/stores/user.ts";
 import {toJalaliDate} from "@/utils/date.ts";
+import ImageCropper from "@/components/ImageCropper.vue";
+import ImageUploader from "@/components/ImageUploader.vue";
 
 // Define refs first
+const cropper = ref({show: false, imageFile: undefined, aspectRatio: 1, fieldName: ''})
 const searchQuery = ref('')
 const showAddModal = ref(false)
 const showEditModal = ref(false)
@@ -903,7 +934,25 @@ const checkIsMobile = () => {
     isMobile.value = window.innerWidth < 1024
   }
 }
+function saveCroppedImage(base64) {
 
+  if (!base64 || !cropper.value.fieldName) return
+  if(showEditModal){
+    editForm.value[cropper.value.fieldName] = base64
+  }
+  userForm.value[cropper.value.fieldName] = base64
+  closeCropper()
+}
+
+function closeCropper() {
+  cropper.value = {show: false, imageFile: undefined, aspectRatio: 1, fieldName: ''}
+}
+function handleImageUpload({file, field, aspectRatio}) {
+  cropper.value = {show: true, imageFile: file, aspectRatio, fieldName: field}
+}
+function removeImage(field) {
+  userForm.value[field] = null
+}
 // Click outside to close dropdown
 const handleClickOutside = (event) => {
   if (!event.target.closest('.relative')) {
@@ -942,6 +991,7 @@ const editingUser = ref(null)
 const itemsPerPageOptions = [8, 12, 16, 20]
 const editForm = ref({
   name: '',
+  avatar: null,
   email: '',
   phone: '',
   role: 'subscriber'
@@ -952,7 +1002,7 @@ const selectedStatus = ref({ value: 'all', label: 'همه وضعیت‌ها' })
 
 const roleOptions = ref([
   { value: 'all', label: 'همه نقش‌ها' },
-  { value: 'admin', label: 'مدیر' },
+  { value: 'danim_admin', label: 'مدیر' },
   { value: 'editor', label: 'ویرایشگر' },
   { value: 'author', label: 'نویسنده' },
   { value: 'subscriber', label: 'کاربر عادی' }
@@ -967,7 +1017,8 @@ const statusOptions = ref([
 
 const userForm = ref({
   name: '',
-  username:'',
+  avatar: null,
+  username:null,
   email: '',
   phone: '',
   password: '',
@@ -980,8 +1031,8 @@ const users = computed(() =>
       const rolesArray = Array.isArray(u.roles) ? u.roles : []
       let role = 'user' // پیش‌فرض
 
-      if (rolesArray.includes('admin')) {
-        role = 'admin'
+      if (rolesArray.includes('danim_admin')) {
+        role = 'danim_admin'
       } else if (rolesArray.includes('user')) {
         role = 'user'
       }
@@ -990,6 +1041,7 @@ const users = computed(() =>
         id: u.id,
         name: u.fullName,
         username: u.username || '',
+        avatar:u.avatar,
         email: u.email,
         phone: u.phoneNumber,
         role:Array.isArray(u.roles) ? u.roles[0] : [],
@@ -1002,7 +1054,7 @@ const users = computed(() =>
 )
 
 const adminCount = computed(() => {
-  return users.value.filter(user => user.role === 'admin').length
+  return users.value.filter(user => user.role === 'danim_admin').length
 })
 
 const activeCount = computed(() => {
@@ -1154,6 +1206,7 @@ const updateUser = async () => {
       fullName: editForm.value.name,
       email: editForm.value.email,
       phoneNumber: editForm.value.phone,
+      avatar:editForm.value.avatar,
       roles: [editForm.value.role],
     };
 
@@ -1257,7 +1310,7 @@ const toggleUserMenu = (userId, event) => {
 
 const getRoleColor = (role) => {
   const colors = {
-    admin: 'bg-purple-100 text-purple-800',
+    danim_admin: 'bg-purple-100 text-purple-800',
     editor: 'bg-blue-100 text-blue-800',
     author: 'bg-green-100 text-green-800',
     subscriber: 'bg-gray-100 text-gray-800'
@@ -1267,7 +1320,7 @@ const getRoleColor = (role) => {
 
 const getRoleIcon = (role) => {
   const icons = {
-    admin: 'ti ti-crown',
+    danim_admin: 'ti ti-crown',
     editor: 'ti ti-edit',
     author: 'ti ti-pencil',
     subscriber: 'ti ti-user'
@@ -1277,12 +1330,12 @@ const getRoleIcon = (role) => {
 
 const getRoleLabel = (role) => {
   const labels = {
-    admin: 'مدیر',
+    danim_admin: 'مدیر',
     editor: 'ویرایشگر',
     author: 'نویسنده',
     subscriber: 'کاربر عادی'
   }
-  return labels[role] || role
+  return labels[role] || 'کاربر عادی'//role
 }
 
 const getStatusColor = (status) => {
@@ -1365,7 +1418,8 @@ const deleteUser = (user) => {
     'حذف کاربر',
     `آیا از حذف کاربر "${user.name}" اطمینان دارید؟ این عمل قابل بازگشت نیست.`,
     'danger',
-    () => {
+    async () => {
+      await userStore.deleteUser(user.id)
       users.value = users.value.filter(u => u.id !== user.id)
       showSuccessMessage(`کاربر "${user.name}" با موفقیت حذف شد`)
       openUserMenu.value = null
@@ -1378,6 +1432,7 @@ const addUser = async () => {
   try {
     const payload = {
       fullName: userForm.value.name,
+      avatar:userForm.value.avatar,
       username: userForm.value.username,
       email: userForm.value.email,
       password: userForm.value.password,
@@ -1403,7 +1458,8 @@ const closeAddModal = () => {
   showAddModal.value = false
   userForm.value = {
     name: '',
-    username:'',
+    username:null,
+    avatar:null,
     email: '',
     phone: '',
     password: '',

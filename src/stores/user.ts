@@ -3,21 +3,33 @@ import {axiosKey} from "../plugins/axiosPlugins";
 import {inject, ref} from "vue";
 import type {AxiosInstance} from "axios";
 import {toJalaliDate} from "../utils/date";
+import {PostForm} from "./post";
 
 export interface User {
     id: number
+    name: string
+    fullName: string
+    username: string
+    password:string
+    isActive: boolean
+    email: string
+    phoneNumber: string
+    roles:[]
+    role: string
+    location: string
+    avatar?: string | File | null
+    createdAt: string
+    lastLogin:string
+    updatedAt: string
+}
+export interface UserForm {
     name: string
     username: string
     isActive: boolean
     email: string
     phone: string
     roles:[]
-    role: string
-    location: string
-    avatar: string
-    createdAt: string
-    lastLogin:string
-    updatedAt: string
+    avatar?: string | File | null
 }
 export interface Donation {
     id: string
@@ -80,10 +92,51 @@ export const useUserStore = defineStore('userStore', () => {
             console.error('❌ خطا در دریافت کاربر:', error)
         }
     }
+    const uploadImage = async (file: File): Promise<string> => {
+        const formData = new FormData()
+        formData.append('file', file)
+
+        const { data } = await axios.post('/v1/uploads/image', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        })
+
+        return data.url
+    }
+    async function resolveAvatar(avatar?: string | File | null): Promise<string | null> {
+        if (!avatar) return null
+
+        if (typeof avatar === 'string' && avatar.startsWith('data:image')) {
+            const blob = await fetch(avatar).then(r => r.blob())
+            const file = new File([blob], 'post-image.png', { type: blob.type })
+            return await uploadImage(file)
+        }
+
+        if (avatar instanceof File) {
+            return await uploadImage(avatar)
+        }
+
+        return avatar as string
+    }
 
     const addUser = async (newUser: Partial<User>) => {
+
         try {
-            const { data } = await axios.post('/users', newUser)
+
+            const avatarUrl = await resolveAvatar(newUser.avatar ?? null)
+
+            const payload={
+                fullName: newUser.fullName,
+                username: newUser.username,
+                isActive: newUser.isActive,
+                email: newUser.email,
+                phoneNumber: newUser.phoneNumber,
+                roles:newUser.roles,
+                avatar: avatarUrl,
+                password:newUser.password
+            }
+
+
+            const { data } = await axios.post('/users', payload)
             // اضافه کردن نقش و lastLogin مثل fetchAllUsers
             const rolesArray = Array.isArray(data.roles) ? data.roles : []
             let role = 'user'
@@ -103,7 +156,17 @@ export const useUserStore = defineStore('userStore', () => {
 
     const updateUser = async (id: string | number, updatedData: Partial<User>) => {
         try {
-            const { data } = await axios.patch(`/users/${id}`, updatedData)
+            const avatarUrl = await resolveAvatar(updatedData.avatar ?? null)
+            const payload={
+                name: updatedData.name,
+                username: updatedData.username,
+                isActive: updatedData.isActive,
+                email: updatedData.email,
+                phoneNumber: updatedData.phoneNumber,
+                roles:updatedData.roles,
+                avatar: avatarUrl,
+            }
+            const { data } = await axios.patch(`/users/${id}`, payload)
             const index = users.value.findIndex(u => u.id === id)
             if (index !== -1) {
                 const rolesArray = Array.isArray(data.roles) ? data.roles : []
@@ -201,7 +264,17 @@ export const useUserStore = defineStore('userStore', () => {
     const removeDonation = (id: string) => {
         donations.value = donations.value.filter(d => d.id !== id)
     }
-
+    function mapFormToUser(form: any): UserForm {
+        return {
+            name: form.name,
+            username: form.username,
+            isActive: form.isActive,
+            email: form.email,
+            phone: form.phone,
+            roles:form.roles,
+            avatar: form.avatar,
+        }
+    }
 
     return {
         user,

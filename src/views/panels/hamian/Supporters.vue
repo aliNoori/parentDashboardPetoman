@@ -104,7 +104,12 @@
         <div class="relative h-24 bg-gradient-to-br from-blue-400 to-cyan-500">
           <div class="absolute -bottom-12 right-6">
             <div class="w-24 h-24 rounded-full border-4 border-white bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
-              {{ supporter.initials }}
+              <img v-if="supporter.avatar"
+                   :src="supporter.avatar"
+                   :alt="supporter.name"
+                   class="w-24 h-24 rounded-full object-cover"
+              >
+              <span v-else class="text-white text-xl font-medium">{{ supporter.initials.charAt(0) }}</span>
             </div>
           </div>
           <div class="absolute top-3 left-3">

@@ -855,7 +855,7 @@ function base64ToFile(base64, filename, mimeType) {
   return new File([ab], filename, { type: mimeType })
 }
 onMounted(async () => {
-  await categoryTypeStore.fetchType('danim')
+  await categoryTypeStore.fetchType('document')
 })
 
 watch(

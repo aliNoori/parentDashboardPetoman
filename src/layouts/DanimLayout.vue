@@ -16,7 +16,12 @@
           <!-- Profile Button -->
           <button @click="showProfileBottomSheet = true" class="flex items-center gap-2 p-1 hover:bg-gray-100 rounded-lg transition-colors">
             <div class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
-              <span class="text-white text-sm font-medium">{{ getUserInitials(user.fullName) }}</span>
+              <img v-if="user?.avatar"
+                   :src="user?.avatar"
+                   :alt="user?.name"
+                   class="w-8 h-8 rounded-full object-cover"
+              >
+              <span v-else class="text-white text-sm font-medium">{{ user.name?.charAt(0) }}</span>
             </div>
           </button>
           <button @click="$emit('back')" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
@@ -215,10 +220,15 @@
                   class="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
-                    <span class="text-white text-sm font-medium">{{ getUserInitials(user.fullName) }}</span>
+                    <img v-if="user?.avatar"
+                         :src="user?.avatar"
+                         :alt="user?.name"
+                         class="w-10 h-10 rounded-full object-cover"
+                    >
+                    <span v-else class="text-white text-sm font-medium">{{ user.name?.charAt(0) }}</span>
                   </div>
                   <div class="text-right">
-                    <p class="text-sm font-medium text-gray-900">{{ user.fullName }}</p>
+                    <p class="text-sm font-medium text-gray-900">{{ user?.fullName }}</p>
                     <p class="text-xs text-gray-500">مدیر</p>
                   </div>
                   <i class="ti ti-chevron-down text-gray-600"></i>
@@ -230,7 +240,12 @@
                     <div class="px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-orange-50 to-red-50">
                       <div class="flex items-center gap-3">
                         <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
-                          <span class="text-white font-medium">{{ getUserInitials(user.fullName) }}</span>
+                          <img v-if="user?.avatar"
+                               :src="user?.avatar"
+                               :alt="user?.name"
+                               class="w-12 h-12 rounded-full object-cover"
+                          >
+                          <span v-else class="text-white text-sm font-medium">{{ user.name?.charAt(0) }}</span>
                         </div>
                         <div>
                           <p class="font-bold text-gray-900">{{ user?.fullName }}</p>
@@ -300,11 +315,16 @@
           <div class="px-6 py-4 border-b border-gray-100">
             <div class="flex items-center gap-4">
               <div class="w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
-                <span class="text-white text-lg font-medium">{{ getUserInitials(user.fullName) }}</span>
+                <img v-if="user?.avatar"
+                     :src="user?.avatar"
+                     :alt="user?.name"
+                     class="w-16 h-16 rounded-full object-cover"
+                >
+                <span v-else class="text-white text-sm font-medium">{{ user.name?.charAt(0) }}</span>
               </div>
               <div>
-                <h3 class="text-lg font-bold text-gray-900">user.fullName</h3>
-                <p class="text-sm text-gray-500">user.email</p>
+                <h3 class="text-lg font-bold text-gray-900">{{ user?.fullName }}</h3>
+                <p class="text-sm text-gray-500">{{ user?.email }}</p>
                 <p class="text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded-full inline-block mt-1">مدیر ارشد</p>
               </div>
             </div>
@@ -378,11 +398,14 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import {computed, onMounted, onUnmounted, ref, watchEffect} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
 import {useUserStore} from "@/stores/user.ts";
 import {useAuthStore} from "@/stores/auth.ts";
-
+import {usePostStore} from "@/stores/post.ts";
+import {useNotificationStore} from "@/stores/notification.ts";
+import {useSocketStore} from "@/stores/socket.js";
+const notificationStore = useNotificationStore()
 const router = useRouter()
 const route = useRoute()
 const emit = defineEmits(['back'])
@@ -394,33 +417,7 @@ const showNotifications = ref(false)
 const showProfileDropdown = ref(false)
 const userStore = useUserStore()
 const user = computed(() => userStore.user)
-// Notifications data
-const notifications = ref([
-  {
-    id: 1,
-    title: 'نظر جدید',
-    message: 'کاربر جدید نظری برای مقاله شما ثبت کرد',
-    time: '5 دقیقه پیش',
-    icon: 'ti ti-message-circle text-blue-600',
-    color: 'bg-blue-100'
-  },
-  {
-    id: 2,
-    title: 'مقاله منتشر شد',
-    message: 'مقاله "راهنمای مراقبت از سگ" با موفقیت منتشر شد',
-    time: '1 ساعت پیش',
-    icon: 'ti ti-check text-green-600',
-    color: 'bg-green-100'
-  },
-  {
-    id: 3,
-    title: 'به‌روزرسانی سیستم',
-    message: 'نسخه جدید داشبورد در دسترس است',
-    time: '3 ساعت پیش',
-    icon: 'ti ti-refresh text-orange-600',
-    color: 'bg-orange-100'
-  }
-])
+const notifications = computed(() => notificationStore.notifications)
 
 // Logout function
 const logout = async () => {
@@ -455,8 +452,7 @@ const currentView = computed(() => {
   }
   
   // اگر activeSection موجود باشه از اون استفاده کن، وگرنه dashboard نشون بده
-  const result = activeSection || 'dashboard'
-  return result
+  return activeSection || 'dashboard'
 })
 
 // Navigation function
@@ -555,7 +551,15 @@ const menuItems = ref([
   { id: 'users', label: 'مدیریت کاربران', icon: 'ti ti-users' },
   { id: 'settings', label: 'تنظیمات', icon: 'ti ti-settings' }
 ])
-
+const postStore = usePostStore()
+const badge = computed(() => postStore.totalPosts)
+watchEffect(() => {
+  // آیتم donations رو پیدا کن
+  const postItem = menuItems.value.find(item => item.id === 'posts')
+  if (postItem) {
+    postItem.badge = badge.value
+  }
+})
 const bottomNavItems = ref([
   { id: 'dashboard', label: 'خانه', icon: 'ti ti-home' },
   { id: 'posts', label: 'نوشته‌ها', icon: 'ti ti-article' },
@@ -604,17 +608,46 @@ const handleNavigateToPostEdit = (event) => {
 const handleNavigateToPosts = () => {
   navigateTo('posts')
 }
+const socketStore = useSocketStore();
+const isConnected = ref(false);
 
 onMounted(async () => {
   await userStore.fetchUser()
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const userId = user.id
+  await notificationStore.fetchNotifications(userId)
   window.addEventListener('navigate-to-categories', handleNavigateToCategories)
   window.addEventListener('navigate-to-post-create', handleNavigateToPostCreate)
   window.addEventListener('navigate-to-post-edit', handleNavigateToPostEdit)
   window.addEventListener('navigate-to-posts', handleNavigateToPosts)
   document.addEventListener('click', handleClickOutside)
+
+
+  ///
+
+  socketStore.connect(authStore.token);
+  socketStore.socket.on("connect", () => {
+    console.log("✅ Connected to server");
+    isConnected.value = true;
+  });
+
+  socketStore.socket.on("notification", (payload) => {
+    console.log("📩 Notification received:", payload);
+    const enrichedPayload = {
+      ...payload,
+      time: notificationStore.formatTime(new Date(payload.createdAt))
+    }
+
+    notifications.value.push(enrichedPayload)
+
+  });
+  socketStore.socket.on("connect_error", (err) => {
+    console.error("❌ Connection error:", err.message);
+  });
 })
 
 onUnmounted(() => {
+  socketStore.socket.off("notification");
   window.removeEventListener('navigate-to-categories', handleNavigateToCategories)
   window.removeEventListener('navigate-to-post-create', handleNavigateToPostCreate)
   window.removeEventListener('navigate-to-post-edit', handleNavigateToPostEdit)
