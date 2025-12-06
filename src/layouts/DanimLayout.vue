@@ -20,10 +20,10 @@
                 class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
               <img v-if="user?.avatar"
                    :src="user?.avatar"
-                   :alt="user?.name"
-                   class="w-8 h-8 rounded-full object-cover"
+                   :alt="user.fullName?.charAt(0)"
+                   class="w-8 h-8 rounded-full object-cover content-center"
               >
-              <span v-else class="text-white text-sm font-medium">{{ user.name?.charAt(0) }}</span>
+              <span v-else class="text-white text-sm font-medium">{{ user.fullName?.charAt(0) }}</span>
             </div>
           </button>
           <button @click="$emit('back')" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
@@ -255,14 +255,13 @@
                       class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
                     <img v-if="user?.avatar"
                          :src="user?.avatar"
-                         :alt="user?.name"
-                         class="w-10 h-10 rounded-full object-cover"
+                         :alt="user.fullName?.charAt(0)"
+                         class="w-10 h-10 rounded-full object-cover content-center"
                     >
-                    <span v-else class="text-white text-sm font-medium">{{ user.name?.charAt(0) }}</span>
+                    <span v-else class="text-white text-sm font-medium">{{ user.fullName?.charAt(0) }}</span>
                   </div>
                   <div class="text-right">
                     <p class="text-sm font-medium text-gray-900">{{ user?.fullName }}</p>
-                    <p class="text-xs text-gray-500">مدیر</p>
                   </div>
                   <i class="ti ti-chevron-down text-gray-600"></i>
                 </button>
@@ -277,10 +276,10 @@
                             class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
                           <img v-if="user?.avatar"
                                :src="user?.avatar"
-                               :alt="user?.name"
-                               class="w-12 h-12 rounded-full object-cover"
+                               :alt="user.fullName?.charAt(0)"
+                               class="w-12 h-12 rounded-full object-cover align-center text-center content-center"
                           >
-                          <span v-else class="text-white text-sm font-medium">{{ user.name?.charAt(0) }}</span>
+                          <span v-else class="text-white text-sm font-medium">{{ user.fullName?.charAt(0) }}</span>
                         </div>
                         <div>
                           <p class="font-bold text-gray-900">{{ user?.fullName }}</p>
@@ -357,10 +356,10 @@
                   class="w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
                 <img v-if="user?.avatar"
                      :src="user?.avatar"
-                     :alt="user?.name"
-                     class="w-16 h-16 rounded-full object-cover"
+                     :alt="user.fullName?.charAt(0)"
+                     class="w-16 h-16 rounded-full object-cover content-center"
                 >
-                <span v-else class="text-white text-sm font-medium">{{ user.name?.charAt(0) }}</span>
+                <span v-else class="text-white text-sm font-medium">{{ user.fullName?.charAt(0) }}</span>
               </div>
               <div>
                 <h3 class="text-lg font-bold text-gray-900">{{ user?.fullName }}</h3>
@@ -656,7 +655,7 @@ onMounted(async () => {
   await userStore.fetchUser()
   const user = JSON.parse(localStorage.getItem('user') || '{}')
   const userId = user.id
-  await notificationStore.fetchNotifications(userId)
+  await notificationStore.fetchNotifications(userId,'danim')
   window.addEventListener('navigate-to-categories', handleNavigateToCategories)
   window.addEventListener('navigate-to-post-create', handleNavigateToPostCreate)
   window.addEventListener('navigate-to-post-edit', handleNavigateToPostEdit)

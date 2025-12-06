@@ -287,7 +287,7 @@ const supporters = computed(() => supporterStore.supporterCases)
 const projects = computed(() => kindnessMeetingStore.kindnessMeetings)
 // فقط پروژه‌های فعال
 const activeProjects = computed(() => {
-  return projects.value.filter(p => p.status === 'active')
+  return projects.value.filter(p => p.status === 'active'&&p.type==='financial')
 })
 
 const form = ref({

@@ -23,10 +23,10 @@
                   class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
                 <img v-if="user?.avatar"
                      :src="user?.avatar"
-                     :alt="user?.name"
-                     class="w-8 h-8 rounded-full object-cover"
+                     :alt="user.fullName?.charAt(0)"
+                     class="w-8 h-8 rounded-full object-cover text-center content-center"
                 >
-                <span v-else class="text-white text-sm font-medium">{{ user.name?.charAt(0) }}</span>
+                <span v-else class="text-white text-sm font-medium">{{ user.fullName?.charAt(0) }}</span>
               </div>
               <span class="text-sm font-medium text-gray-900 hidden sm:inline">{{ user.fullName }}</span>
             </div>

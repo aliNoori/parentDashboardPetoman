@@ -97,7 +97,7 @@
               </td>
               <td class="px-6 py-4">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                  {{ post.category }}
+                  {{ post.category.title }}
                 </span>
               </td>
               <td class="px-6 py-4">
@@ -135,19 +135,29 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import {computed, onMounted, ref, watch} from 'vue'
 import { useRouter } from 'vue-router'
+import {useFilmPostStore} from "@/stores/film-post.ts";
 
 const router = useRouter()
+const postStore=useFilmPostStore()
+const stats = computed(() => {
+  const total = posts.value.length
+  const published = posts.value.filter(p => p.status === 'published').length
+  const draft = posts.value.filter(p => p.status === 'draft').length
+  const todayViews = posts.value
+      .filter(p => {
+        // مقایسه تاریخ امروز با publishDate یا createdAt
+        const today = new Date().toLocaleDateString('fa-IR')
+        const postDate = new Date(p.publishDate || p.createdAt).toLocaleDateString('fa-IR')
+        return postDate === today
+      })
+      .reduce((sum, p) => sum + (p.views ?? 0), 0)
 
-const stats = ref({
-  total: 0,
-  published: 0,
-  draft: 0,
-  todayViews: 0
+  return { total, published, draft, todayViews }
 })
 
-const posts = ref([])
+const posts = computed(()=>postStore.posts)
 
 const getStatusColor = (status) => {
   const colors = {
@@ -173,10 +183,11 @@ const editPost = (post) => {
   router.push(`/dashboard/film/posts/edit/${post.id}`)
 }
 
-const deletePost = (post) => {
+const deletePost = async (post) => {
   if (confirm(`آیا از حذف نوشته "${post.title}" مطمئن هستید؟`)) {
     const index = posts.value.findIndex(p => p.id === post.id)
     if (index > -1) {
+      await postStore.deletePost(post.id)
       posts.value.splice(index, 1)
       stats.value.total--
       if (post.status === 'published') {
@@ -192,6 +203,12 @@ const deletePost = (post) => {
 const exportToExcel = () => {
   console.log('Export to Excel')
 }
+
+onMounted(async () => {
+
+  await postStore.fetchPosts()
+
+})
 </script>
 
 <style scoped>

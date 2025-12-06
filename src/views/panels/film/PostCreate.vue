@@ -235,7 +235,7 @@
               @click="showCategoryDropdown = !showCategoryDropdown"
               class="w-full px-4 py-2.5 bg-white border-2 border-gray-200 rounded-lg text-right hover:border-purple-300 transition-colors flex items-center justify-between"
             >
-              <span>{{ form.category || 'انتخاب دسته‌بندی' }}</span>
+              <span>{{ form.category.title || 'انتخاب دسته‌بندی' }}</span>
               <i class="ti ti-chevron-down"></i>
             </button>
             <ul
@@ -249,41 +249,52 @@
                 class="px-4 py-2.5 hover:bg-purple-50 cursor-pointer transition-colors"
                 :class="{ 'bg-purple-50 text-purple-600 font-medium': form.category === category }"
               >
-                {{ category }}
+                {{ category.title }}
               </li>
             </ul>
           </div>
           <p v-if="errors.category" class="text-red-600 text-sm mt-1">{{ errors.category }}</p>
         </div>
 
-        <!-- Tags Block -->
+        <!-- Tags Block (Separate) -->
         <div class="bg-white rounded-xl border border-gray-200 p-6">
           <h3 class="text-lg font-medium text-gray-900 mb-4">برچسب‌ها</h3>
-          
-          <div class="flex flex-wrap gap-2 mb-3">
-            <span
-              v-for="(tag, index) in form.tags"
-              :key="index"
-              class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
-            >
-              {{ tag }}
-              <button @click="removeTag(index)" class="mr-1 hover:text-purple-600">
-                <i class="ti ti-x text-xs"></i>
-              </button>
-            </span>
+          <!-- پیشنهادات -->
+          <div class="flex flex-wrap gap-2 mb-2">
+  <span
+      v-for="tag in tagStore.tags"
+      :key="tag.name"
+      @click="addTag(tag.name)"
+      class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm cursor-pointer hover:bg-rose-100 hover:text-rose-700"
+  >
+    {{ tag.name }} ({{ tag.count }})
+  </span>
           </div>
-          
+          <!-- تگ‌های انتخاب‌شده -->
+          <div class="flex flex-wrap gap-2 mb-2">
+         <span v-for="(tag, index) in form.tags" :key="index"
+               class="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-sm flex items-center gap-2">
+    {{ tag }}
+    <button type="button" @click="removeTag(index)" class="hover:text-rose-900">
+      <i class="ti ti-x text-xs"></i>
+    </button>
+  </span>
+          </div>
+          <!-- ورودی تگ جدید -->
           <div class="flex gap-2">
             <input
-              v-model="newTag"
-              type="text"
-              placeholder="برچسب جدید..."
-              class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors flex-1"
-              @keyup.enter="addTag"
+                v-model="newTag"
+                type="text"
+                @keypress.enter.prevent="addTag()"
+                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                placeholder="برچسب جدید را وارد کنید..."
             >
-            <button @click="addTag" type="button" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">افزودن</button>
+            <button type="button" @click="addTag()"
+                    class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
+              <i class="ti ti-plus"></i>
+            </button>
           </div>
-          <p class="text-xs text-gray-500 mt-1">برچسب‌ها با Enter یا کلیک دکمه اضافه می‌شوند</p>
+
         </div>
 
         <!-- Featured Image with Drag & Drop -->
@@ -351,33 +362,32 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import {ref, onMounted, watch, computed} from 'vue'
 import { useRouter } from 'vue-router'
-import { useToast } from '../../../composables/useToast'
+import { useToast} from "@/composables/useToast.js";
 import TinyMCEEditor from '../../../components/TinyMCEEditor.vue'
 import VuePersianDatetimePicker from 'vue3-persian-datetime-picker'
+import {useFilmPostStore} from "@/stores/film-post.ts";
+import {useCategoryTypeStore} from "@/stores/category-type.ts";
+import {useCategoryStore} from "@/stores/category.ts";
+import {useTagTypeStore} from "@/stores/tag-type.ts";
+import {useTagStore} from "@/stores/tag.ts";
 
+const tagTypeStore = useTagTypeStore()
+const tagStore=useTagStore()
 const router = useRouter()
 const toast = useToast()
-
+const categoryTypeStore = useCategoryTypeStore()
+const categoryStore = useCategoryStore()
+// Category Management - Tree Structure
+const categoryTree = computed(() => categoryStore.categoryTree)
 const isLoading = ref(false)
 const isDragging = ref(false)
 const showStatusDropdown = ref(false)
 const showCategoryDropdown = ref(false)
 const newTag = ref('')
-
-const categories = ref([
-  'فیلم',
-  'سریال',
-  'انیمیشن',
-  'مستند',
-  'اخبار',
-  'آموزشی',
-  'نقد و بررسی',
-  'مصاحبه',
-  'پشت صحنه',
-  'تریلر'
-])
+const postStore=useFilmPostStore()
+const categories = computed(() => categoryStore.categories)
 
 const form = ref({
   title: '',
@@ -386,6 +396,7 @@ const form = ref({
   status: 'draft',
   publishDate: '',
   category: '',
+  categoryId:'',
   tags: [],
   thumbnail: '',
   slug: '',
@@ -418,6 +429,7 @@ const selectStatus = (status) => {
 
 const selectCategory = (category) => {
   form.value.category = category
+  form.value.categoryId = category.id
   showCategoryDropdown.value = false
   errors.value.category = ''
 }
@@ -476,21 +488,28 @@ const generateExcerpt = () => {
   toast.success('خلاصه تولید شد', 'از 150 کاراکتر اول محتوا')
 }
 
-const addTag = () => {
-  const tag = newTag.value.trim()
-  if (tag && !form.value.tags.includes(tag)) {
+function addTag(tagName) {
+  const tag = tagName || newTag.value.trim()
+  if (!tag) return
+
+  if (!form.value.tags.includes(tag)) {
     form.value.tags.push(tag)
-    newTag.value = ''
-    toast.success('برچسب اضافه شد', tag)
-  } else if (form.value.tags.includes(tag)) {
-    toast.warning('این برچسب قبلاً اضافه شده است')
+
+    // اگر تگ از پیشنهادات بود، شمارنده زیاد بشه
+    if (tagStore.tags.some(t => t.name === tag)) {
+      tagStore.incrementTagCount(tag)
+    }
   }
+  newTag.value = ''
 }
 
-const removeTag = (index) => {
-  const tag = form.value.tags[index]
+const removeTag = async (index) => {
+  const tagName = form.value.tags[index]
+  const tagObj = tagStore.tags.find(t => t.name === tagName)
+  if (tagObj) {
+    await tagStore.decrementTagCount(tagObj.id)
+  }
   form.value.tags.splice(index, 1)
-  toast.info('برچسب حذف شد', tag)
 }
 
 const handleThumbnailUpload = (event) => {
@@ -569,7 +588,7 @@ const saveDraft = () => {
   publishPost()
 }
 
-const publishPost = () => {
+const publishPost = async () => {
   if (!validateForm()) {
     toast.warning('لطفاً فیلدهای الزامی را پر کنید', 'عنوان، محتوا و دسته‌بندی الزامی هستند')
     return
@@ -577,20 +596,46 @@ const publishPost = () => {
 
   isLoading.value = true
 
-  // Simulate API call
-  setTimeout(() => {
-    console.log('Creating post:', form.value)
-    isLoading.value = false
-    
-    if (form.value.status === 'draft') {
-      toast.success('پیش‌نویس ذخیره شد!', 'نوشته به عنوان پیش‌نویس ذخیره گردید')
-    } else {
-      toast.success('نوشته منتشر شد!', 'نوشته شما با موفقیت منتشر شد')
-    }
-    
-    setTimeout(() => {
-      router.push('/dashboard/film/posts')
-    }, 1000)
-  }, 1500)
+  console.log('Creating post:', form.value)
+  await postStore.addPost(form.value)
+  isLoading.value = false
+  if (form.value.status === 'draft') {
+    toast.success('پیش‌نویس ذخیره شد!', 'نوشته به عنوان پیش‌نویس ذخیره گردید')
+  } else {
+    toast.success('نوشته منتشر شد!', 'نوشته شما با موفقیت منتشر شد')
+  }
+  await router.push('/dashboard/film/posts')
+
 }
+
+
+// Initialize
+onMounted(async () => {
+  await categoryTypeStore.fetchType('post')
+  await tagTypeStore.fetchType('post')
+  // Persian DatePicker handles default date automatically
+  // No need for manual initialization
+})
+
+watch(
+    () => tagTypeStore.selectedType,
+    async (type) => {
+      if (type?.id) {
+        await tagStore.fetchTags({typeId: type.id,contentType:'film'})
+      }
+    },
+    {immediate: true}
+)
+
+watch(
+    () => categoryTypeStore.selectedType,
+    async (type) => {
+      if (type?.id) {
+        await categoryStore.fetchCategoryTree(type.id,'film')
+        await categoryStore.fetchCategories({typeId: type.id,contentType:'film'})
+      }
+    },
+    {immediate: true}
+)
+
 </script>

@@ -16,6 +16,32 @@
       </div>
     </div>
 
+    <!-- User Select with Search -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-2">انتخاب کاربر</label>
+      <input
+          v-model="userSearch"
+          type="text"
+          placeholder="جستجو بر اساس نام یا ایمیل..."
+          class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-1"
+      />
+      <select
+          v-model="selectedUserId"
+          @change="fillFormFromUser"
+          class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      >
+        <option value="" disabled selected>انتخاب کاربر...</option>
+        <option
+            v-for="u in filteredUsers"
+            :key="u.id"
+            :value="u.id"
+        >
+          {{ u.fullName }}
+        </option>
+      </select>
+    </div>
+
+
     <!-- Form -->
     <form @submit.prevent="handleSubmit" class="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -172,11 +198,12 @@
 </template>
 
 <script setup>
-import {ref} from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
-import {useSupporterStore} from "../../../stores/supporter.ts";
+import {useSupporterStore} from "@/stores/supporter.ts";
 import jalaali from 'jalaali-js'
 import PersianDatePicker from "@/components/PersianDatePicker.vue";
+import {useUserStore} from "@/stores/user.ts";
 const router = useRouter()
 
 const form = ref({
@@ -212,4 +239,32 @@ const handleSubmit = async () => {
   alert('حامی با موفقیت ثبت شد!')
   await router.push('/dashboard/hamian/supporters')
 }
+const userStore=useUserStore()
+const users=computed(()=>userStore.users)
+
+const userSearch = ref('')
+const selectedUserId = ref('')
+
+const filteredUsers = computed(() => {
+  const query = userSearch.value.toLowerCase()
+  return users.value.filter(u =>
+      u.fullName?.toLowerCase().includes(query) ||
+      (u.email && u.email.toLowerCase().includes(query))
+  )
+})
+
+// وقتی کاربری انتخاب شد، فرم پر شود
+const fillFormFromUser = () => {
+  const user = users.value.find(u => u.id === selectedUserId.value)
+  if (!user) return
+
+  form.value.name = user.fullName || ''
+  form.value.email = user.email || ''
+  form.value.phone = user.phoneNumber || ''
+  form.value.address = user.address || ''
+}
+
+onMounted(async () => {
+  await userStore.fetchAllUsers()
+})
 </script>

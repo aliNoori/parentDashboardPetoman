@@ -225,7 +225,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import {ref, computed, onMounted} from 'vue'
+import {useMovieStore} from "@/stores/movie.ts";
 
 const searchQuery = ref('')
 const showStatusDropdown = ref(false)
@@ -325,10 +326,15 @@ const editMovie = (movie) => {
 }
 
 const deleteMovie = (movie) => {
+
   console.log('Delete movie:', movie)
 }
 
 const exportToExcel = () => {
   console.log('Export to Excel')
 }
+const movieStore=useMovieStore()
+onMounted(async () => {
+  await movieStore.fetchMovies()
+})
 </script>

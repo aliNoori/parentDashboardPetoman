@@ -15,7 +15,12 @@
         <div class="flex items-center gap-2">
           <button @click="showProfileBottomSheet = true" class="flex items-center gap-2 p-1 hover:bg-gray-100 rounded-lg transition-colors">
             <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
-              <span class="text-white text-sm font-medium">م ح</span>
+              <img v-if="user?.avatar"
+                   :src="user?.avatar"
+                   :alt="user?.fullName.charAt(0)"
+                   class="w-8 h-8 rounded-full object-cover"
+              >
+              <span v-else class="text-white text-sm font-medium">{{ user.fullName?.charAt(0) }}</span>
             </div>
           </button>
           <button @click="$emit('back')" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
@@ -159,7 +164,7 @@
         <div class="px-6 py-4">
           <div class="flex items-center justify-between">
             <div>
-              <h1 class="text-2xl font-bold text-gray-900">خوش آمدید، محبوب عزیز! 👋</h1>
+              <h1 class="text-2xl font-bold text-gray-900">خوش آمدید، {{ user.fullName }} عزیز! 👋</h1>
             </div>
 
             <div class="flex items-center gap-3">
@@ -197,6 +202,26 @@
                     </div>
                   </div>
                 </Transition>
+                <!-- Toast Bubble -->
+                <Transition name="fade">
+                  <div v-if="toastNotification"
+                       class="absolute left-5 mt-2 top-4 w-80 bg-white shadow-lg rounded-lg border border-gray-200 p-4 z-50">
+                    <div class="flex items-start gap-3">
+                      <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                           :class="toastNotification.color">
+                        <i :class="toastNotification.icon" class="text-lg"></i>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900">{{ toastNotification.title }}</p>
+                        <p class="text-xs text-gray-600 mt-1">{{ toastNotification.message }}</p>
+                        <p class="text-xs text-gray-400 mt-1">{{ toastNotification.time }}</p>
+                      </div>
+                      <button @click="toastNotification = null" class="text-gray-400 hover:text-gray-600">
+                        <i class="ti ti-x"></i>
+                      </button>
+                    </div>
+                  </div>
+                </Transition>
               </div>
 
               <!-- Profile Dropdown -->
@@ -206,11 +231,15 @@
                   class="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
-                    <span class="text-white text-sm font-medium">م ح</span>
+                    <img v-if="user?.avatar"
+                         :src="user?.avatar"
+                         :alt="user.fullName?.charAt(0)"
+                         class="w-10 h-10 rounded-full text-center content-center object-cover"
+                    >
+                    <span v-else class="text-white text-sm font-medium">{{ user.fullName?.charAt(0) }}</span>
                   </div>
                   <div class="text-right">
-                    <p class="text-sm font-medium text-gray-900">محبوب حسینزاده</p>
-                    <p class="text-xs text-gray-500">مدیر</p>
+                    <p class="text-sm font-medium text-gray-900">{{ user.fullName }}</p>
                   </div>
                   <i class="ti ti-chevron-down text-gray-600"></i>
                 </button>
@@ -220,11 +249,16 @@
                     <div class="px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-purple-50 to-pink-50">
                       <div class="flex items-center gap-3">
                         <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
-                          <span class="text-white font-medium">م ح</span>
+                          <img v-if="user?.avatar"
+                               :src="user?.avatar"
+                               :alt="user.fullName?.charAt(0)"
+                               class="w-12 h-12 rounded-full object-cover text-center content-center"
+                          >
+                          <span v-else class="text-white text-sm font-medium">{{ user.fullName?.charAt(0) }}</span>
                         </div>
                         <div>
-                          <p class="font-bold text-gray-900">محبوب حسینزاده</p>
-                          <p class="text-xs text-gray-600">admin@film.com</p>
+                          <p class="font-bold text-gray-900">{{ user.fullName }}</p>
+                          <p class="text-xs text-gray-600">{{ user.email }}</p>
                         </div>
                       </div>
                     </div>
@@ -288,11 +322,16 @@
           <div class="px-6 py-4 border-b border-gray-100">
             <div class="flex items-center gap-4">
               <div class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
-                <span class="text-white text-lg font-medium">م ح</span>
+                <img v-if="user?.avatar"
+                     :src="user?.avatar"
+                     :alt="user?.fullName.charAt(0)"
+                     class="w-16 h-16 rounded-full object-cover"
+                >
+                <span v-else class="text-white text-sm font-medium">{{ user.fullName?.charAt(0) }}</span>
               </div>
               <div>
-                <h3 class="text-lg font-bold text-gray-900">محبوب حسینزاده</h3>
-                <p class="text-sm text-gray-500">admin@film.com</p>
+                <h3 class="text-lg font-bold text-gray-900">{{ user.fullName }}</h3>
+                <p class="text-sm text-gray-500">{{ user.email }}</p>
                 <p class="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded-full inline-block mt-1">مدیر ارشد</p>
               </div>
             </div>
@@ -353,8 +392,14 @@
 </template>
 
 <script setup>
-import {computed, onMounted, onUnmounted, ref} from 'vue'
+import {computed, onMounted, onUnmounted, ref, watchEffect} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
+import {useUserStore} from "@/stores/user.ts";
+import {useNotificationStore} from "@/stores/notification.ts";
+import {useAuthStore} from "@/stores/auth.ts";
+import {useSocketStore} from "@/stores/socket.js";
+import {useMovieStore} from "@/stores/movie.ts";
+import {useSeriesStore} from "@/stores/series.ts";
 
 const router = useRouter()
 const route = useRoute()
@@ -364,8 +409,11 @@ const mobileSidebarOpen = ref(false)
 const showProfileBottomSheet = ref(false)
 const showNotifications = ref(false)
 const showProfileDropdown = ref(false)
-
-const notifications = ref([
+const userStore = useUserStore()
+const user = computed(() => userStore.user)
+const notificationStore = useNotificationStore()
+const notifications = computed(() => notificationStore.notifications)
+/*const notifications = ref([
   {
     id: 1,
     title: 'نظر جدید',
@@ -390,10 +438,11 @@ const notifications = ref([
     icon: 'ti ti-refresh text-purple-600',
     color: 'bg-purple-100'
   }
-])
-
-const logout = () => {
-  console.log('Logging out...')
+])*/
+const authStore=useAuthStore()
+const logout = async () => {
+  await authStore.logout()
+  await router.push('/')
   showProfileDropdown.value = false
 }
 
@@ -552,6 +601,23 @@ const bottomNavItems = ref([
   { id: 'settings', label: 'تنظیمات', icon: 'ti ti-settings' }
 ])
 
+const movieStore = useMovieStore()
+const seriesStore = useSeriesStore()
+
+const badge = computed(() => {
+  const moviesCount = movieStore.movies?.length || 0
+  const seriesCount = seriesStore.seriesList.length || 0
+  return moviesCount + seriesCount
+})
+
+watchEffect(() => {
+  // آیتم movies رو پیدا کن
+  const moviesItem = menuItems.value.find(item => item.id === 'movies')
+  if (moviesItem) {
+    moviesItem.badge = badge.value
+  }
+})
+
 const toggleMobileSidebar = () => {
   mobileSidebarOpen.value = !mobileSidebarOpen.value
 }
@@ -567,12 +633,57 @@ const handleClickOutside = (event) => {
     showProfileDropdown.value = false
   }
 }
+const toastNotification = ref(null)
+const socketStore = useSocketStore();
+const isConnected = ref(false);
 
-onMounted(() => {
+onMounted(async () => {
+
+  await movieStore.fetchMovies()
+  await seriesStore.fetchSeries()
+
+  await userStore.fetchUser()
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const userId = user.id
+  await notificationStore.fetchNotifications(userId, 'film')
+
+
   document.addEventListener('click', handleClickOutside)
+
+
+  ////socket
+
+  socketStore.connect(authStore.token);
+  socketStore.socket.on("connect", () => {
+    console.log("✅ Connected to server");
+    isConnected.value = true;
+  });
+
+  socketStore.socket.on("notification", (payload) => {
+    console.log("📩 Notification received:", payload);
+    const enrichedPayload = {
+      ...payload,
+      time: notificationStore.formatTime(new Date(payload.createdAt))
+    }
+
+    notifications.value.push(enrichedPayload)
+
+    // نمایش به صورت Toast
+    toastNotification.value = enrichedPayload
+
+    // بستن خودکار بعد از چند ثانیه (اختیاری)
+    setTimeout(() => {
+      toastNotification.value = null
+    }, 5000)
+
+  });
+  socketStore.socket.on("connect_error", (err) => {
+    console.error("❌ Connection error:", err.message);
+  });
 })
 
 onUnmounted(() => {
+  socketStore.socket.off("notification");
   document.removeEventListener('click', handleClickOutside)
 })
 

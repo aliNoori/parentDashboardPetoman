@@ -202,8 +202,8 @@
                   <img
                       v-if="category.image"
                       :src="category.image"
-                      :alt="category.title"
-                      class="w-full h-full object-cover"
+                      :alt="category.title.charAt(0)"
+                      class="w-full h-full object-cover content-center text-center"
                   >
                   <i v-else
                      class="ti ti-folder text-gray-400 text-xl flex items-center justify-center w-full h-full"></i>
@@ -896,6 +896,8 @@ const saveCategory = async () => {
     const updatedCategory = {
       ...categoryForm.value,
       typeId: categoryForm.typeId?.trim(),
+      isActive:categoryForm.value.status === 'active',
+      contentType:'danim'
     }
 
     // فراخوانی متد update
@@ -904,9 +906,10 @@ const saveCategory = async () => {
       image: updatedCategory.image,
       cover: updatedCategory.cover,
       id: updatedCategory.id,
+      isActive:categoryForm.value.status === 'active',
     })
 
-    await categoryStore.fetchCategoryTree( categoryTypeStore.selectedType.id)
+    await categoryStore.fetchCategoryTree( categoryTypeStore.selectedType.id,'danim')
 
     // جایگزینی در لیست محلی
     const index = categories.value.findIndex(cat => cat.id === updatedCategory.id)
@@ -916,14 +919,16 @@ const saveCategory = async () => {
   } else {
     // Add new category
     const newCategory = {
-      ...categoryForm.value, typeId: categoryForm.typeId.trim(),
+      ...categoryForm.value,
+      typeId: categoryForm.typeId.trim(),
+      contentType:'danim'
     }
     await categoryStore.addCategoryWithImages({
       ...newCategory,
       image: newCategory.image,
       cover: newCategory.cover
     })
-    await categoryStore.fetchCategoryTree( categoryTypeStore.selectedType.id)
+    await categoryStore.fetchCategoryTree( categoryTypeStore.selectedType.id,'danim')
 
   }
   closeModal()
@@ -955,7 +960,7 @@ const toggleStatus = async (category) => {
 const deleteCategory = async (category) => {
   if (confirm(`آیا از حذف دسته‌بندی "${category.title}" اطمینان دارید؟`)) {
     await categoryStore.removeCategory(category.id)
-    await categoryStore.fetchCategoryTree( categoryTypeStore.selectedType.id)
+    await categoryStore.fetchCategoryTree( categoryTypeStore.selectedType.id,'danim')
     const index = categories.value.findIndex(cat => cat.id === category.id)
     if (index !== -1) {
       categories.value.splice(index, 1)
@@ -1002,15 +1007,14 @@ watch(() => categoryForm.value.name, (newName) => {
 
 // Initialize data
 onMounted(async () => {
-  await categoryTypeStore.fetchType('danim')
-  /*initializeCategories()*/
+  await categoryTypeStore.fetchType('post')
 })
 watch(
     () => categoryTypeStore.selectedType,
     async (type) => {
       if (type?.id) {
         categoryForm.typeId = type.id
-        await categoryStore.fetchCategoryTree( type.id)
+        await categoryStore.fetchCategoryTree( type.id,'danim')
       }
     },
     {immediate: true}

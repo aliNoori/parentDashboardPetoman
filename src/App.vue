@@ -22,21 +22,6 @@ provide('toast', {
   info: (message, description) => toastRef.value?.info(message, description)
 })
 
-// Initialize
-onMounted(async () => {
-  await categoryTypeStore.fetchType('danim')
-})
-
-watch(
-    () => categoryTypeStore.selectedType,
-    async (type) => {
-      if (type?.id) {
-        await categoryStore.fetchCategoryTree(type.id)
-        await categoryStore.fetchCategories({typeId: type.id})
-      }
-    },
-    {immediate: true}
-)
 </script>
 
 <style scoped>

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { ref, computed, inject } from 'vue'
 import { axiosKey } from '../plugins/axiosPlugins'
 import { useAuthStore } from './auth'
-import {AxiosInstance} from "axios/index";
+import type {AxiosInstance} from "axios";
 
 export const useNotificationStore = defineStore('notifications', () => {
     const notifications = ref([])
@@ -16,11 +16,11 @@ export const useNotificationStore = defineStore('notifications', () => {
     if (!axios) throw new Error('Axios instance not injected')
 
     // دریافت نوتیفیکیشن‌ها
-    const fetchNotifications = async (userId:string) => {
+    const fetchNotifications = async (userId:string,panelType:string) => {
 
         loading.value = true
         try {
-            const { data } = await axios.get(`/notifications/user/${userId}`)
+            const { data } = await axios.get(`/notifications/user/${userId}`, {params: {panelType}})
             notifications.value = data.map((n:any) => ({
                 id: n.id,
                 type: n.type,

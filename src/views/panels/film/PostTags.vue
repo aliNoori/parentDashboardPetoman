@@ -249,32 +249,28 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue'
+import {ref, inject, onMounted, watch, computed} from 'vue'
+import {useTagTypeStore} from "@/stores/tag-type.ts";
+import {useTagStore} from "@/stores/tag.ts";
 
 const toast = inject('toast')
+const tagTypeStore = useTagTypeStore()
+const tagStore = useTagStore()
+const tags = computed(() =>
+    tagStore.tags.map(tag => ({
+      ...tag,
+      status: tag.isActive ? 'active' : 'inactive'
+    }))
+)
+const stats = computed(() => {
+  const tags = tagStore.tags
 
-// Stats
-const stats = ref({
-  total: 12,
-  active: 11,
-  totalUsage: 342
+  return {
+    total: tags.length,
+    active: tags.filter(t => t.isActive === true).length,
+    totalUsage: tags.reduce((sum, t) => sum + (t.count ?? 0), 0)
+  }
 })
-
-// Tags data
-const tags = ref([
-  { id: 1, name: 'معرفی فیلم', slug: 'movie-intro', color: '#3b82f6', count: 45, status: 'active', description: 'معرفی و بررسی فیلم‌ها' },
-  { id: 2, name: 'نقد و بررسی', slug: 'review', color: '#8b5cf6', count: 38, status: 'active', description: 'نقد و تحلیل فیلم و سریال' },
-  { id: 3, name: 'مصاحبه', slug: 'interview', color: '#10b981', count: 12, status: 'active', description: 'مصاحبه با هنرمندان' },
-  { id: 4, name: 'پشت صحنه', slug: 'behind-scenes', color: '#f59e0b', count: 28, status: 'active', description: 'پشت صحنه فیلم‌ها' },
-  { id: 5, name: 'اخبار', slug: 'news', color: '#ef4444', count: 56, status: 'active', description: 'اخبار سینما و تلویزیون' },
-  { id: 6, name: 'تریلر', slug: 'trailer', color: '#ec4899', count: 42, status: 'active', description: 'معرفی تریلرها' },
-  { id: 7, name: 'داستان', slug: 'story', color: '#06b6d4', count: 19, status: 'active', description: 'داستان و خلاصه' },
-  { id: 8, name: 'بازیگران', slug: 'actors', color: '#a855f7', count: 34, status: 'active', description: 'معرفی بازیگران' },
-  { id: 9, name: 'کارگردان', slug: 'director', color: '#f97316', count: 21, status: 'active', description: 'معرفی کارگردانان' },
-  { id: 10, name: 'جوایز', slug: 'awards', color: '#eab308', count: 15, status: 'active', description: 'جوایز و افتخارات' },
-  { id: 11, name: 'توصیه', slug: 'recommendation', color: '#84cc16', count: 32, status: 'active', description: 'پیشنهاد تماشا' },
-  { id: 12, name: 'رتبه‌بندی', slug: 'ranking', color: '#0ea5e9', count: 0, status: 'inactive', description: 'لیست و رتبه‌بندی' }
-])
 
 // Modal state
 const showModal = ref(false)
@@ -347,16 +343,24 @@ const validateForm = () => {
 }
 
 // Save tag
-const saveTag = () => {
+const saveTag = async () => {
   if (!validateForm()) {
     toast.warning('لطفا فیلدهای الزامی را تکمیل کنید')
     return
   }
-  
+
   if (editMode.value) {
+    const {id, count, status, ...rest} = form.value
+    const cleanPayload = {
+      ...rest,
+      isActive: status === 'active',
+      contentType:'film'
+    }
+
+    await tagStore.editTag({id: form.value.id, ...cleanPayload})
     const index = tags.value.findIndex(t => t.id === form.value.id)
     if (index !== -1) {
-      tags.value[index] = { ...form.value }
+      tags.value[index] = {...form.value}
       toast.success('برچسب با موفقیت بروزرسانی شد')
     }
   } else {
@@ -365,31 +369,35 @@ const saveTag = () => {
       id: tags.value.length + 1,
       count: 0
     }
-    tags.value.push(newTag)
-    stats.value.total++
-    if (form.value.status === 'active') stats.value.active++
+    const {id, count, status, ...rest} = newTag
+    const cleanPayload = {
+      ...rest,
+      typeId: tagTypeStore.selectedType.id,
+      contentType:'film',
+      isActive: status === 'active'
+    }
+
+    await tagStore.addTag(cleanPayload)
+
     toast.success('برچسب جدید با موفقیت اضافه شد')
   }
-  
+
   closeModal()
 }
 
 // Delete tag
-const deleteTag = (tag) => {
+const deleteTag = async (tag) => {
   if (tag.count > 0) {
     if (!confirm(`این برچسب در ${tag.count} نوشته استفاده شده است. آیا از حذف آن اطمینان دارید؟`)) {
       return
     }
   }
-  
+
   if (confirm(`آیا از حذف برچسب "${tag.name}" اطمینان دارید؟`)) {
+    await tagStore.removeTag(tag.id)
     const index = tags.value.findIndex(t => t.id === tag.id)
     if (index !== -1) {
-      const deletedCount = tag.count
       tags.value.splice(index, 1)
-      stats.value.total--
-      stats.value.totalUsage -= deletedCount
-      if (tag.status === 'active') stats.value.active--
       toast.success('برچسب با موفقیت حذف شد')
     }
   }
@@ -399,4 +407,17 @@ const deleteTag = (tag) => {
 const closeModal = () => {
   showModal.value = false
 }
+
+onMounted(async () => {
+  await tagTypeStore.fetchType('post')
+})
+watch(
+    () => tagTypeStore.selectedType,
+    async (type) => {
+      if (type?.id) {
+        await tagStore.fetchTags({typeId: type.id,contentType:'film'})
+      }
+    },
+    {immediate: true}
+)
 </script>

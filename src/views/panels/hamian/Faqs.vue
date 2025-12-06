@@ -129,7 +129,7 @@
             <td class="px-4 py-3">
                 <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
                       :style="getCategoryClass(faq.category)">
-                  {{ faq.category }}
+                  {{ faq.category.title }}
                 </span>
             </td>
             <td class="px-4 py-3">
@@ -300,6 +300,7 @@ import {ref, computed, onMounted, watch} from 'vue'
 import {useFaqStore} from "@/stores/faq.ts";
 import {useCategoryStore} from "@/stores/category.ts";
 import {useCategoryTypeStore} from "@/stores/category-type.ts";
+import {useFaqTypeStore} from "@/stores/faq-type.ts";
 
 const emit = defineEmits(['navigate'])
 
@@ -357,7 +358,7 @@ const filteredFaqs = computed(() => {
 
 // Methods
 const getCategoryClass = (category) => {
-  const cat = categories.value.find(c => c.title === category)
+  const cat = categories.value.find(c => c.title === category.title)
   if (!cat) return 'bg-gray-100 text-gray-700'
 
   // Convert hex to RGB for background with opacity
@@ -391,7 +392,13 @@ const openCreateModal = () => {
 
 const editFaq = async (faq) => {
   editingFaq.value = faq
-  faqForm.value = {...faq}
+  faqForm.value = {
+    id: faq.id,
+    question: faq.question,
+    answer: faq.answer,
+    isActive: faq.isActive,
+    category: faq.category?.title || ""   // مقدار قبلی select
+  }
   showModal.value = true
 }
 
@@ -408,6 +415,8 @@ const saveFaq = async () => {
     question: faqForm.value.question,
     answer: faqForm.value.answer,
     isActive: faqForm.value.isActive,
+    status:faqForm.value.isActive?'active':'inactive',
+    typeId:faqTypeStore.selectedType.id,
     categoryId: selectedCategory?.id || null
   }
   if (editingFaq.value) {
@@ -430,9 +439,9 @@ const toggleStatus = async (faq) => {
   await faqStore.toggleStatus(faq.id, faq.isActive)
   console.log(`FAQ ${faq.id} status changed to ${faq.isActive}`)
 }
-
+const faqTypeStore = useFaqTypeStore()
 onMounted(async () => {
-  await faqStore.fetchFaqs()
+  await faqTypeStore.fetchType('hamian')
   await categoryTypeStore.fetchType('faq')
 })
 
@@ -440,7 +449,17 @@ watch(
     () => categoryTypeStore.selectedType,
     async (type) => {
       if (type?.id) {
-        await categoryStore.fetchCategories({typeId: type.id})
+        await categoryStore.fetchCategories({typeId: type.id,contentType:'hamian'})
+      }
+    },
+    {immediate: true}
+)
+
+watch(
+    () => faqTypeStore.selectedType,
+    async (type) => {
+      if (type?.id) {
+        await faqStore.fetchFaqs({typeId: type.id})
       }
     },
     {immediate: true}

@@ -166,18 +166,19 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-
+import {ref, computed, onMounted} from 'vue'
+import {useCommentStore} from "@/stores/comment.ts";
+const commentStore=useCommentStore()
 const filterStatus = ref('all')
 const searchQuery = ref('')
-
+//const stats=computed(()=>commentStore.stats)
 const stats = ref({
   total: 145,
   pending: 12,
   approved: 128,
   rejected: 5
 })
-
+//const comments=computed(()=>commentStore.comments)
 const comments = ref([
   {
     id: 1,
@@ -282,6 +283,11 @@ const deleteComment = (id) => {
     }
   }
 }
+
+onMounted(async () => {
+  await commentStore.fetchComments()
+
+})
 </script>
 
 <style scoped>

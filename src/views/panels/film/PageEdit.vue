@@ -51,12 +51,11 @@
 
         <div class="bg-white rounded-xl border border-gray-200 p-6">
           <label class="block text-sm font-medium text-gray-700 mb-4">محتوای صفحه</label>
-          <textarea
-            v-model="form.content"
-            rows="20"
-            placeholder="محتوای کامل صفحه را بنویسید..."
-            class="input-field resize-none font-['Vazirmatn']"
-          ></textarea>
+          <TinyMCEEditor
+              v-model="form.content"
+              placeholder="محتوای صفحه خود را اینجا بنویسید..."
+              :height="400"
+          />
         </div>
 
         <div class="bg-white rounded-xl border border-gray-200 p-6">
@@ -241,17 +240,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import {ref, onMounted, computed} from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useToast } from '../../../composables/useToast'
+import { useToast} from "@/composables/useToast.js";
+import {useFilmPageStore} from "@/stores/film-page.ts";
+import TinyMCEEditor from "@/components/TinyMCEEditor.vue";
 
 const router = useRouter()
 const route = useRoute()
 const toast = useToast()
-
+const pageFound = ref(false)
+const pageId = ref(null)
 const loading = ref(true)
+const filmPageStore=useFilmPageStore()
 const showStatusDropdown = ref(false)
-
+const pages = computed(()=>filmPageStore.pages)
 const form = ref({
   id: null,
   title: '',
@@ -266,34 +269,39 @@ const form = ref({
   views: 0,
   todayViews: 0
 })
+function mapPageToForm(page) {
+  form.value = {
+    id: page.id,
+    title: page.title,
+    slug: page.slug,
+    content: page.content,
+    thumbnail: page.thumbnailUrl,
+    status: page.status || 'draft',
+    seoTitle: page.metaTitle || '',
+    seoDescription: page.metaDescription || '',
+    showInMenu: page.showInMenu ?? false,
+    commentsEnabled: page.commentsEnabled ?? false,
+    views: page.views ?? 0,
+    todayViews: page.todayViews ?? 0
+  }
+}
 
 onMounted(() => {
   loadPage()
 })
-
 const loadPage = () => {
-  loading.value = true
-  const pageId = route.params.id
-  
-  setTimeout(() => {
-    form.value = {
-      id: pageId,
-      title: 'درباره ما',
-      slug: 'about-us',
-      content: 'ما یک پلتفرم جامع برای معرفی و نقد فیلم و سریال هستیم.\n\nهدف ما ارائه بهترین محتوا در زمینه سینما و تلویزیون است.\n\nتیم ما متشکل از منتقدین حرفه‌ای و علاقه‌مندان به سینما است.',
-      thumbnail: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=500',
-      status: 'published',
-      seoTitle: 'درباره ما - پلتفرم فیلم و سریال',
-      seoDescription: 'آشنایی با تیم ما و اهداف پلتفرم',
-      showInMenu: true,
-      commentsEnabled: false,
-      views: 12450,
-      todayViews: 156
-    }
-    loading.value = false
-  }, 1000)
-}
+  pageId.value = route.params.id
+  const page = pages.value.find(p => p.id === pageId.value)
 
+  if (page) {
+    mapPageToForm(page)
+    pageFound.value = true
+  } else {
+    pageFound.value = false
+  }
+
+  loading.value = false
+}
 const selectStatus = (status) => {
   form.value.status = status
   showStatusDropdown.value = false
@@ -322,13 +330,12 @@ const handleThumbnailUpload = (event) => {
 const goBack = () => {
   router.back()
 }
-
 const saveDraft = () => {
   form.value.status = 'draft'
   updatePage()
 }
 
-const updatePage = () => {
+const updatePage = async () => {
   if (!form.value.title) {
     toast.warning('لطفاً عنوان صفحه را وارد کنید', 'عنوان الزامی است')
     return
@@ -340,15 +347,17 @@ const updatePage = () => {
   }
 
   console.log('Updating page:', form.value)
+  await filmPageStore.updatePage(form.value.id,form.value)
   toast.success('صفحه با موفقیت به‌روزرسانی شد!', 'تغییرات ذخیره گردید')
   setTimeout(() => {
     router.push('/dashboard/film/pages')
   }, 1000)
 }
 
-const deletePage = () => {
+const deletePage = async () => {
   if (confirm('آیا از حذف این صفحه اطمینان دارید؟')) {
     console.log('Deleting page:', form.value.id)
+    await filmPageStore.deletePage(form.value.id)
     toast.success('صفحه با موفقیت حذف شد', 'تغییرات اعمال گردید')
     setTimeout(() => {
       router.push('/dashboard/film/pages')

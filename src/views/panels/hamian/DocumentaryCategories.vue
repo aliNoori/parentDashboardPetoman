@@ -272,7 +272,9 @@ const categories = computed(() => categoryStore.categories)
 const newCategory = ref({
   title: '',
   slug: '',
-  color: '#6B7280'
+  color: '#6B7280',
+  contentType:'hamian',
+  typeId: categoryTypeStore.selectedType?.id || null
 })
 
 const editingCategory = ref(null)
@@ -342,6 +344,7 @@ const addCategory = async () => {
     title: '',
     slug: '',
     color: '#6B7280',
+    contentType:'hamian',
     typeId: categoryTypeStore.selectedType?.id || null
   }
 
@@ -349,7 +352,11 @@ const addCategory = async () => {
 }
 
 const editCategory = (category) => {
-  editingCategory.value = {...category}
+  const clean = { ...category }
+  delete clean.posts
+  delete clean.parent
+
+  editingCategory.value = clean
   showEditModal.value = true
 }
 
@@ -393,7 +400,7 @@ watch(
     async (type) => {
       if (type?.id) {
         newCategory.value.typeId = type.id
-        await categoryStore.fetchCategories({typeId: type.id})
+        await categoryStore.fetchCategories({typeId: type.id,contentType:'hamian'})
       }
     },
     {immediate: true}

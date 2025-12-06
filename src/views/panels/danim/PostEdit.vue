@@ -717,6 +717,7 @@ import {useCategoryStore} from "@/stores/category.ts";
 import {useCategoryTypeStore} from "@/stores/category-type.ts";
 import {useRoute} from "vue-router";
 import {useTagStore} from "@/stores/tag.ts";
+import {useTagTypeStore} from "@/stores/tag-type.ts";
 
 const isLoading = ref(false)
 const showPreviewModal = ref(false)
@@ -729,7 +730,8 @@ const categoryTypeStore = useCategoryTypeStore()
 const categoryStore = useCategoryStore()
 // Category Management - Tree Structure
 const categoryTree = computed(() => categoryStore.categoryTree)
-const categories = computed(() => categoryStore.categories)
+//const categories = computed(() => categoryStore.categories)
+const tagTypeStore = useTagTypeStore()
 /*const categoryTree = ref([
   {
     id: 1,
@@ -1333,8 +1335,8 @@ watchEffect(()=>
 })
 // Initialize
 onMounted(async () => {
-  await categoryTypeStore.fetchType('danim')
-  await tagStore.fetchTags()
+  await categoryTypeStore.fetchType('post')
+  await tagTypeStore.fetchType('post')
   loadPostData(posts.value)
 })
 const loadPostData = (posts) => {
@@ -1351,8 +1353,18 @@ watch(
     async (type) => {
       if (type?.id) {
         newCategoryForm.typeId = type.id
-        await categoryStore.fetchCategoryTree(type.id)
-        await categoryStore.fetchCategories({typeId: type.id})
+        await categoryStore.fetchCategoryTree(type.id,'danim')
+        //await categoryStore.fetchCategories({typeId: type.id,contentType:'danim'})
+      }
+    },
+    {immediate: true}
+)
+
+watch(
+    () => tagTypeStore.selectedType,
+    async (type) => {
+      if (type?.id) {
+        await tagStore.fetchTags({typeId: type.id,contentType:'danim'})
       }
     },
     {immediate: true}

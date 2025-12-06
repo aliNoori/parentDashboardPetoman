@@ -31,7 +31,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="bg-white rounded-xl p-6 border border-gray-200">
         <div class="flex items-center justify-between">
           <div>
@@ -43,7 +43,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="bg-white rounded-xl p-6 border border-gray-200">
         <div class="flex items-center justify-between">
           <div>
@@ -55,7 +55,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="bg-white rounded-xl p-6 border border-gray-200">
         <div class="flex items-center justify-between">
           <div>
@@ -74,36 +74,36 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
           <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="جستجو در سریال‌ها..."
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+              v-model="searchQuery"
+              type="text"
+              placeholder="جستجو در سریال‌ها..."
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
           />
         </div>
-        
+
         <div class="relative">
           <button
-            @click="showCategoryDropdown = !showCategoryDropdown"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg text-right flex items-center justify-between hover:border-purple-500 transition-colors"
+              @click="showCategoryDropdown = !showCategoryDropdown"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg text-right flex items-center justify-between hover:border-purple-500 transition-colors"
           >
             <span class="text-gray-700">{{ selectedCategory || 'همه دسته‌بندی‌ها' }}</span>
             <i class="ti ti-chevron-down text-gray-400"></i>
           </button>
           <ul
-            v-if="showCategoryDropdown"
-            class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+              v-if="showCategoryDropdown"
+              class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
           >
             <li
-              @click="selectCategory(null)"
-              class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
+                @click="selectCategory(null)"
+                class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
             >
               همه دسته‌بندی‌ها
             </li>
             <li
-              v-for="category in categories"
-              :key="category.id"
-              @click="selectCategory(category.name)"
-              class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
+                v-for="category in categories"
+                :key="category.id"
+                @click="selectCategory(category.name)"
+                class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
             >
               {{ category.name }}
             </li>
@@ -112,37 +112,37 @@
 
         <div class="relative">
           <button
-            @click="showStatusDropdown = !showStatusDropdown"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg text-right flex items-center justify-between hover:border-purple-500 transition-colors"
+              @click="showStatusDropdown = !showStatusDropdown"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg text-right flex items-center justify-between hover:border-purple-500 transition-colors"
           >
             <span class="text-gray-700">{{ getStatusLabel(selectedStatus) }}</span>
             <i class="ti ti-chevron-down text-gray-400"></i>
           </button>
           <ul
-            v-if="showStatusDropdown"
-            class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg"
+              v-if="showStatusDropdown"
+              class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg"
           >
             <li
-              @click="selectStatus('all')"
-              class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
+                @click="selectStatus('all')"
+                class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
             >
               همه وضعیت‌ها
             </li>
             <li
-              @click="selectStatus('ongoing')"
-              class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
+                @click="selectStatus('ongoing')"
+                class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
             >
               در حال پخش
             </li>
             <li
-              @click="selectStatus('completed')"
-              class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
+                @click="selectStatus('completed')"
+                class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
             >
               پایان یافته
             </li>
             <li
-              @click="selectStatus('upcoming')"
-              class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
+                @click="selectStatus('upcoming')"
+                class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
             >
               به زودی
             </li>
@@ -151,37 +151,37 @@
 
         <div class="relative">
           <button
-            @click="showSortDropdown = !showSortDropdown"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg text-right flex items-center justify-between hover:border-purple-500 transition-colors"
+              @click="showSortDropdown = !showSortDropdown"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg text-right flex items-center justify-between hover:border-purple-500 transition-colors"
           >
             <span class="text-gray-700">{{ getSortLabel(sortBy) }}</span>
             <i class="ti ti-chevron-down text-gray-400"></i>
           </button>
           <ul
-            v-if="showSortDropdown"
-            class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg"
+              v-if="showSortDropdown"
+              class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg"
           >
             <li
-              @click="selectSort('newest')"
-              class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
+                @click="selectSort('newest')"
+                class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
             >
               جدیدترین
             </li>
             <li
-              @click="selectSort('oldest')"
-              class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
+                @click="selectSort('oldest')"
+                class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
             >
               قدیمی‌ترین
             </li>
             <li
-              @click="selectSort('views')"
-              class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
+                @click="selectSort('views')"
+                class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
             >
               پربازدیدترین
             </li>
             <li
-              @click="selectSort('rating')"
-              class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
+                @click="selectSort('rating')"
+                class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
             >
               بهترین امتیاز
             </li>
@@ -204,25 +204,25 @@
       </div>
 
       <div
-        v-for="series in filteredSeries"
-        :key="series.id"
-        class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all group"
+          v-for="series in filteredSeries"
+          :key="series.id"
+          class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all group"
       >
         <div class="relative aspect-[2/3] overflow-hidden bg-gray-100">
           <img
-            v-if="series.poster"
-            :src="series.poster"
-            :alt="series.title"
-            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              v-if="series.poster"
+              :src="series.poster"
+              :alt="series.title"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
           <div v-else class="w-full h-full flex items-center justify-center">
             <i class="ti ti-photo text-gray-400 text-4xl"></i>
           </div>
-          
+
           <div class="absolute top-2 right-2 flex gap-2">
             <span
-              :class="getStatusBadgeColor(series.status)"
-              class="px-2 py-1 rounded-lg text-xs font-bold backdrop-blur-sm"
+                :class="getStatusBadgeColor(series.status)"
+                class="px-2 py-1 rounded-lg text-xs font-bold backdrop-blur-sm"
             >
               {{ getStatusLabel(series.status) }}
             </span>
@@ -245,7 +245,7 @@
         <div class="p-4">
           <h3 class="font-bold text-gray-900 mb-1 line-clamp-1">{{ series.title }}</h3>
           <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ series.description }}</p>
-          
+
           <div class="flex items-center gap-2 mb-3 text-xs text-gray-500">
             <span class="px-2 py-1 bg-purple-50 text-purple-700 rounded">{{ series.category }}</span>
             <span>{{ series.seasons }} فصل</span>
@@ -254,22 +254,22 @@
 
           <div class="flex gap-2">
             <button
-              @click="$router.push(`/dashboard/film/series/edit/${series.id}`)"
-              class="flex-1 px-3 py-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors text-sm font-medium"
+                @click="$router.push(`/dashboard/film/series/edit/${series.id}`)"
+                class="flex-1 px-3 py-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors text-sm font-medium"
             >
               <i class="ti ti-edit ml-1"></i>
               ویرایش
             </button>
             <button
-              @click="viewSeasons(series)"
-              class="flex-1 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
+                @click="viewSeasons(series)"
+                class="flex-1 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
             >
               <i class="ti ti-list ml-1"></i>
               فصل‌ها
             </button>
             <button
-              @click="deleteSeries(series.id)"
-              class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                @click="deleteSeries(series.id)"
+                class="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
             >
               <i class="ti ti-trash"></i>
             </button>
@@ -280,9 +280,9 @@
 
     <!-- Seasons Modal -->
     <div
-      v-if="showSeasonsModal"
-      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-      @click.self="showSeasonsModal = false"
+        v-if="showSeasonsModal"
+        class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+        @click.self="showSeasonsModal = false"
     >
       <div class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div class="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
@@ -291,8 +291,8 @@
             <p class="text-sm text-gray-600 mt-1">مدیریت فصل‌ها و قسمت‌ها</p>
           </div>
           <button
-            @click="showSeasonsModal = false"
-            class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              @click="showSeasonsModal = false"
+              class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <i class="ti ti-x text-xl"></i>
           </button>
@@ -300,8 +300,8 @@
 
         <div class="p-6 space-y-4">
           <button
-            @click="addSeason"
-            class="w-full px-4 py-3 border-2 border-dashed border-purple-300 rounded-lg text-purple-600 hover:bg-purple-50 transition-colors font-medium"
+              @click="addSeason"
+              class="w-full px-4 py-3 border-2 border-dashed border-purple-300 rounded-lg text-purple-600 hover:bg-purple-50 transition-colors font-medium"
           >
             <i class="ti ti-plus ml-2"></i>
             افزودن فصل جدید
@@ -313,16 +313,17 @@
           </div>
 
           <div
-            v-for="(season, index) in selectedSeries?.seasonsList"
-            :key="index"
-            class="border border-gray-200 rounded-lg overflow-hidden"
+              v-for="(season, index) in selectedSeries?.seasonsList"
+              :key="index"
+              class="border border-gray-200 rounded-lg overflow-hidden"
           >
             <div
-              @click="toggleSeason(index)"
-              class="bg-gray-50 px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-gray-100 transition-colors"
+                @click="toggleSeason(index)"
+                class="bg-gray-50 px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-gray-100 transition-colors"
             >
               <div class="flex items-center gap-3">
-                <span class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm">
+                <span
+                    class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm">
                   {{ index + 1 }}
                 </span>
                 <div>
@@ -332,44 +333,46 @@
               </div>
               <div class="flex items-center gap-2">
                 <button
-                  @click.stop="editSeason(index)"
-                  class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    @click.stop="editSeason(index)"
+                    class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                 >
                   <i class="ti ti-edit"></i>
                 </button>
                 <button
-                  @click.stop="removeSeason(index)"
-                  class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    @click.stop="removeSeason(index)"
+                    class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                 >
                   <i class="ti ti-trash"></i>
                 </button>
                 <i
-                  :class="expandedSeasons.includes(index) ? 'ti ti-chevron-up' : 'ti ti-chevron-down'"
-                  class="text-gray-600"
+                    :class="expandedSeasons.includes(index) ? 'ti ti-chevron-up' : 'ti ti-chevron-down'"
+                    class="text-gray-600"
                 ></i>
               </div>
             </div>
 
             <div v-if="expandedSeasons.includes(index)" class="p-4 space-y-3">
               <button
-                @click="addEpisode(index)"
-                class="w-full px-4 py-2 border border-dashed border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors text-sm"
+                  @click="addEpisode(index)"
+                  class="w-full px-4 py-2 border border-dashed border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors text-sm"
               >
                 <i class="ti ti-plus ml-2"></i>
                 افزودن قسمت
               </button>
 
-              <div v-if="!season.episodes || season.episodes.length === 0" class="text-center py-6 text-gray-400 text-sm">
+              <div v-if="!season.episodes || season.episodes.length === 0"
+                   class="text-center py-6 text-gray-400 text-sm">
                 <i class="ti ti-movie-off text-2xl mb-1 block"></i>
                 <p>هنوز قسمتی اضافه نشده</p>
               </div>
 
               <div
-                v-for="(episode, epIndex) in season.episodes"
-                :key="epIndex"
-                class="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg hover:border-purple-300 transition-colors"
+                  v-for="(episode, epIndex) in season.episodes"
+                  :key="epIndex"
+                  class="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg hover:border-purple-300 transition-colors"
               >
-                <span class="w-8 h-8 rounded bg-purple-50 text-purple-700 flex items-center justify-center font-bold text-xs">
+                <span
+                    class="w-8 h-8 rounded bg-purple-50 text-purple-700 flex items-center justify-center font-bold text-xs">
                   {{ episode.number }}
                 </span>
                 <div class="flex-1">
@@ -378,14 +381,14 @@
                 </div>
                 <div class="flex gap-2">
                   <button
-                    @click="editEpisode(index, epIndex)"
-                    class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      @click="editEpisode(index, epIndex)"
+                      class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                   >
                     <i class="ti ti-edit text-sm"></i>
                   </button>
                   <button
-                    @click="removeEpisode(index, epIndex)"
-                    class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      @click="removeEpisode(index, epIndex)"
+                      class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                   >
                     <i class="ti ti-trash text-sm"></i>
                   </button>
@@ -400,9 +403,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { useToast } from '../../../composables/useToast'
+import {ref, computed, onMounted} from 'vue'
+import {useRouter} from 'vue-router'
+import {useToast} from "@/composables/useToast.js";
+import {useSeriesStore} from "@/stores/series.ts";
 
 const router = useRouter()
 const toast = useToast()
@@ -429,17 +433,18 @@ const stats = ref({
 
 // Categories
 const categories = ref([
-  { id: 1, name: 'اکشن' },
-  { id: 2, name: 'کمدی' },
-  { id: 3, name: 'درام' },
-  { id: 4, name: 'علمی تخیلی' },
-  { id: 5, name: 'ترسناک' },
-  { id: 6, name: 'انیمیشن' },
-  { id: 7, name: 'فانتزی' }
+  {id: 1, name: 'اکشن'},
+  {id: 2, name: 'کمدی'},
+  {id: 3, name: 'درام'},
+  {id: 4, name: 'علمی تخیلی'},
+  {id: 5, name: 'ترسناک'},
+  {id: 6, name: 'انیمیشن'},
+  {id: 7, name: 'فانتزی'}
 ])
-
+const seriesStore = useSeriesStore()
+const series = computed(() => seriesStore.seriesList)
 // Series Data
-const series = ref([
+/*const series = ref([
   {
     id: 1,
     title: 'سریال Breaking Bad',
@@ -553,7 +558,7 @@ const series = ref([
     episodes: 24,
     seasonsList: []
   }
-])
+])*/
 
 // Computed
 const filteredSeries = computed(() => {
@@ -563,8 +568,8 @@ const filteredSeries = computed(() => {
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
     result = result.filter(s =>
-      s.title.toLowerCase().includes(query) ||
-      s.description.toLowerCase().includes(query)
+        s.title.toLowerCase().includes(query) ||
+        s.description.toLowerCase().includes(query)
     )
   }
 
@@ -728,6 +733,10 @@ const exportToExcel = () => {
     toast.success('فایل Excel آماده است', 'دانلود خودکار شروع شد')
   }, 2000)
 }
+
+onMounted(async () => {
+  await seriesStore.fetchSeries()
+})
 </script>
 
 <style scoped>

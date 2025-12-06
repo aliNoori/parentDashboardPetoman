@@ -81,7 +81,7 @@ const initEditor = async () => {
       resize: true,
 
       // ✅ هندلر آپلود تصویر
-      images_upload_handler: async (blobInfo, success, failure) => {
+      /*images_upload_handler: async (blobInfo, success, failure) => {
         try {
           const file = blobInfo.blob()
           const url = await pageStore.uploadImage(file)
@@ -90,12 +90,12 @@ const initEditor = async () => {
             throw new Error('Invalid URL returned from server')
           }
 
-          success(url) // فقط URL رو پاس بده
+          success(url)
         } catch (err) {
           console.error('❌ Image upload failed', err)
           failure('Upload failed: ' + err.message)
         }
-      },
+      },*/
 
       image_advtab: true,
       image_title: true,
@@ -111,6 +111,7 @@ const initEditor = async () => {
             const file = input.files[0]
             if (!file) return
             const url = await pageStore.uploadImage(file)
+            console.log('iiiiiiiiiii')
             callback(url, { alt: file.name })
           }
           input.click()

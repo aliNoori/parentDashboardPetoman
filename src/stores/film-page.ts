@@ -11,15 +11,16 @@ export interface Page {
     content: string
     metaTitle?: string
     metaDescription?: string
-    status: 'draft' | 'published'
-    showInMenu: boolean
-    featuredImage?: string
+    template: string
+    status: 'draft' | 'published' | 'scheduled'
+    publishDate: Date
+    thumbnail?: string
     createdAt: string
     updatedAt: string
     views: number
 }
 
-export const usePageStore = defineStore('pageStore', () => {
+export const useFilmPageStore = defineStore('filmPageStore', () => {
     const pages = ref<Page[]>([])
     const page = ref<Page>()
     const fetched = ref(false)
@@ -29,7 +30,7 @@ export const usePageStore = defineStore('pageStore', () => {
 
     const fetchPage = async (id:string) => {
         try {
-            const { data } = await axios.get(`/v1/pages/${id}`)
+            const { data } = await axios.get(`/v1/film-pages/${id}`)
             page.value = data
             fetched.value = true
         } catch (error) {
@@ -39,7 +40,7 @@ export const usePageStore = defineStore('pageStore', () => {
 
     const fetchPages = async () => {
         try {
-            const { data } = await axios.get('/v1/pages')
+            const { data } = await axios.get('/v1/film-pages')
             pages.value = data
             fetched.value = true
         } catch (error) {
@@ -74,12 +75,12 @@ export const usePageStore = defineStore('pageStore', () => {
 
     const addPage = async (newPage: Partial<Page>) => {
         try {
-            let featuredImageUrl = newPage.featuredImage
+            let thumbnailUrl = newPage.thumbnail
 
-            if (featuredImageUrl?.startsWith('data:image')) {
-                const blob = await fetch(featuredImageUrl).then(res => res.blob())
+            if (thumbnailUrl?.startsWith('data:image')) {
+                const blob = await fetch(thumbnailUrl).then(res => res.blob())
                 const file = new File([blob], 'featured-image.png', { type: blob.type })
-                featuredImageUrl = await uploadImage(file)
+                thumbnailUrl = await uploadImage(file)
             }
 
             const formData = new FormData()
@@ -89,10 +90,14 @@ export const usePageStore = defineStore('pageStore', () => {
             formData.append('metaTitle', newPage.metaTitle || '')
             formData.append('metaDescription', newPage.metaDescription || '')
             formData.append('status', newPage.status || 'draft')
-            formData.append('showInMenu', String(newPage.showInMenu))
-            formData.append('featuredImage', featuredImageUrl || '')
+            formData.append(
+                'publishDate',
+                (newPage.publishDate ? new Date(newPage.publishDate) : new Date()).toISOString()
+            )
 
-            const { data } = await axios.post('/v1/pages', formData, {
+            formData.append('thumbnailUrl', thumbnailUrl || '')
+
+            const { data } = await axios.post('/v1/film-pages', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             })
 
@@ -106,25 +111,31 @@ export const usePageStore = defineStore('pageStore', () => {
 
     const updatePage = async (id: string | number, updatedPage: Partial<Page>) => {
         try {
-            let featuredImageUrl = updatedPage.featuredImage
+            let thumbnailUrl = updatedPage.thumbnail
 
-            if (featuredImageUrl?.startsWith('data:image')) {
-                const blob = await fetch(featuredImageUrl).then(res => res.blob())
+            if (thumbnailUrl?.startsWith('data:image')) {
+                const blob = await fetch(thumbnailUrl).then(res => res.blob())
                 const file = new File([blob], 'featured-image.png', { type: blob.type })
-                featuredImageUrl = await uploadImage(file)
+                thumbnailUrl = await uploadImage(file)
             }
 
             const formData = new FormData()
             formData.append('title', updatedPage.title || '')
             formData.append('slug', updatedPage.slug || '')
             formData.append('content', updatedPage.content || '')
-            formData.append('metaTitle', updatedPage.metaTitle || '')
-            formData.append('metaDescription', updatedPage.metaDescription || '')
+            formData.append('commentsEnabled', updatedPage.commentsEnabled || '')
+            formData.append('showInMenu', updatedPage.showInMenu || '')
+            formData.append('metaTitle', updatedPage.seoTitle || '')
+            formData.append('metaDescription', updatedPage.seoDescription || '')
             formData.append('status', updatedPage.status || 'draft')
-            formData.append('showInMenu', String(updatedPage.showInMenu))
-            formData.append('featuredImage', featuredImageUrl || '')
+            formData.append(
+                'publishDate',
+                (updatedPage.publishDate ? new Date(updatedPage.publishDate) : new Date()).toISOString()
+            )
 
-            const { data } = await axios.patch(`/v1/pages/${id}`, formData, {
+            formData.append('thumbnailUrl', thumbnailUrl || '')
+
+            const { data } = await axios.patch(`/v1/film-pages/${id}`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             })
 
@@ -139,7 +150,7 @@ export const usePageStore = defineStore('pageStore', () => {
 
     const deletePage = async (id: string | number) => {
         try {
-            await axios.delete(`/v1/pages/${id}`)
+            await axios.delete(`/v1/film-pages/${id}`)
             pages.value = pages.value.filter(p => p.id !== id)
         } catch (error) {
             console.error('❌ Failed to delete page', error)

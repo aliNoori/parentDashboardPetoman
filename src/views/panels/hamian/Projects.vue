@@ -1213,9 +1213,11 @@ const createNewProject = () => {
 const viewProject = (project) => {
   showProjectModal.value = true
   selectedProject.value = project
+
 }
 
 const editProject = (project) => {
+
   showEditModal.value = true
   editForm.value = {
     id: project.id,
@@ -1366,7 +1368,7 @@ const handleClickOutside = () => {
 
 onMounted(async () => {
   await kindnessStore.fetchKindnessMeetings()
-  await categoryTypeStore.fetchType('danim')
+  await categoryTypeStore.fetchType('kindness-meeting')
   document.addEventListener('click', handleClickOutside)
 })
 

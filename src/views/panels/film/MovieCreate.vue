@@ -6,15 +6,18 @@
         <p class="text-gray-600 mt-1">فیلم جدید خود را ایجاد و منتشر کنید</p>
       </div>
       <div class="flex gap-3">
-        <button @click="goBack" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium flex items-center">
+        <button @click="goBack"
+                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium flex items-center">
           <i class="ti ti-arrow-right ml-2"></i>
           بازگشت
         </button>
-        <button @click="saveDraft" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium flex items-center">
+        <button @click="saveDraft"
+                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium flex items-center">
           <i class="ti ti-device-floppy ml-2"></i>
           ذخیره پیش‌نویس
         </button>
-        <button @click="publishMovie" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium flex items-center">
+        <button @click="publishMovie"
+                class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium flex items-center">
           <i class="ti ti-send ml-2"></i>
           انتشار فیلم
         </button>
@@ -29,95 +32,155 @@
           <div class="space-y-4">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">عنوان فیلم</label>
-              <input v-model="form.title" type="text" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors" placeholder="عنوان فیلم فارسی...">
+              <input v-model="form.title" type="text"
+                     class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors"
+                     placeholder="عنوان فیلم فارسی...">
             </div>
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">عنوان انگلیسی</label>
-              <input v-model="form.titleEn" type="text" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors" placeholder="English Title..." dir="ltr">
+              <input v-model="form.titleEn" type="text"
+                     class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors"
+                     placeholder="English Title..." dir="ltr">
             </div>
-            
+
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">خلاصه داستان</label>
-              <textarea v-model="form.description" rows="5" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors resize-none" placeholder="خلاصه داستان فیلم را بنویسید..."></textarea>
+              <textarea v-model="form.description" rows="5"
+                        class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors resize-none"
+                        placeholder="خلاصه داستان فیلم را بنویسید..."></textarea>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">کارگردان</label>
-                <input v-model="form.director" type="text" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors" placeholder="نام کارگردان...">
+                <input v-model="form.director" type="text"
+                       class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors"
+                       placeholder="نام کارگردان...">
               </div>
 
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">سال تولید</label>
-                <input v-model="form.year" type="number" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors" placeholder="2024">
+                <input v-model="form.year" type="number"
+                       class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors"
+                       placeholder="2024">
               </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">مدت زمان (دقیقه)</label>
-                <input v-model="form.duration" type="number" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors" placeholder="120">
+                <input v-model="form.duration" type="number"
+                       class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors"
+                       placeholder="120">
               </div>
 
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">امتیاز IMDB</label>
-                <input v-model="form.imdbRating" type="number" step="0.1" min="0" max="10" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors" placeholder="8.5">
+                <input v-model="form.imdbRating" type="number" step="0.1" min="0" max="10"
+                       class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors"
+                       placeholder="8.5">
               </div>
             </div>
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">بازیگران</label>
-              <input v-model="form.cast" type="text" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors" placeholder="نام بازیگران را با کاما جدا کنید...">
+              <input v-model="form.cast" type="text"
+                     class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors"
+                     placeholder="نام بازیگران را با کاما جدا کنید...">
             </div>
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">لینک تریلر</label>
-              <input v-model="form.trailerUrl" type="text" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors" placeholder="https://..." dir="ltr">
+              <input v-model="form.trailerUrl" type="text"
+                     class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors"
+                     placeholder="https://..." dir="ltr">
             </div>
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">لینک دانلود</label>
-              <input v-model="form.downloadUrl" type="text" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors" placeholder="https://..." dir="ltr">
+              <input v-model="form.downloadUrl" type="text"
+                     class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors"
+                     placeholder="https://..." dir="ltr">
             </div>
           </div>
         </div>
 
         <!-- Tags Section -->
+        <!--        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                  <h3 class="text-lg font-bold text-gray-900 mb-4">برچسب‌ها</h3>
+                  <div class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">افزودن برچسب</label>
+                      <div class="flex gap-2">
+                        <input
+                          v-model="tagInput"
+                          @keyup.enter="addTag"
+                          type="text"
+                          placeholder="نام برچسب را وارد کنید..."
+                          class="flex-1 px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors"
+                        />
+                        <button
+                          @click="addTag"
+                          class="px-4 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                        >
+                          <i class="ti ti-plus"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div v-if="form.tags.length > 0" class="flex flex-wrap gap-2">
+                      <span
+                        v-for="(tag, index) in form.tags"
+                        :key="index"
+                        class="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-100 text-purple-700 rounded-lg text-sm font-medium"
+                      >
+                        {{ tag }}
+                        <button @click="removeTag(index)" class="hover:text-purple-900">
+                          <i class="ti ti-x text-sm"></i>
+                        </button>
+                      </span>
+                    </div>
+                  </div>
+                </div>-->
+        <!-- Tags Block (Separate) -->
         <div class="bg-white rounded-xl border border-gray-200 p-6">
-          <h3 class="text-lg font-bold text-gray-900 mb-4">برچسب‌ها</h3>
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">افزودن برچسب</label>
-              <div class="flex gap-2">
-                <input
-                  v-model="tagInput"
-                  @keyup.enter="addTag"
-                  type="text"
-                  placeholder="نام برچسب را وارد کنید..."
-                  class="flex-1 px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors"
-                />
-                <button
-                  @click="addTag"
-                  class="px-4 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-                >
-                  <i class="ti ti-plus"></i>
-                </button>
-              </div>
-            </div>
-            <div v-if="form.tags.length > 0" class="flex flex-wrap gap-2">
-              <span
-                v-for="(tag, index) in form.tags"
-                :key="index"
-                class="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-100 text-purple-700 rounded-lg text-sm font-medium"
-              >
-                {{ tag }}
-                <button @click="removeTag(index)" class="hover:text-purple-900">
-                  <i class="ti ti-x text-sm"></i>
-                </button>
-              </span>
-            </div>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">برچسب‌ها</h3>
+          <!-- پیشنهادات -->
+          <div class="flex flex-wrap gap-2 mb-2">
+  <span
+      v-for="tag in tagStore.tags"
+      :key="tag.name"
+      @click="addTag(tag.name)"
+      class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm cursor-pointer hover:bg-rose-100 hover:text-rose-700"
+  >
+    {{ tag.name }} ({{ tag.count }})
+  </span>
           </div>
+          <!-- تگ‌های انتخاب‌شده -->
+          <div class="flex flex-wrap gap-2 mb-2">
+         <span v-for="(tag, index) in form.tags" :key="index"
+               class="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-sm flex items-center gap-2">
+    {{ tag }}
+    <button type="button" @click="removeTag(index)" class="hover:text-rose-900">
+      <i class="ti ti-x text-xs"></i>
+    </button>
+  </span>
+          </div>
+          <!-- ورودی تگ جدید -->
+          <div class="flex gap-2">
+            <input
+                v-model="newTag"
+                type="text"
+                @keypress.enter.prevent="addTag()"
+                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                placeholder="برچسب جدید را وارد کنید..."
+            >
+            <button type="button" @click="addTag()"
+                    class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
+              <i class="ti ti-plus"></i>
+            </button>
+          </div>
+
         </div>
 
         <!-- Video Upload/Link Section -->
@@ -130,19 +193,19 @@
               <div class="flex gap-4">
                 <label class="flex items-center gap-2 cursor-pointer">
                   <input
-                    v-model="form.videoSourceType"
-                    type="radio"
-                    value="upload"
-                    class="w-4 h-4 text-purple-600 focus:ring-purple-500"
+                      v-model="form.videoSourceType"
+                      type="radio"
+                      value="upload"
+                      class="w-4 h-4 text-purple-600 focus:ring-purple-500"
                   >
                   <span class="text-sm text-gray-700">آپلود فایل</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
                   <input
-                    v-model="form.videoSourceType"
-                    type="radio"
-                    value="link"
-                    class="w-4 h-4 text-purple-600 focus:ring-purple-500"
+                      v-model="form.videoSourceType"
+                      type="radio"
+                      value="link"
+                      class="w-4 h-4 text-purple-600 focus:ring-purple-500"
                   >
                   <span class="text-sm text-gray-700">لینک پخش</span>
                 </label>
@@ -152,10 +215,10 @@
             <!-- Upload Section -->
             <div v-if="form.videoSourceType === 'upload'" class="space-y-3">
               <div
-                @click="$refs.videoInput.click()"
-                @drop.prevent="handleVideoDrop"
-                @dragover.prevent
-                class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-purple-500 hover:bg-purple-50 transition-all"
+                  @click="$refs.videoInput.click()"
+                  @drop.prevent="handleVideoDrop"
+                  @dragover.prevent
+                  class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-purple-500 hover:bg-purple-50 transition-all"
               >
                 <div v-if="!form.videoFile">
                   <i class="ti ti-cloud-upload text-4xl text-gray-400 mb-2"></i>
@@ -169,19 +232,19 @@
                     <p class="text-xs text-gray-500">{{ formatFileSize(form.videoFile.size) }}</p>
                   </div>
                   <button
-                    @click.stop="removeVideo"
-                    class="mr-2 text-red-600 hover:text-red-700"
+                      @click.stop="removeVideo"
+                      class="mr-2 text-red-600 hover:text-red-700"
                   >
                     <i class="ti ti-x"></i>
                   </button>
                 </div>
               </div>
               <input
-                ref="videoInput"
-                type="file"
-                accept="video/*"
-                class="hidden"
-                @change="handleVideoUpload"
+                  ref="videoInput"
+                  type="file"
+                  accept="video/*"
+                  class="hidden"
+                  @change="handleVideoUpload"
               >
             </div>
 
@@ -189,11 +252,11 @@
             <div v-if="form.videoSourceType === 'link'">
               <label class="block text-sm font-medium text-gray-700 mb-2">لینک پخش ویدیو</label>
               <input
-                v-model="form.videoLink"
-                type="text"
-                placeholder="https://example.com/video.mp4"
-                class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors"
-                dir="ltr"
+                  v-model="form.videoLink"
+                  type="text"
+                  placeholder="https://example.com/video.mp4"
+                  class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors"
+                  dir="ltr"
               >
               <p class="text-xs text-gray-500 mt-2">لینک مستقیم فایل ویدیو یا لینک پلیر را وارد کنید</p>
             </div>
@@ -203,18 +266,19 @@
               <label class="block text-sm font-medium text-gray-700 mb-2">کیفیت ویدیو</label>
               <div class="relative">
                 <button
-                  @click="showQualityDropdown = !showQualityDropdown"
-                  class="w-full px-4 py-2.5 bg-white border-2 border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between"
+                    @click="showQualityDropdown = !showQualityDropdown"
+                    class="w-full px-4 py-2.5 bg-white border-2 border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between"
                 >
                   <span>{{ selectedQuality.label }}</span>
                   <i class="ti ti-chevron-down text-sm"></i>
                 </button>
-                <ul v-if="showQualityDropdown" class="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                <ul v-if="showQualityDropdown"
+                    class="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
                   <li v-for="quality in qualities" :key="quality.value">
                     <button
-                      @click="selectQuality(quality)"
-                      class="w-full px-4 py-2 text-sm text-right hover:bg-gray-50"
-                      :class="selectedQuality.value === quality.value ? 'bg-purple-50 text-purple-600' : 'text-gray-700'"
+                        @click="selectQuality(quality)"
+                        class="w-full px-4 py-2 text-sm text-right hover:bg-gray-50"
+                        :class="selectedQuality.value === quality.value ? 'bg-purple-50 text-purple-600' : 'text-gray-700'"
                     >
                       {{ quality.label }}
                     </button>
@@ -233,18 +297,19 @@
           <label class="block text-sm font-medium text-gray-700 mb-3">پوستر فیلم</label>
           <div class="space-y-3">
             <div v-if="form.poster" class="relative aspect-[2/3] rounded-lg overflow-hidden border-2 border-gray-200">
-              <img :src="form.poster" alt="Poster" class="w-full h-full object-cover" />
+              <img :src="form.poster" alt="Poster" class="w-full h-full object-cover"/>
               <button
-                @click="form.poster = ''"
-                class="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                  @click="form.poster = ''"
+                  class="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
               >
                 <i class="ti ti-x"></i>
               </button>
             </div>
-            <label class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium flex items-center justify-center w-full cursor-pointer">
+            <label
+                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium flex items-center justify-center w-full cursor-pointer">
               <i class="ti ti-upload ml-2"></i>
               آپلود پوستر
-              <input type="file" @change="handlePosterUpload" accept="image/*" class="hidden" />
+              <input type="file" @change="handlePosterUpload" accept="image/*" class="hidden"/>
             </label>
           </div>
         </div>
@@ -254,24 +319,24 @@
           <label class="block text-sm font-medium text-gray-700 mb-3">دسته‌بندی</label>
           <div class="relative">
             <button
-              @click="showCategoryDropdown = !showCategoryDropdown"
-              class="w-full px-4 py-2.5 bg-white border-2 border-gray-200 rounded-lg text-right hover:border-purple-300 transition-colors flex items-center justify-between"
+                @click="showCategoryDropdown = !showCategoryDropdown"
+                class="w-full px-4 py-2.5 bg-white border-2 border-gray-200 rounded-lg text-right hover:border-purple-300 transition-colors flex items-center justify-between"
             >
-              <span>{{ form.category || 'انتخاب دسته‌بندی' }}</span>
+              <span>{{ selectedCategory || 'انتخاب دسته‌بندی' }}</span>
               <i class="ti ti-chevron-down"></i>
             </button>
             <ul
-              v-show="showCategoryDropdown"
-              class="absolute z-10 w-full mt-2 bg-white border-2 border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                v-show="showCategoryDropdown"
+                class="absolute z-10 w-full mt-2 bg-white border-2 border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
             >
               <li
-                v-for="category in categories"
-                :key="category"
-                @click="selectCategory(category)"
-                class="px-4 py-2.5 hover:bg-purple-50 cursor-pointer transition-colors"
-                :class="{ 'bg-purple-50 text-purple-600 font-medium': form.category === category }"
+                  v-for="category in categories"
+                  :key="category"
+                  @click="selectCategory(category)"
+                  class="px-4 py-2.5 hover:bg-purple-50 cursor-pointer transition-colors"
+                  :class="{ 'bg-purple-50 text-purple-600 font-medium': form.category === category.title }"
               >
-                {{ category }}
+                {{ category.title }}
               </li>
             </ul>
           </div>
@@ -282,27 +347,27 @@
           <label class="block text-sm font-medium text-gray-700 mb-3">وضعیت انتشار</label>
           <div class="relative">
             <button
-              @click="showStatusDropdown = !showStatusDropdown"
-              class="w-full px-4 py-2.5 bg-white border-2 border-gray-200 rounded-lg text-right hover:border-purple-300 transition-colors flex items-center justify-between"
+                @click="showStatusDropdown = !showStatusDropdown"
+                class="w-full px-4 py-2.5 bg-white border-2 border-gray-200 rounded-lg text-right hover:border-purple-300 transition-colors flex items-center justify-between"
             >
               <span>{{ getStatusLabel(form.status) }}</span>
               <i class="ti ti-chevron-down"></i>
             </button>
             <ul
-              v-show="showStatusDropdown"
-              class="absolute z-10 w-full mt-2 bg-white border-2 border-gray-200 rounded-lg shadow-lg"
+                v-show="showStatusDropdown"
+                class="absolute z-10 w-full mt-2 bg-white border-2 border-gray-200 rounded-lg shadow-lg"
             >
               <li
-                @click="selectStatus('draft')"
-                class="px-4 py-2.5 hover:bg-purple-50 cursor-pointer transition-colors"
-                :class="{ 'bg-purple-50 text-purple-600 font-medium': form.status === 'draft' }"
+                  @click="selectStatus('draft')"
+                  class="px-4 py-2.5 hover:bg-purple-50 cursor-pointer transition-colors"
+                  :class="{ 'bg-purple-50 text-purple-600 font-medium': form.status === 'draft' }"
               >
                 پیش‌نویس
               </li>
               <li
-                @click="selectStatus('published')"
-                class="px-4 py-2.5 hover:bg-purple-50 cursor-pointer transition-colors"
-                :class="{ 'bg-purple-50 text-purple-600 font-medium': form.status === 'published' }"
+                  @click="selectStatus('published')"
+                  class="px-4 py-2.5 hover:bg-purple-50 cursor-pointer transition-colors"
+                  :class="{ 'bg-purple-50 text-purple-600 font-medium': form.status === 'published' }"
               >
                 منتشر شده
               </li>
@@ -314,9 +379,9 @@
         <div class="bg-white rounded-xl border border-gray-200 p-6">
           <label class="flex items-center gap-3 cursor-pointer">
             <input
-              v-model="form.featured"
-              type="checkbox"
-              class="w-5 h-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                v-model="form.featured"
+                type="checkbox"
+                class="w-5 h-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
             />
             <span class="text-gray-700 font-medium">فیلم ویژه</span>
           </label>
@@ -327,32 +392,29 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useToast } from '../../../composables/useToast'
+import {computed, onMounted, ref, watch} from 'vue'
+import {useRouter} from 'vue-router'
+import {useToast} from "@/composables/useToast.js";
+import {useMovieStore} from "@/stores/movie.ts";
+import {useCategoryTypeStore} from "@/stores/category-type.ts";
+import {useCategoryStore} from "@/stores/category.ts";
+import {useTagStore} from "@/stores/tag.ts";
+import {useTagTypeStore} from "@/stores/tag-type.ts";
 
 const router = useRouter()
 const toast = useToast()
-
+const categoryTypeStore = useCategoryTypeStore()
+const categoryStore = useCategoryStore()
 const showCategoryDropdown = ref(false)
 const showStatusDropdown = ref(false)
 
-const categories = ref([
-  'اکشن',
-  'کمدی',
-  'درام',
-  'علمی تخیلی',
-  'ترسناک',
-  'انیمیشن',
-  'ماجراجویی',
-  'فانتزی',
-  'جنایی',
-  'تاریخی',
-  'عاشقانه',
-  'هیجان انگیز'
-])
-
+const selectedCategory = ref()
+const categories = computed(() => categoryStore.categories)
+const tagTypeStore = useTagTypeStore()
+const tagStore = useTagStore()
+const tags = computed(() => tagStore.tags)
 const form = ref({
+  type:'movies',
   title: '',
   titleEn: '',
   description: '',
@@ -364,7 +426,7 @@ const form = ref({
   trailerUrl: '',
   downloadUrl: '',
   poster: '',
-  category: '',
+  categoryId: '',
   status: 'draft',
   featured: false,
   tags: [],
@@ -374,30 +436,41 @@ const form = ref({
   videoQuality: '1080p'
 })
 
-const tagInput = ref('')
+//const tagInput = ref('')
 const showQualityDropdown = ref(false)
 
-const selectedQuality = ref({ value: '1080p', label: '1080p - Full HD' })
+const selectedQuality = ref({value: '1080p', label: '1080p - Full HD'})
 
 const qualities = [
-  { value: '480p', label: '480p - SD' },
-  { value: '720p', label: '720p - HD' },
-  { value: '1080p', label: '1080p - Full HD' },
-  { value: '1440p', label: '1440p - 2K' },
-  { value: '2160p', label: '2160p - 4K' }
+  {value: '480p', label: '480p - SD'},
+  {value: '720p', label: '720p - HD'},
+  {value: '1080p', label: '1080p - Full HD'},
+  {value: '1440p', label: '1440p - 2K'},
+  {value: '2160p', label: '2160p - 4K'}
 ]
+const newTag = ref('')
 
-const addTag = () => {
-  if (!tagInput.value.trim()) return
-  if (form.value.tags.includes(tagInput.value.trim())) {
-    toast.warning('این برچسب قبلاً اضافه شده است')
-    return
+function addTag(tagName) {
+  const tag = tagName || newTag.value.trim()
+  if (!tag) return
+
+  if (!form.value.tags.includes(tag)) {
+    form.value.tags.push(tag)
+
+    // اگر تگ از پیشنهادات بود، شمارنده زیاد بشه
+    if (tagStore.tags.some(t => t.name === tag)) {
+      tagStore.incrementTagCount(tag)
+    }
   }
-  form.value.tags.push(tagInput.value.trim())
-  tagInput.value = ''
+  newTag.value = ''
 }
 
-const removeTag = (index) => {
+const removeTag = async (index) => {
+  const tagName = form.value.tags[index]
+  const tagObj = tagStore.tags.find(t => t.name === tagName)
+  if (tagObj) {
+    await tagStore.decrementTagCount(tagObj.id)
+  }
   form.value.tags.splice(index, 1)
 }
 
@@ -456,7 +529,8 @@ const formatFileSize = (bytes) => {
 }
 
 const selectCategory = (category) => {
-  form.value.category = category
+  form.value.categoryId = category.id
+  selectedCategory.value = category.title
   showCategoryDropdown.value = false
 }
 
@@ -498,8 +572,8 @@ const saveDraft = () => {
   form.value.status = 'draft'
   publishMovie()
 }
-
-const publishMovie = () => {
+const movieStore = useMovieStore()
+const publishMovie = async () => {
   if (!form.value.title) {
     toast.warning('لطفاً عنوان فیلم را وارد کنید', 'عنوان الزامی است')
     return
@@ -510,15 +584,43 @@ const publishMovie = () => {
     return
   }
 
-  if (!form.value.category) {
+  if (!form.value.categoryId) {
     toast.warning('لطفاً دسته‌بندی را انتخاب کنید', 'انتخاب دسته‌بندی الزامی است')
     return
   }
 
-  console.log('Creating movie:', form.value)
+  await movieStore.addMovie(form.value, form.value.poster, form.value.videoFile)
+
+
   toast.success('فیلم با موفقیت ایجاد شد!', 'اطلاعات ذخیره گردید')
   setTimeout(() => {
     router.push('/dashboard/film/movies')
   }, 1000)
 }
+
+// Initialize
+onMounted(async () => {
+  await categoryTypeStore.fetchType('film')
+  await tagTypeStore.fetchType('film')
+})
+
+watch(
+    () => categoryTypeStore.selectedType,
+    async (type) => {
+      if (type?.id) {
+        await categoryStore.fetchCategories({typeId: type.id,contentType:'movie'})
+      }
+    },
+    {immediate: true}
+)
+
+watch(
+    () => tagTypeStore.selectedType,
+    async (type) => {
+      if (type?.id) {
+        await tagStore.fetchTags({typeId: type.id,contentType:'movie'})
+      }
+    },
+    {immediate: true}
+)
 </script>

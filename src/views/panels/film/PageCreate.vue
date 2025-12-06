@@ -288,6 +288,7 @@ import { ref, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import TinyMCEEditor from '../../../components/TinyMCEEditor.vue'
 import VuePersianDatetimePicker from 'vue3-persian-datetime-picker'
+import {useFilmPageStore} from "@/stores/film-page.ts";
 
 const router = useRouter()
 const toast = inject('toast')
@@ -392,8 +393,8 @@ const saveDraft = () => {
   form.value.status = 'draft'
   publishPage()
 }
-
-const publishPage = () => {
+const filmPageStore=useFilmPageStore()
+const publishPage = async () => {
   if (!form.value.title) {
     toast.warning('لطفاً عنوان صفحه را وارد کنید')
     return
@@ -410,6 +411,7 @@ const publishPage = () => {
   }
 
   console.log('Publishing page:', form.value)
+  await filmPageStore.addPage(form.value)
   toast.success('صفحه با موفقیت ایجاد شد!')
   setTimeout(() => {
     router.push('/dashboard/film/pages')

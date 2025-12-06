@@ -6,6 +6,11 @@ import { axiosKey } from '../plugins/axiosPlugins'
 
 export interface Tag {
     id: number
+    contentType:string
+    typeId:string
+    color:string
+    isActive:boolean
+    status:'active'|'inactive'
     name: string
     slug: string
     description: string
@@ -25,23 +30,16 @@ export const useTagStore = defineStore('tagStore', () => {
     // =====================================================================
     // 📌 دریافت همه برچسب‌ها
     // =====================================================================
-    const fetchTags = async () => {
+    const fetchTags = async (filters?: { typeId?: string;contentType?:string; activeOnly?: boolean }) => {
         try {
-            const { data } = await axios.get('/tags')
-
-            tags.value = data.map((item: any) => ({
-                id: item.id,
-                name: item.name,
-                slug: item.slug,
-                description: item.description || '',
-                count: item.count || 0,
-                lastUsed: item.lastUsed || 'هرگز',
-            }))
-
+            const { data } = await axios.get('/tags', { params: filters })
+            tags.value = data
             fetched.value = true
         } catch (error) {
-            console.error('❌ خطا در دریافت برچسب‌ها:', error)
+            console.error('❌ خطا در دریافت برچسب ها:', error)
         }
+
+
     }
 
     // =====================================================================
@@ -63,6 +61,10 @@ export const useTagStore = defineStore('tagStore', () => {
         try {
             const payload = {
                 name: newTag.name,
+                typeId:newTag.typeId,
+                contentType:newTag.contentType,
+                isActive:newTag.isActive,
+                color:newTag.color,
                 slug: newTag.slug,
                 description: newTag.description || '',
             }
@@ -71,6 +73,11 @@ export const useTagStore = defineStore('tagStore', () => {
 
             const mapped: Tag = {
                 id: data.id,
+                contentType:data.contentType,
+                typeId:data.typeId,
+                color:data.color,
+                status:data.isActive?'active':'inactive',
+                isActive:data.isActive,
                 name: data.name,
                 slug: data.slug,
                 description: data.description || '',
@@ -92,6 +99,10 @@ export const useTagStore = defineStore('tagStore', () => {
         try {
             const payload = {
                 name: updatedTag.name,
+                typeId:updatedTag.typeId,
+                contentType:updatedTag.contentType,
+                isActive:updatedTag.isActive,
+                color:updatedTag.color,
                 slug: updatedTag.slug,
                 description: updatedTag.description || '',
             }
@@ -100,6 +111,11 @@ export const useTagStore = defineStore('tagStore', () => {
 
             const mapped: Tag = {
                 id: data.id,
+                contentType:data.contentType,
+                typeId:data.typeId,
+                color:data.color,
+                status:data.status,
+                isActive:data.isActive,
                 name: data.name,
                 slug: data.slug,
                 description: data.description || '',

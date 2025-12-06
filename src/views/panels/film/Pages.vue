@@ -121,30 +121,25 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-
-const pages = ref([])
-
-const loadPages = () => {
-  const savedPages = localStorage.getItem('film-pages')
-  if (savedPages) {
-    pages.value = JSON.parse(savedPages)
-  }
-}
+import {useFilmPageStore} from "@/stores/film-page.ts";
+import {useRouter} from "vue-router";
+const filmPageStore=useFilmPageStore()
+const pages = computed(()=>filmPageStore.pages)
 
 const totalPages = computed(() => pages.value.length)
 const publishedPages = computed(() => pages.value.filter(p => p.status === 'published').length)
 const draftPages = computed(() => pages.value.filter(p => p.status === 'draft').length)
 const totalViews = computed(() => pages.value.reduce((sum, p) => sum + (p.views || 0), 0))
 
-const deletePage = (id) => {
+const deletePage = async (id) => {
   if (confirm('آیا از حذف این صفحه اطمینان دارید؟')) {
+    await filmPageStore.deletePage(id)
     pages.value = pages.value.filter(p => p.id !== id)
-    localStorage.setItem('film-pages', JSON.stringify(pages.value))
   }
 }
-
+const router = useRouter()
 const editPage = (id) => {
-  console.log('Edit page:', id)
+  router.push(`/dashboard/film/pages/edit/${id}`)
 }
 
 const formatDate = (dateString) => {
@@ -171,11 +166,11 @@ const getStatusColor = (status) => {
 }
 
 const createNewPage = () => {
-  console.log('Create new page')
+  router.push('/dashboard/film/pages/create')
 }
 
-onMounted(() => {
-  loadPages()
+onMounted(async () => {
+  await filmPageStore.fetchPages()
 })
 </script>
 

@@ -38,31 +38,31 @@
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">عنوان فیلم</label>
               <input
-                v-model="form.title"
-                type="text"
-                placeholder="عنوان فیلم فارسی..."
-                class="input-field"
+                  v-model="form.title"
+                  type="text"
+                  placeholder="عنوان فیلم فارسی..."
+                  class="input-field"
               />
             </div>
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">عنوان انگلیسی</label>
               <input
-                v-model="form.titleEn"
-                type="text"
-                placeholder="English Title..."
-                class="input-field"
-                dir="ltr"
+                  v-model="form.titleEn"
+                  type="text"
+                  placeholder="English Title..."
+                  class="input-field"
+                  dir="ltr"
               />
             </div>
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">خلاصه داستان</label>
               <textarea
-                v-model="form.description"
-                rows="5"
-                placeholder="خلاصه داستان فیلم را بنویسید..."
-                class="input-field resize-none"
+                  v-model="form.description"
+                  rows="5"
+                  placeholder="خلاصه داستان فیلم را بنویسید..."
+                  class="input-field resize-none"
               ></textarea>
             </div>
 
@@ -70,20 +70,20 @@
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">کارگردان</label>
                 <input
-                  v-model="form.director"
-                  type="text"
-                  placeholder="نام کارگردان..."
-                  class="input-field"
+                    v-model="form.director"
+                    type="text"
+                    placeholder="نام کارگردان..."
+                    class="input-field"
                 />
               </div>
 
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">سال تولید</label>
                 <input
-                  v-model="form.year"
-                  type="number"
-                  placeholder="2024"
-                  class="input-field"
+                    v-model="form.year"
+                    type="number"
+                    placeholder="2024"
+                    class="input-field"
                 />
               </div>
             </div>
@@ -92,23 +92,23 @@
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">مدت زمان (دقیقه)</label>
                 <input
-                  v-model="form.duration"
-                  type="number"
-                  placeholder="120"
-                  class="input-field"
+                    v-model="form.duration"
+                    type="number"
+                    placeholder="120"
+                    class="input-field"
                 />
               </div>
 
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">امتیاز IMDB</label>
                 <input
-                  v-model="form.imdbRating"
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  max="10"
-                  placeholder="8.5"
-                  class="input-field"
+                    v-model="form.imdbRating"
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="10"
+                    placeholder="8.5"
+                    class="input-field"
                 />
               </div>
             </div>
@@ -116,32 +116,32 @@
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">بازیگران</label>
               <input
-                v-model="form.cast"
-                type="text"
-                placeholder="نام بازیگران را با کاما جدا کنید..."
-                class="input-field"
+                  v-model="form.cast"
+                  type="text"
+                  placeholder="نام بازیگران را با کاما جدا کنید..."
+                  class="input-field"
               />
             </div>
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">لینک تریلر</label>
               <input
-                v-model="form.trailerUrl"
-                type="text"
-                placeholder="https://..."
-                class="input-field"
-                dir="ltr"
+                  v-model="form.trailerUrl"
+                  type="text"
+                  placeholder="https://..."
+                  class="input-field"
+                  dir="ltr"
               />
             </div>
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">لینک دانلود</label>
               <input
-                v-model="form.downloadUrl"
-                type="text"
-                placeholder="https://..."
-                class="input-field"
-                dir="ltr"
+                  v-model="form.downloadUrl"
+                  type="text"
+                  placeholder="https://..."
+                  class="input-field"
+                  dir="ltr"
               />
             </div>
           </div>
@@ -154,40 +154,40 @@
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">کشور سازنده</label>
               <input
-                v-model="form.country"
-                type="text"
-                placeholder="نام کشور..."
-                class="input-field"
+                  v-model="form.country"
+                  type="text"
+                  placeholder="نام کشور..."
+                  class="input-field"
               />
             </div>
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">زبان</label>
               <input
-                v-model="form.language"
-                type="text"
-                placeholder="فارسی، انگلیسی، ..."
-                class="input-field"
+                  v-model="form.language"
+                  type="text"
+                  placeholder="فارسی، انگلیسی، ..."
+                  class="input-field"
               />
             </div>
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">محدودیت سنی</label>
               <input
-                v-model="form.ageRating"
-                type="text"
-                placeholder="مثلا: +13، +18"
-                class="input-field"
+                  v-model="form.ageRating"
+                  type="text"
+                  placeholder="مثلا: +13، +18"
+                  class="input-field"
               />
             </div>
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">کلمات کلیدی</label>
               <input
-                v-model="form.keywords"
-                type="text"
-                placeholder="کلمات کلیدی با کاما جدا کنید..."
-                class="input-field"
+                  v-model="form.keywords"
+                  type="text"
+                  placeholder="کلمات کلیدی با کاما جدا کنید..."
+                  class="input-field"
               />
             </div>
           </div>
@@ -220,10 +220,10 @@
           <label class="block text-sm font-medium text-gray-700 mb-3">پوستر فیلم</label>
           <div class="space-y-3">
             <div v-if="form.poster" class="relative aspect-[2/3] rounded-lg overflow-hidden border-2 border-gray-200">
-              <img :src="form.poster" alt="Poster" class="w-full h-full object-cover" />
+              <img :src="form.poster" alt="Poster" class="w-full h-full object-cover"/>
               <button
-                @click="form.poster = ''"
-                class="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                  @click="form.poster = ''"
+                  class="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
               >
                 <i class="ti ti-x"></i>
               </button>
@@ -231,7 +231,7 @@
             <label class="btn-secondary w-full text-center cursor-pointer">
               <i class="ti ti-upload ml-2"></i>
               {{ form.poster ? 'تغییر پوستر' : 'آپلود پوستر' }}
-              <input type="file" @change="handlePosterUpload" accept="image/*" class="hidden" />
+              <input type="file" @change="handlePosterUpload" accept="image/*" class="hidden"/>
             </label>
           </div>
         </div>
@@ -241,24 +241,24 @@
           <label class="block text-sm font-medium text-gray-700 mb-3">دسته‌بندی</label>
           <div class="relative">
             <button
-              @click="showCategoryDropdown = !showCategoryDropdown"
-              class="w-full px-4 py-2.5 bg-white border-2 border-gray-200 rounded-lg text-right hover:border-purple-300 transition-colors flex items-center justify-between"
+                @click="showCategoryDropdown = !showCategoryDropdown"
+                class="w-full px-4 py-2.5 bg-white border-2 border-gray-200 rounded-lg text-right hover:border-purple-300 transition-colors flex items-center justify-between"
             >
-              <span>{{ form.category || 'انتخاب دسته‌بندی' }}</span>
+              <span>{{ selectedCategory || 'انتخاب دسته‌بندی' }}</span>
               <i class="ti ti-chevron-down"></i>
             </button>
             <ul
-              v-show="showCategoryDropdown"
-              class="absolute z-10 w-full mt-2 bg-white border-2 border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                v-show="showCategoryDropdown"
+                class="absolute z-10 w-full mt-2 bg-white border-2 border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
             >
               <li
-                v-for="category in categories"
-                :key="category"
-                @click="selectCategory(category)"
-                class="px-4 py-2.5 hover:bg-purple-50 cursor-pointer transition-colors"
-                :class="{ 'bg-purple-50 text-purple-600 font-medium': form.category === category }"
+                  v-for="category in categories"
+                  :key="category"
+                  @click="selectCategory(category)"
+                  class="px-4 py-2.5 hover:bg-purple-50 cursor-pointer transition-colors"
+                  :class="{ 'bg-purple-50 text-purple-600 font-medium': form.category === category.title }"
               >
-                {{ category }}
+                {{ category.title }}
               </li>
             </ul>
           </div>
@@ -269,27 +269,27 @@
           <label class="block text-sm font-medium text-gray-700 mb-3">وضعیت انتشار</label>
           <div class="relative">
             <button
-              @click="showStatusDropdown = !showStatusDropdown"
-              class="w-full px-4 py-2.5 bg-white border-2 border-gray-200 rounded-lg text-right hover:border-purple-300 transition-colors flex items-center justify-between"
+                @click="showStatusDropdown = !showStatusDropdown"
+                class="w-full px-4 py-2.5 bg-white border-2 border-gray-200 rounded-lg text-right hover:border-purple-300 transition-colors flex items-center justify-between"
             >
               <span>{{ getStatusLabel(form.status) }}</span>
               <i class="ti ti-chevron-down"></i>
             </button>
             <ul
-              v-show="showStatusDropdown"
-              class="absolute z-10 w-full mt-2 bg-white border-2 border-gray-200 rounded-lg shadow-lg"
+                v-show="showStatusDropdown"
+                class="absolute z-10 w-full mt-2 bg-white border-2 border-gray-200 rounded-lg shadow-lg"
             >
               <li
-                @click="selectStatus('draft')"
-                class="px-4 py-2.5 hover:bg-purple-50 cursor-pointer transition-colors"
-                :class="{ 'bg-purple-50 text-purple-600 font-medium': form.status === 'draft' }"
+                  @click="selectStatus('draft')"
+                  class="px-4 py-2.5 hover:bg-purple-50 cursor-pointer transition-colors"
+                  :class="{ 'bg-purple-50 text-purple-600 font-medium': form.status === 'draft' }"
               >
                 پیش‌نویس
               </li>
               <li
-                @click="selectStatus('published')"
-                class="px-4 py-2.5 hover:bg-purple-50 cursor-pointer transition-colors"
-                :class="{ 'bg-purple-50 text-purple-600 font-medium': form.status === 'published' }"
+                  @click="selectStatus('published')"
+                  class="px-4 py-2.5 hover:bg-purple-50 cursor-pointer transition-colors"
+                  :class="{ 'bg-purple-50 text-purple-600 font-medium': form.status === 'published' }"
               >
                 منتشر شده
               </li>
@@ -301,9 +301,9 @@
         <div class="bg-white rounded-xl border border-gray-200 p-6">
           <label class="flex items-center gap-3 cursor-pointer">
             <input
-              v-model="form.featured"
-              type="checkbox"
-              class="w-5 h-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                v-model="form.featured"
+                type="checkbox"
+                class="w-5 h-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
             />
             <span class="text-gray-700 font-medium">فیلم ویژه</span>
           </label>
@@ -313,7 +313,8 @@
         <div class="bg-white rounded-xl border border-red-200 p-6">
           <h3 class="text-lg font-bold text-red-600 mb-4">حذف فیلم</h3>
           <p class="text-sm text-gray-600 mb-4">با حذف فیلم، تمام اطلاعات آن نیز حذف می‌شود.</p>
-          <button @click="deleteMovie" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
+          <button @click="deleteMovie"
+                  class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
             <i class="ti ti-trash ml-2"></i>
             حذف دائمی
           </button>
@@ -324,32 +325,24 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useToast } from '../../../composables/useToast'
+import {ref, onMounted, computed, watch} from 'vue'
+import {useRouter, useRoute} from 'vue-router'
+import {useToast} from "@/composables/useToast.js";
+import {useMovieStore} from "@/stores/movie.ts";
+import {useCategoryTypeStore} from "@/stores/category-type.ts";
+import {useCategoryStore} from "@/stores/category.ts";
 
 const router = useRouter()
 const route = useRoute()
 const toast = useToast()
-
+const categoryTypeStore = useCategoryTypeStore()
+const categoryStore = useCategoryStore()
 const loading = ref(true)
 const showCategoryDropdown = ref(false)
 const showStatusDropdown = ref(false)
+const selectedCategory = ref()
+const categories = computed(() => categoryStore.categories)
 
-const categories = ref([
-  'اکشن',
-  'کمدی',
-  'درام',
-  'علمی تخیلی',
-  'ترسناک',
-  'انیمیشن',
-  'ماجراجویی',
-  'فانتزی',
-  'جنایی',
-  'تاریخی',
-  'عاشقانه',
-  'هیجان انگیز'
-])
 
 const form = ref({
   id: null,
@@ -369,46 +362,64 @@ const form = ref({
   keywords: '',
   poster: '',
   category: '',
+  categoryId: '',
   status: 'draft',
   featured: false,
   views: 0,
   likes: 0,
   comments: 0
 })
+const movieStore = useMovieStore()
 
-onMounted(() => {
-  // Simulate loading data
-  setTimeout(() => {
-    form.value = {
-      id: route.params.id,
-      title: 'شاهد شوتِس',
-      titleEn: 'The Shawshank Redemption',
-      description: 'داستان اندی دوفرین، بانکداری که به اتهام قتل همسر و معشوقش به زندان محکوم می‌شود. او در زندان با رِد، زندانی باتجربه‌ای آشنا می‌شود که به او کمک می‌کند تا در زندان زنده بماند.',
-      director: 'فرانک دارابونت',
-      year: 1994,
-      duration: 142,
-      imdbRating: 9.3,
-      cast: 'تیم رابینز، مورگان فریمن، باب گانتون',
-      trailerUrl: 'https://www.youtube.com/watch?v=6hB3S9bIaco',
-      downloadUrl: 'https://example.com/download/shawshank',
-      country: 'ایالات متحده',
-      language: 'انگلیسی',
-      ageRating: '+13',
-      keywords: 'درام، زندان، دوستی، امید',
-      poster: 'https://image.tmdb.org/t/p/w500/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg',
-      category: 'درام',
-      status: 'published',
-      featured: true,
-      views: 145620,
-      likes: 8934,
-      comments: 423
-    }
-    loading.value = false
-  }, 800)
+onMounted(async () => {
+  await categoryTypeStore.fetchType('film')
+  const data = movieStore.findById(String(route.params.id))
+  if (data == null) {
+    await router.push('/dashboard/film/movies')
+  }
+  selectedCategory.value = data.category.title
+  form.value = {
+    id: route.params.id,
+    type: data.type,
+    title: data.title,
+    titleEn: data.titleEn,
+    description: data.description,
+    director: data.director,
+    year: data.year,
+    duration: data.duration,
+    imdbRating: data.imdbRating,
+    cast: data.cast,
+    trailerUrl: data.trailerUrl,
+    downloadUrl: data.downloadUrl,
+    country: data.country,
+    language: data.language,
+    ageRating: data.ageRating,
+    keywords: data.keywords,
+    poster: data.poster,
+    category: data.category.title,
+    categoryId: data.category.id,
+    status: data.status ?? '',
+    featured: data.featured ?? '',
+    views: data.views ?? 0,
+    likes: data.likes ?? 0,
+    comments: data.comments ?? 0
+  }
+  loading.value = false
+
 })
+watch(
+    () => categoryTypeStore.selectedType,
+    async (type) => {
+      if (type?.id) {
+        await categoryStore.fetchCategories({typeId: type.id,contentType:'movie'})
+      }
+    },
+    {immediate: true}
+)
 
 const selectCategory = (category) => {
-  form.value.category = category
+  form.value.categoryId = category.id
+  selectedCategory.value = category.title
   showCategoryDropdown.value = false
 }
 
@@ -451,7 +462,7 @@ const saveDraft = () => {
   updateMovie()
 }
 
-const updateMovie = () => {
+const updateMovie = async () => {
   if (!form.value.title) {
     toast.warning('لطفاً عنوان فیلم را وارد کنید', 'عنوان الزامی است')
     return
@@ -462,21 +473,21 @@ const updateMovie = () => {
     return
   }
 
-  if (!form.value.category) {
+  if (!form.value.categoryId) {
     toast.warning('لطفاً دسته‌بندی را انتخاب کنید', 'انتخاب دسته‌بندی الزامی است')
     return
   }
-
-  console.log('Updating movie:', form.value)
+  await movieStore.updateMovie(form.value)
   toast.success('فیلم با موفقیت به‌روزرسانی شد!', 'تغییرات ذخیره گردید')
   setTimeout(() => {
     router.push('/dashboard/film/movies')
   }, 1000)
 }
 
-const deleteMovie = () => {
+const deleteMovie = async () => {
   if (confirm('آیا از حذف این فیلم اطمینان دارید؟ این عمل غیرقابل بازگشت است!')) {
     console.log('Deleting movie:', form.value.id)
+    await movieStore.removeMovie(form.value.id)
     toast.success('فیلم با موفقیت حذف شد', 'تغییرات اعمال گردید')
     setTimeout(() => {
       router.push('/dashboard/film/movies')

@@ -1,0 +1,89 @@
+import { ref, inject } from 'vue'
+import type { AxiosInstance, AxiosProgressEvent } from 'axios'
+import { axiosKey } from '../plugins/axiosPlugins'
+
+export function useUploader() {
+    const axios = inject<AxiosInstance>(axiosKey)
+    if (!axios) throw new Error('Axios instance not injected')
+
+    const uploading = ref(false)
+    const progress = ref(0)
+
+    // 📌 متد عمومی آپلود
+    const upload = async (file: File, endpoint: string): Promise<string> => {
+        try {
+            uploading.value = true
+            progress.value = 0
+
+            const formData = new FormData()
+            formData.append('file', file)
+
+            const { data } = await axios.post(endpoint, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+                onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+                    if (progressEvent.total) {
+                        progress.value = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+                    }
+                },
+            })
+
+            if (!data?.url) throw new Error('No URL returned from server')
+            return data.url.toString()
+        } finally {
+            uploading.value = false
+        }
+    }
+
+    // 📌 کمکی: اگر ورودی base64 بود تبدیل به File کن
+    const base64ToFile = async (base64String: string, filename = 'upload.png'): Promise<File> => {
+        const blob = await fetch(base64String).then(res => res.blob())
+        return new File([blob], filename, { type: blob.type })
+    }
+
+    // 📌 آپلود تصویر
+    const uploadImage = async (input: File | string): Promise<string> => {
+        let file: File
+        if (typeof input === 'string' && input.startsWith('data:image')) {
+            file = await base64ToFile(input, 'image.png')
+        } else if (input instanceof File) {
+            file = input
+        } else {
+            throw new Error('Invalid input for uploadImage')
+        }
+        return upload(file, '/v1/uploads/image')
+    }
+
+    // 📌 آپلود ویدیو
+    const uploadVideo = async (input: File | string): Promise<string> => {
+        let file: File
+        if (typeof input === 'string' && input.startsWith('data:video')) {
+            file = await base64ToFile(input, 'video.mp4')
+        } else if (input instanceof File) {
+            file = input
+        } else {
+            throw new Error('Invalid input for uploadVideo')
+        }
+        return upload(file, '/v1/uploads/video')
+    }
+
+    // 📌 آپلود فایل عمومی
+    const uploadFile = async (input: File | string): Promise<string> => {
+        let file: File
+        if (typeof input === 'string' && input.startsWith('data:')) {
+            file = await base64ToFile(input, 'file.bin')
+        } else if (input instanceof File) {
+            file = input
+        } else {
+            throw new Error('Invalid input for uploadFile')
+        }
+        return upload(file, '/v1/uploads/file')
+    }
+
+    return {
+        uploading,
+        progress,
+        uploadImage,
+        uploadVideo,
+        uploadFile,
+    }
+}

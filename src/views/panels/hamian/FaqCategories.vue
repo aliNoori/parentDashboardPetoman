@@ -263,6 +263,7 @@ import {ref, computed, onMounted, watch} from 'vue'
 import {useFaqStore} from "@/stores/faq.ts";
 import {useCategoryTypeStore} from "@/stores/category-type.ts";
 import {useCategoryStore} from "@/stores/category.ts";
+import {useFaqTypeStore} from "@/stores/faq-type.ts";
 
 defineEmits(['navigate'])
 const faqStore=useFaqStore()
@@ -273,7 +274,9 @@ const categories = computed(() => categoryStore.categories)
 const newCategory = ref({
   title: '',
   slug: '',
-  color: '#6B7280'
+  color: '#6B7280',
+  contentType:'hamian',
+  typeId: categoryTypeStore.selectedType?.id || null
 })
 
 const editingCategory = ref(null)
@@ -309,12 +312,11 @@ watch(
     { immediate: true, deep: true }
 )
 const categoryCounts = computed(() => {
-  const counts = {}  // آبجکت خالی ساده
-  console.log('c',faqs.value)
+  const counts = {}
   if (!faqs.value) return counts
   faqs.value.forEach(faq => {
-    if (faq.categoryType && faq.categoryType.slug) {
-      const slug = faq.categoryType.slug
+    if (faq.category && faq.category.slug) {
+      const slug = faq.category.slug
 
       counts[slug] = (counts[slug] || 0) + 1
     }
@@ -344,6 +346,7 @@ const addCategory = async () => {
     title: '',
     slug: '',
     color: '#6B7280',
+    contentType:'hamian',
     typeId: categoryTypeStore.selectedType?.id || null
   }
 
@@ -351,11 +354,16 @@ const addCategory = async () => {
 }
 
 const editCategory = (category) => {
-  editingCategory.value = { ...category }
+  const clean = { ...category }
+  delete clean.posts
+  delete clean.parent
+
+  editingCategory.value = clean
   showEditModal.value = true
 }
 
 const updateCategory = async () => {
+
   const index = categories.value.findIndex(c => c.id === editingCategory.value.id)
   if (index !== -1) {
     // فراخوانی store برای ویرایش
@@ -385,9 +393,9 @@ const deleteCategory = async (id) => {
     alert('دسته‌بندی با موفقیت حذف شد!')
   }
 }
-
+const faqTypeStore = useFaqTypeStore()
 onMounted(async () => {
-  await faqStore.fetchFaqs()
+  await faqTypeStore.fetchType('hamian')
   await categoryTypeStore.fetchType('faq')
 })
 watch(
@@ -395,7 +403,17 @@ watch(
     async (type) => {
       if (type?.id) {
         newCategory.value.typeId = type.id
-        await categoryStore.fetchCategories({typeId: type.id})
+        await categoryStore.fetchCategories({typeId: type.id,contentType:'hamian'})
+      }
+    },
+    {immediate: true}
+)
+
+watch(
+    () => faqTypeStore.selectedType,
+    async (type) => {
+      if (type?.id) {
+        await faqStore.fetchFaqs({typeId: type.id})
       }
     },
     {immediate: true}

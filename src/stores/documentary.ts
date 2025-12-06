@@ -68,7 +68,8 @@ export const useDocumentaryStore = defineStore('documentaryStore', () => {
 
             documentaries.value = data.map((doc: any) => ({
                 ...doc,
-                videoUrl: doc.videoFile || doc.videoUrl || '',
+                videoUrl: doc.videoUrl || '',
+                videoFile: doc.videoFile||'',
                 thumbnailUrl: doc.thumbnailPreview || '',
                 tags: Array.isArray(doc.tags) ? doc.tags : JSON.parse(doc.tags || '[]')
             }))
@@ -113,8 +114,10 @@ export const useDocumentaryStore = defineStore('documentaryStore', () => {
             // 🎞️ ویدیو
             if (form.videoUploadMethod === 'file' && form.videoFile) {
                 formData.append('videoFile', form.videoFile)
+                formData.append('videoUrl', '')
             } else if (form.videoUploadMethod === 'url' && form.videoUrl) {
                 formData.append('videoUrl', form.videoUrl)
+                formData.append('videoFile','')
             }
 
             // 🖼️ Thumbnail (اختیاری)
@@ -125,7 +128,6 @@ export const useDocumentaryStore = defineStore('documentaryStore', () => {
             }
 
             const { data } = await axios.post('/v1/documentaries', formData)
-
             documentaries.value.unshift(data)
             console.log('✅ مستند جدید ثبت شد')
             return data

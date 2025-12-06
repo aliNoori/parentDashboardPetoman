@@ -42,7 +42,7 @@
 
 <script setup>
 import { ref } from 'vue'
-
+const emit = defineEmits(["close"])
 const toasts = ref([])
 let toastId = 0
 

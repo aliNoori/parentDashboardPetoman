@@ -33,7 +33,8 @@ export const useCategoryStore = defineStore('categoryStore', () => {
     if (!axios) throw new Error('Axios instance not injected')
 
     // fetch all categories flat
-    const fetchCategories = async (filters?: { typeId?: string; activeOnly?: boolean }) => {
+    const fetchCategories = async (filters?: { typeId?: string;contentType?:string; activeOnly?: boolean }) => {
+
         try {
             const { data } = await axios.get('/categories', { params: filters })
             categories.value = data
@@ -44,9 +45,9 @@ export const useCategoryStore = defineStore('categoryStore', () => {
     }
 
     // fetch tree by type
-    const fetchCategoryTree = async (typeId?: string) => {
+    const fetchCategoryTree = async (typeId?: string,contentType?:string) => {
         try {
-            const { data } = await axios.get('/categories/tree', { params: { typeId } })
+            const { data } = await axios.get('/categories/tree', { params: { typeId,contentType } })
             categoryTree.value = data
         } catch (error) {
             console.error('❌ خطا در دریافت درخت دسته‌بندی‌ها:', error)
@@ -126,6 +127,7 @@ export const useCategoryStore = defineStore('categoryStore', () => {
                 slug: newCategory.slug,
                 parentId: newCategory.parentId,
                 typeId: newCategory.typeId,
+                contentType:newCategory.contentType,
                 isActive: newCategory.isActive,
                 sortOrder: newCategory.sortOrder,
                 cover: coverUrl || null,
@@ -183,6 +185,7 @@ export const useCategoryStore = defineStore('categoryStore', () => {
                 slug: updatedCategory.slug,
                 parentId: updatedCategory.parentId,
                 typeId: updatedCategory.typeId,
+                contentType:updatedCategory.contentType,
                 isActive: updatedCategory.isActive,
                 sortOrder: updatedCategory.sortOrder,
                 cover: coverUrl || null,

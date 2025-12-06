@@ -8,7 +8,7 @@
           <p class="text-gray-600 mt-1">اطلاعات ویدیوی مستند را با دقت وارد کنید</p>
         </div>
         <button
-            @click="emit('navigate', 'documentaries')"
+            @click="cancelEdit"
             class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 flex items-center gap-2"
         >
           <i class="ti ti-arrow-right"></i>
@@ -387,14 +387,22 @@ import {useDocumentaryStore} from "@/stores/documentary.ts";
 import {useCategoryTypeStore} from "@/stores/category-type.ts";
 import {useCategoryStore} from "@/stores/category.ts";
 import {useTagStore} from "@/stores/tag.ts";
+import {useTagTypeStore} from "@/stores/tag-type.ts";
+
 
 const emit = defineEmits(['navigate'])
 const documentaryStore = useDocumentaryStore()
+const tagTypeStore = useTagTypeStore()
 const tagStore = useTagStore()
 const documentary = computed(() => documentaryStore.documentary)
 const isEdit = ref(false) // TODO: Check if editing existing documentary
 const categoryTypeStore = useCategoryTypeStore()
 const categoryStore = useCategoryStore()
+const cancelEdit = () => {
+  isEdit.value = false
+  documentaryStore.documentary=null
+  emit('navigate', 'documentaries')
+}
 const form = ref({
   title: '',
   description: '',
@@ -529,6 +537,7 @@ const handleSubmit = async () => {
     if (isEdit.value && documentary.value?.id) {
       // 🔹 حالت ویرایش
       await documentaryStore.updateDocumentary(documentary.value.id, payload)
+      isEdit.value = false
       alert('✅ تغییرات مستند با موفقیت ذخیره شد!')
     } else {
       // 🔹 حالت ایجاد
@@ -543,14 +552,11 @@ const handleSubmit = async () => {
   }
 }
 onMounted(async () => {
-  //await documentaryStore.fetchDocumentaries()
-  await tagStore.fetchTags()
   await categoryTypeStore.fetchType('document')
-
+  await tagTypeStore.fetchType('document')
   if (documentary.value && documentary.value.id) {
     isEdit.value = true
-    // پر کردن فرم با داده‌های مستند
-    console.log('tags', documentary.value.tags)
+
     form.value = {
       title: documentary.value.title || '',
       description: documentary.value.description || '',
@@ -558,7 +564,7 @@ onMounted(async () => {
       thumbnailPreview: documentary.value.thumbnailPreview || null,
       videoUploadMethod: documentary.value.videoUrl ? 'url' : 'file',
       videoUrl: documentary.value.videoUrl || '',
-      videoFile: documentary.value.videoUrl || '',
+      videoFile: documentary.value.videoFile || '',
       duration: documentary.value.duration || '',
       tags: documentary.value.tags || [],
       publishDate: documentary.value.publishDate
@@ -577,7 +583,16 @@ watch(
     () => categoryTypeStore.selectedType,
     async (type) => {
       if (type?.id) {
-        await categoryStore.fetchCategories({typeId: type.id})
+        await categoryStore.fetchCategories({typeId: type.id,contentType:'hamian'})
+      }
+    },
+    {immediate: true}
+)
+watch(
+    () => tagTypeStore.selectedType,
+    async (type) => {
+      if (type?.id) {
+        await tagStore.fetchTags({typeId: type.id,contentType:'hamian'})
       }
     },
     {immediate: true}

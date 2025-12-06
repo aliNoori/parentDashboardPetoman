@@ -50,12 +50,11 @@
 
         <div class="bg-white rounded-xl border border-gray-200 p-6">
           <label class="block text-sm font-medium text-gray-700 mb-4">محتوای نوشته</label>
-          <textarea
-            v-model="form.content"
-            rows="15"
-            placeholder="محتوای کامل نوشته خود را بنویسید..."
-            class="input-field resize-none font-['Vazirmatn']"
-          ></textarea>
+          <TinyMCEEditor
+              v-model="form.content"
+              placeholder="محتوای نوشته خود را اینجا بنویسید..."
+              :height="400"
+          />
         </div>
 
         <div class="bg-white rounded-xl border border-gray-200 p-6">
@@ -120,7 +119,7 @@
               @click="showCategoryDropdown = !showCategoryDropdown"
               class="w-full px-4 py-2 border border-gray-300 rounded-lg text-right flex items-center justify-between hover:border-purple-500 transition-colors"
             >
-              <span class="text-gray-700">{{ form.category || 'انتخاب دسته‌بندی' }}</span>
+              <span class="text-gray-700">{{ form.category.title || 'انتخاب دسته‌بندی' }}</span>
               <i class="ti ti-chevron-down text-gray-400"></i>
             </button>
             <ul
@@ -133,38 +132,51 @@
                 @click="selectCategory(category)"
                 class="px-4 py-2 hover:bg-purple-50 cursor-pointer transition-colors"
               >
-                {{ category }}
+                {{ category.title }}
               </li>
             </ul>
           </div>
         </div>
 
+        <!-- Tags Block (Separate) -->
         <div class="bg-white rounded-xl border border-gray-200 p-6">
-          <h3 class="text-lg font-bold text-gray-900 mb-4">برچسب‌ها</h3>
-          <div class="flex flex-wrap gap-2 mb-3">
-            <span
-              v-for="(tag, index) in form.tags"
-              :key="index"
-              class="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm"
-            >
-              {{ tag }}
-              <button @click="removeTag(index)" class="hover:text-purple-900">
-                <i class="ti ti-x text-xs"></i>
-              </button>
-            </span>
+          <h3 class="text-lg font-medium text-gray-900 mb-4">برچسب‌ها</h3>
+          <!-- پیشنهادات -->
+          <div class="flex flex-wrap gap-2 mb-2">
+  <span
+      v-for="tag in tagStore.tags"
+      :key="tag.name"
+      @click="addTag(tag.name)"
+      class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm cursor-pointer hover:bg-rose-100 hover:text-rose-700"
+  >
+    {{ tag.name }} ({{ tag.count }})
+  </span>
           </div>
+          <!-- تگ‌های انتخاب‌شده -->
+          <div class="flex flex-wrap gap-2 mb-2">
+         <span v-for="(tag, index) in form.tags" :key="index"
+               class="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-sm flex items-center gap-2">
+    {{ tag }}
+    <button type="button" @click="removeTag(index)" class="hover:text-rose-900">
+      <i class="ti ti-x text-xs"></i>
+    </button>
+  </span>
+          </div>
+          <!-- ورودی تگ جدید -->
           <div class="flex gap-2">
             <input
-              v-model="newTag"
-              @keypress.enter="addTag"
-              type="text"
-              placeholder="برچسب جدید..."
-              class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm"
-            />
-            <button @click="addTag" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                v-model="newTag"
+                type="text"
+                @keypress.enter.prevent="addTag()"
+                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                placeholder="برچسب جدید را وارد کنید..."
+            >
+            <button type="button" @click="addTag()"
+                    class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
               <i class="ti ti-plus"></i>
             </button>
           </div>
+
         </div>
 
         <div class="bg-white rounded-xl border border-gray-200 p-6">
@@ -223,20 +235,30 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import {ref, onMounted, watch, watchEffect, computed} from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useToast } from '../../../composables/useToast'
+import { useToast} from "@/composables/useToast.js";
+import {useTagTypeStore} from "@/stores/tag-type.ts";
+import {useCategoryTypeStore} from "@/stores/category-type.ts";
+import {useCategoryStore} from "@/stores/category.ts";
+import {useTagStore} from "@/stores/tag.ts";
+import {useFilmPostStore} from "@/stores/film-post.ts";
+import TinyMCEEditor from "@/components/TinyMCEEditor.vue";
 
 const router = useRouter()
 const route = useRoute()
 const toast = useToast()
-
+const postStore=useFilmPostStore()
+const tagTypeStore=useTagTypeStore()
+const tagStore=useTagStore()
+const categoryTypeStore=useCategoryTypeStore()
+const categoryStore=useCategoryStore()
 const loading = ref(true)
 const showCategoryDropdown = ref(false)
 const showStatusDropdown = ref(false)
 const newTag = ref('')
-
-const categories = ref([
+const categories=computed(()=>categoryStore.categories)
+/*const categories = ref([
   'فیلم',
   'سریال',
   'انیمیشن',
@@ -245,7 +267,7 @@ const categories = ref([
   'اخبار',
   'مصاحبه',
   'آموزشی'
-])
+])*/
 
 const form = ref({
   id: null,
@@ -254,6 +276,7 @@ const form = ref({
   content: '',
   thumbnail: '',
   category: '',
+  categoryId:'',
   tags: [],
   status: 'draft',
   commentsEnabled: true,
@@ -261,36 +284,9 @@ const form = ref({
   likes: 0,
   comments: 0
 })
-
-onMounted(() => {
-  loadPost()
-})
-
-const loadPost = () => {
-  loading.value = true
-  const postId = route.params.id
-  
-  setTimeout(() => {
-    form.value = {
-      id: postId,
-      title: 'بررسی فیلم The Shawshank Redemption',
-      excerpt: 'یکی از بهترین فیلم‌های تاریخ سینما که داستان امید و دوستی را روایت می‌کند',
-      content: 'محتوای کامل نوشته درباره این فیلم استثنایی...\n\nاین فیلم که در سال 1994 ساخته شد، یکی از محبوب‌ترین آثار سینمایی است.',
-      thumbnail: 'https://image.tmdb.org/t/p/w500/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg',
-      category: 'نقد و بررسی',
-      tags: ['فیلم', 'درام', 'کلاسیک'],
-      status: 'published',
-      commentsEnabled: true,
-      views: 5420,
-      likes: 328,
-      comments: 42
-    }
-    loading.value = false
-  }, 1000)
-}
-
 const selectCategory = (category) => {
   form.value.category = category
+  form.value.categoryId = category.id
   showCategoryDropdown.value = false
 }
 
@@ -303,14 +299,26 @@ const getStatusLabel = (status) => {
   return status === 'published' ? 'منتشر شده' : 'پیش‌نویس'
 }
 
-const addTag = () => {
-  if (newTag.value.trim() && !form.value.tags.includes(newTag.value.trim())) {
-    form.value.tags.push(newTag.value.trim())
-    newTag.value = ''
-  }
-}
+function addTag(tagName) {
+  const tag = tagName || newTag.value.trim()
+  if (!tag) return
 
-const removeTag = (index) => {
+  if (!form.value.tags.includes(tag)) {
+    form.value.tags.push(tag)
+
+    // اگر تگ از پیشنهادات بود، شمارنده زیاد بشه
+    if (tagStore.tags.some(t => t.name === tag)) {
+      tagStore.incrementTagCount(tag)
+    }
+  }
+  newTag.value = ''
+}
+const removeTag = async (index) => {
+  const tagName = form.value.tags[index]
+  const tagObj = tagStore.tags.find(t => t.name === tagName)
+  if (tagObj) {
+    await tagStore.decrementTagCount(tagObj.id)
+  }
   form.value.tags.splice(index, 1)
 }
 
@@ -339,13 +347,14 @@ const saveDraft = () => {
   updatePost()
 }
 
-const updatePost = () => {
+const updatePost = async () => {
   if (!form.value.title) {
     toast.warning('لطفاً عنوان نوشته را وارد کنید', 'عنوان الزامی است')
     return
   }
 
   console.log('Updating post:', form.value)
+  await postStore.updatePost(form.value.id, form.value)
   toast.success('نوشته با موفقیت به‌روزرسانی شد!', 'تغییرات ذخیره گردید')
   setTimeout(() => {
     router.push('/dashboard/film/posts')
@@ -361,6 +370,65 @@ const deletePost = () => {
     }, 1000)
   }
 }
+const posts=ref()
+watchEffect(()=>
+{
+  posts.value=postStore.posts
+
+})
+
+onMounted(async () => {
+  await categoryTypeStore.fetchType('post')
+  await tagTypeStore.fetchType('post')
+  loadPostData(posts.value)
+})
+const loadPostData = (posts) => {
+  const postId = route.params.id
+  const post = posts.find(p => p.id === postId)
+  if (!post) return
+
+  const map = {
+    id: post.id,
+    title: post.title,
+    excerpt: post.excerpt,
+    content: post.content,
+    thumbnail: post.thumbnail,
+    category: post.category, // ← این مهمه
+    categoryId: post.category.id,
+    tags: post.tags || [],
+    status: post.status,
+    commentsEnabled: post.commentsEnabled ?? true,
+    views: post.views ?? 0,
+    likes: post.likes ?? 0,
+    comments: post.comments ?? 0,
+  }
+
+  Object.assign(form.value, map)
+  loading.value=false
+}
+
+
+watch(
+    () => categoryTypeStore.selectedType,
+    async (type) => {
+      if (type?.id) {
+        //newCategoryForm.typeId = type.id
+        //await categoryStore.fetchCategoryTree(type.id)
+        await categoryStore.fetchCategories({typeId: type.id,contentType:'film'})
+      }
+    },
+    {immediate: true}
+)
+
+watch(
+    () => tagTypeStore.selectedType,
+    async (type) => {
+      if (type?.id) {
+        await tagStore.fetchTags({typeId: type.id,contentType:'film'})
+      }
+    },
+    {immediate: true}
+)
 </script>
 
 <style scoped>

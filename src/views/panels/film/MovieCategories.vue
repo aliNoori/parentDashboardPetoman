@@ -86,20 +86,20 @@
                 <div class="flex items-center gap-3">
                   <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-lg"
                        :style="{ backgroundColor: category.color }">
-                    {{ category.name.charAt(0) }}
+                    {{ category.title.charAt(0) }}
                   </div>
-                  <span class="font-medium text-gray-900">{{ category.name }}</span>
+                  <span class="font-medium text-gray-900">{{ category.title }}</span>
                 </div>
               </td>
               <td class="px-6 py-4">
                 <span class="text-sm text-gray-600 font-mono bg-gray-100 px-3 py-1 rounded">{{ category.slug }}</span>
               </td>
               <td class="px-6 py-4">
-                <span v-if="category.type === 'movie'" class="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                <span v-if="category.contentType === 'movie'" class="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
                   <i class="ti ti-movie text-base"></i>
                   فیلم
                 </span>
-                <span v-else-if="category.type === 'series'" class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                <span v-else-if="category.contentType === 'series'" class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
                   <i class="ti ti-device-tv text-base"></i>
                   سریال
                 </span>
@@ -169,7 +169,7 @@
                 نام دسته‌بندی <span class="text-red-500">*</span>
               </label>
               <input
-                v-model="form.name"
+                v-model="form.title"
                 @input="generateSlug"
                 type="text"
                 placeholder="مثال: اکشن، درام، کمدی"
@@ -207,11 +207,11 @@
                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all flex items-center justify-between"
                   :class="{ 'border-red-500': errors.type }"
                 >
-                  <span v-if="form.type" class="flex items-center gap-2">
-                    <i v-if="form.type === 'movie'" class="ti ti-movie text-blue-600"></i>
-                    <i v-else-if="form.type === 'series'" class="ti ti-device-tv text-green-600"></i>
+                  <span v-if="form.contentType" class="flex items-center gap-2">
+                    <i v-if="form.contentType === 'movie'" class="ti ti-movie text-blue-600"></i>
+                    <i v-else-if="form.contentType === 'series'" class="ti ti-device-tv text-green-600"></i>
                     <i v-else class="ti ti-circles text-orange-600"></i>
-                    {{ typeOptions.find(t => t.value === form.type)?.label }}
+                    {{ typeOptions.find(t => t.value === form.contentType)?.label }}
                   </span>
                   <span v-else class="text-gray-400">انتخاب نوع محتوا</span>
                   <i class="ti ti-chevron-down text-gray-400"></i>
@@ -222,7 +222,7 @@
                     :key="option.value"
                     @click="selectType(option.value)"
                     class="px-4 py-3 hover:bg-purple-50 cursor-pointer transition-colors flex items-center gap-2"
-                    :class="{ 'bg-purple-100': form.type === option.value }"
+                    :class="{ 'bg-purple-100': form.contentType === option.value }"
                   >
                     <i :class="option.icon"></i>
                     <span>{{ option.label }}</span>
@@ -318,20 +318,40 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue'
+import {ref, inject, onMounted, watch, computed} from 'vue'
+import {useCategoryTypeStore} from "@/stores/category-type.ts";
+import {useCategoryStore} from "@/stores/category.ts";
 
 const toast = inject('toast')
 
-// Stats
-const stats = ref({
-  total: 10,
-  movies: 4,
-  series: 1,
-  both: 5
-})
 
+const categoryTypeStore = useCategoryTypeStore()
+const categoryStore = useCategoryStore()
+const categories = computed(() =>
+    categoryStore.categories.map(cat => ({
+      id: cat.id,
+      title: cat.title,
+      slug: cat.slug,
+      contentType: cat.contentType??'movie',
+      color: cat.color,
+      count: cat.count??0,
+      status: cat.isActive?'active':'inactive',
+      description: cat.description
+    }))
+)
+
+const stats = computed(() => {
+  const categories = categoryStore.categories
+
+  return {
+    total: categories.length,
+    movies: categories.filter(c => c.contentType === 'movie').length,
+    series: categories.filter(c => c.contentType === 'series').length,
+    both: categories.filter(c => c.contentType === 'both').length
+  }
+})
 // Categories data
-const categories = ref([
+/*const categories = ref([
   { id: 1, name: 'اکشن', slug: 'action', type: 'both', color: '#ef4444', count: 45, status: 'active', description: 'فیلم‌های اکشن و هیجان‌انگیز' },
   { id: 2, name: 'درام', slug: 'drama', type: 'both', color: '#8b5cf6', count: 32, status: 'active', description: 'فیلم‌های درام و احساسی' },
   { id: 3, name: 'کمدی', slug: 'comedy', type: 'movie', color: '#f59e0b', count: 28, status: 'active', description: 'فیلم‌های کمدی و خنده‌دار' },
@@ -342,7 +362,7 @@ const categories = ref([
   { id: 8, name: 'مستند', slug: 'documentary', type: 'both', color: '#84cc16', count: 12, status: 'active', description: 'مستندهای آموزشی' },
   { id: 9, name: 'تاریخی', slug: 'historical', type: 'movie', color: '#a855f7', count: 0, status: 'inactive', description: 'فیلم‌های تاریخی' },
   { id: 10, name: 'ماجراجویی', slug: 'adventure', type: 'both', color: '#f97316', count: 27, status: 'active', description: 'فیلم‌های ماجراجویی' }
-])
+])*/
 
 // Modal state
 const showModal = ref(false)
@@ -351,9 +371,9 @@ const typeDropdownOpen = ref(false)
 
 // Form data
 const form = ref({
-  name: '',
+  title: '',
   slug: '',
-  type: '',
+  contentType: '',
   color: '#9333ea',
   description: '',
   status: 'active'
@@ -378,7 +398,7 @@ const generateSlug = () => {
     'ن': 'n', 'و': 'v', 'ه': 'h', 'ی': 'i', 'ئ': 'i', 'ة': 'e', 'ى': 'a'
   }
   
-  let slug = form.value.name.toLowerCase()
+  let slug = form.value.title.toLowerCase()
   for (const [persian, english] of Object.entries(persianToEnglish)) {
     slug = slug.replace(new RegExp(persian, 'g'), english)
   }
@@ -388,7 +408,7 @@ const generateSlug = () => {
 
 // Select type
 const selectType = (value) => {
-  form.value.type = value
+  form.value.contentType = value
   typeDropdownOpen.value = false
 }
 
@@ -396,9 +416,9 @@ const selectType = (value) => {
 const openAddModal = () => {
   editMode.value = false
   form.value = {
-    name: '',
+    title: '',
     slug: '',
-    type: '',
+    contentType: '',
     color: '#9333ea',
     description: '',
     status: 'active'
@@ -419,7 +439,7 @@ const editCategory = (category) => {
 const validateForm = () => {
   errors.value = {}
   
-  if (!form.value.name) {
+  if (!form.value.title) {
     errors.value.name = 'نام دسته‌بندی الزامی است'
   }
   
@@ -427,58 +447,64 @@ const validateForm = () => {
     errors.value.slug = 'نامک الزامی است'
   }
   
-  if (!form.value.type) {
+  if (!form.value.contentType) {
     errors.value.type = 'انتخاب نوع محتوا الزامی است'
   }
   
   return Object.keys(errors.value).length === 0
 }
-
 // Save category
-const saveCategory = () => {
+const saveCategory = async () => {
   if (!validateForm()) {
     toast.warning('لطفا فیلدهای الزامی را تکمیل کنید')
     return
   }
-  
+
   if (editMode.value) {
+    const { count, status, ...rest } = form.value
+    const cleanPayload = {
+      ...rest,
+      isActive: status === 'active'
+    }
+    await categoryStore.editCategory({id:form.value.id,...cleanPayload})
     const index = categories.value.findIndex(c => c.id === form.value.id)
     if (index !== -1) {
-      categories.value[index] = { ...form.value }
+      categories.value[index] = {...form.value}
       toast.success('دسته‌بندی با موفقیت بروزرسانی شد')
     }
   } else {
     const newCategory = {
       ...form.value,
+      typeId:categoryTypeStore.selectedType.id,
       id: categories.value.length + 1,
       count: 0
     }
-    categories.value.push(newCategory)
-    stats.value.total++
-    if (form.value.type === 'movie') stats.value.movies++
-    else if (form.value.type === 'series') stats.value.series++
-    else stats.value.both++
+    const { id, count, status, ...rest } = newCategory
+    const cleanPayload = {
+      ...rest,
+      isActive: status === 'active'
+    }
+
+    await categoryStore.addCategory(cleanPayload)
+
     toast.success('دسته‌بندی جدید با موفقیت اضافه شد')
   }
-  
+
   closeModal()
 }
 
 // Delete category
-const deleteCategory = (category) => {
+const deleteCategory = async (category) => {
   if (category.count > 0) {
     toast.error('امکان حذف دسته‌بندی با محتوا وجود ندارد')
     return
   }
-  
-  if (confirm(`آیا از حذف دسته‌بندی "${category.name}" اطمینان دارید؟`)) {
+
+  if (confirm(`آیا از حذف دسته‌بندی "${category.title}" اطمینان دارید؟`)) {
+    await categoryStore.removeCategory(category.id)
     const index = categories.value.findIndex(c => c.id === category.id)
     if (index !== -1) {
       categories.value.splice(index, 1)
-      stats.value.total--
-      if (category.type === 'movie') stats.value.movies--
-      else if (category.type === 'series') stats.value.series--
-      else stats.value.both--
       toast.success('دسته‌بندی با موفقیت حذف شد')
     }
   }
@@ -489,4 +515,17 @@ const closeModal = () => {
   showModal.value = false
   typeDropdownOpen.value = false
 }
+
+onMounted(async () => {
+  await categoryTypeStore.fetchType('film')
+})
+watch(
+    () => categoryTypeStore.selectedType,
+    async (type) => {
+      if (type?.id) {
+        await categoryStore.fetchCategories({typeId: type.id})
+      }
+    },
+    {immediate: true}
+)
 </script>

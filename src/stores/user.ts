@@ -137,17 +137,7 @@ export const useUserStore = defineStore('userStore', () => {
 
 
             const { data } = await axios.post('/users', payload)
-            // اضافه کردن نقش و lastLogin مثل fetchAllUsers
-            const rolesArray = Array.isArray(data.roles) ? data.roles : []
-            let role = 'user'
-            if (rolesArray.includes('admin')) role = 'admin'
-            else if (rolesArray.includes('user')) role = 'user'
 
-            users.value.push({
-                ...data,
-                role,
-                lastLogin: data.lastSeen || new Date().toISOString()
-            })
             return data
         } catch (error) {
             console.error('❌ خطا در اضافه کردن کاربر:', error)
@@ -158,7 +148,7 @@ export const useUserStore = defineStore('userStore', () => {
         try {
             const avatarUrl = await resolveAvatar(updatedData.avatar ?? null)
             const payload={
-                name: updatedData.name,
+                fullName: updatedData.fullName,
                 username: updatedData.username,
                 isActive: updatedData.isActive,
                 email: updatedData.email,

@@ -253,8 +253,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import {ref, computed, onMounted, watch} from 'vue'
 import {useTagStore} from "@/stores/tag.ts";
+import {useTagTypeStore} from "@/stores/tag-type.ts";
 
 const searchQuery = ref('')
 const showAddModal = ref(false)
@@ -263,7 +264,8 @@ const deleteConfirm = ref(null)
 const showSortDropdown = ref(false)
 
 const selectedSort = ref({ value: 'name', label: 'نام برچسب' })
-
+const tagTypeStore=useTagTypeStore()
+const tagStore=useTagStore()
 const sortOptions = ref([
   { value: 'name', label: 'نام برچسب' },
   { value: 'count', label: 'تعداد استفاده' },
@@ -274,9 +276,10 @@ const sortOptions = ref([
 const tagForm = ref({
   name: '',
   slug: '',
-  description: ''
+  description: '',
+  contentType:'danim',
 })
-const tagStore=useTagStore()
+
 const tags=computed(()=>tagStore.tags)
 /*const tags = ref([
   {
@@ -400,7 +403,9 @@ const saveTag = async () => {
       id: editingTag.value.id,
       name: tagForm.value.name,
       slug: tagForm.value.slug,
-      description: tagForm.value.description || ''
+      description: tagForm.value.description || '',
+      contentType:'danim',
+      typeId:tagTypeStore.selectedType.id
     })
 
     const index = tags.value.findIndex(tag => tag.id === editingTag.value.id)
@@ -414,7 +419,9 @@ const saveTag = async () => {
     await tagStore.addTag({
       name: tagForm.value.name,
       slug: tagForm.value.slug,
-      description: tagForm.value.description || ''
+      description: tagForm.value.description || '',
+      contentType:'danim',
+      typeId:tagTypeStore.selectedType.id
     })
   }
 
@@ -452,13 +459,23 @@ const exportToExcel = () => {
 }
 
 onMounted(async () => {
-  await tagStore.fetchTags()
+  await tagTypeStore.fetchType('post')
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.relative')) {
       showSortDropdown.value = false
     }
   })
 })
+
+watch(
+    () => tagTypeStore.selectedType,
+    async (type) => {
+      if (type?.id) {
+        await tagStore.fetchTags({typeId: type.id,contentType:'danim'})
+      }
+    },
+    {immediate: true}
+)
 </script>
 
 <style scoped>

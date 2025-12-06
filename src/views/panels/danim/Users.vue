@@ -185,8 +185,8 @@
                 <div class="relative">
                   <img
                     :src="user.avatar"
-                    :alt="user.name"
-                    class="w-12 h-12 rounded-full object-cover"
+                    :alt="user.name.charAt(0)"
+                    class="w-12 h-12 rounded-full object-cover text-center content-center"
                   >
                   <div
                     v-if="user.isOnline"
@@ -994,7 +994,7 @@ const editForm = ref({
   avatar: null,
   email: '',
   phone: '',
-  role: 'subscriber'
+  role: 'danim_subscriber'
 })
 
 const selectedRole = ref({ value: 'all', label: 'همه نقش‌ها' })
@@ -1003,9 +1003,9 @@ const selectedStatus = ref({ value: 'all', label: 'همه وضعیت‌ها' })
 const roleOptions = ref([
   { value: 'all', label: 'همه نقش‌ها' },
   { value: 'danim_admin', label: 'مدیر' },
-  { value: 'editor', label: 'ویرایشگر' },
-  { value: 'author', label: 'نویسنده' },
-  { value: 'subscriber', label: 'کاربر عادی' }
+  { value: 'danim_editor', label: 'ویرایشگر' },
+  { value: 'danim_author', label: 'نویسنده' },
+  { value: 'danim_subscriber', label: 'کاربر عادی' }
 ])
 
 const statusOptions = ref([
@@ -1022,19 +1022,19 @@ const userForm = ref({
   email: '',
   phone: '',
   password: '',
-  role: 'subscriber'
+  role: 'danim_subscriber'
 })
 const userStore = useUserStore()
 const users = computed(() =>
     userStore.users.map(u => {
       // بررسی نقش‌ها
       const rolesArray = Array.isArray(u.roles) ? u.roles : []
-      let role = 'user' // پیش‌فرض
+      let role = 'danim_subscriber' // پیش‌فرض
 
       if (rolesArray.includes('danim_admin')) {
         role = 'danim_admin'
-      } else if (rolesArray.includes('user')) {
-        role = 'user'
+      } else if (rolesArray.includes('danim_subscriber')) {
+        role = 'danim_subscriber'
       }
 
       return {
@@ -1195,7 +1195,7 @@ const closeEditModal = () => {
     name: '',
     email: '',
     phone: '',
-    role: 'subscriber'
+    role: 'danim_subscriber'
   }
 }
 
@@ -1311,9 +1311,9 @@ const toggleUserMenu = (userId, event) => {
 const getRoleColor = (role) => {
   const colors = {
     danim_admin: 'bg-purple-100 text-purple-800',
-    editor: 'bg-blue-100 text-blue-800',
-    author: 'bg-green-100 text-green-800',
-    subscriber: 'bg-gray-100 text-gray-800'
+    danim_editor: 'bg-blue-100 text-blue-800',
+    danim_author: 'bg-green-100 text-green-800',
+    danim_subscriber: 'bg-gray-100 text-gray-800'
   }
   return colors[role] || 'bg-gray-100 text-gray-800'
 }
@@ -1321,9 +1321,9 @@ const getRoleColor = (role) => {
 const getRoleIcon = (role) => {
   const icons = {
     danim_admin: 'ti ti-crown',
-    editor: 'ti ti-edit',
-    author: 'ti ti-pencil',
-    subscriber: 'ti ti-user'
+    danim_editor: 'ti ti-edit',
+    danim_author: 'ti ti-pencil',
+    danim_subscriber: 'ti ti-user'
   }
   return icons[role] || 'ti ti-user'
 }
@@ -1331,9 +1331,9 @@ const getRoleIcon = (role) => {
 const getRoleLabel = (role) => {
   const labels = {
     danim_admin: 'مدیر',
-    editor: 'ویرایشگر',
-    author: 'نویسنده',
-    subscriber: 'کاربر عادی'
+    danim_editor: 'ویرایشگر',
+    danim_author: 'نویسنده',
+    danim_subscriber: 'کاربر عادی'
   }
   return labels[role] || 'کاربر عادی'//role
 }
@@ -1437,7 +1437,7 @@ const addUser = async () => {
       email: userForm.value.email,
       password: userForm.value.password,
       phoneNumber: userForm.value.phone,
-      roles: [userForm.value.role],
+      roles: [userForm.value.role]|| 'danim_subscriber',
       isActive: true,
     };
       // CREATE
@@ -1463,7 +1463,7 @@ const closeAddModal = () => {
     email: '',
     phone: '',
     password: '',
-    role: 'subscriber'
+    role: 'danim_subscriber'
   }
 }
 

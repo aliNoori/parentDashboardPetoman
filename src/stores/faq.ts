@@ -9,9 +9,14 @@ export interface Faq {
     order: number
     question: string
     answer: string
+    contentType:string
+    contentTitle:string
+    typeId:string
+    color:string
     category: string
+    isActive:boolean
     status: 'active' | 'inactive'
-    isActive: boolean
+    createdAt:Date
 }
 
 
@@ -24,110 +29,139 @@ export const useFaqStore = defineStore('faqStore', () => {
     if (!axios) throw new Error('Axios instance not injected')
 
 
-    const fetchFaqs = async () => {
+    // =====================================================================
+    // 📌 دریافت همه سوال‌ها
+    // =====================================================================
+    const fetchFaqs = async (filters?: { typeId?: string; activeOnly?: boolean }) => {
         try {
-            const { data } = await axios.get('/v1/faqs')
-
-            faqs.value = data.map((item: any) => ({
-                id: item.id,
-                order: item.order,
-                question: item.question,
-                answer: item.answer,
-                categoryType:item.category,
-                category: item.category?.displayName || item.category?.title || 'بدون دسته‌بندی',
-                status: item.isActive ? 'active' : 'inactive',
-                isActive: item.isActive,
-                createdAt: item.createdAt || null,
-                updatedAt: item.updatedAt || null,
-            }))
-
+            const { data } = await axios.get('/faqs', { params: filters })
+            faqs.value = data
             fetched.value = true
         } catch (error) {
-            console.error('❌ خطا در دریافت سوالات متداول:', error)
+            console.error('❌ خطا در دریافت سوال ها:', error)
         }
+
+
     }
 
-
-    const fetchFaq = async (id: string) => {
+    // =====================================================================
+    // 📌 دریافت یک سوال
+    // =====================================================================
+    const fetchFaq = async (id: number) => {
         try {
-            const { data } = await axios.get(`/v1/faqs/${id}`)
+            const { data } = await axios.get(`/faqs/${id}`)
             faq.value = data
         } catch (error) {
-            console.error('❌ خطا در دریافت سوال متداول:', error)
+            console.error('❌ خطا در دریافت سوال:', error)
         }
     }
 
-
+    // =====================================================================
+    // 📌 افزودن سوال جدید
+    // =====================================================================
     const addFaq = async (newFaq: Partial<Faq>) => {
         try {
-            const { data } = await axios.post('/v1/faqs', newFaq)
+            const payload = {
+                question: newFaq.question,
+                answer: newFaq.answer,
+                typeId:newFaq.typeId,
+                categoryId:newFaq.categoryId,
+                status:newFaq.status,
+                isActive:newFaq.isActive,
+                contentTitle:newFaq.contentTitle,
+                contentType:newFaq.contentType,
+            }
 
-            const mapped = {
+            const { data } = await axios.post('/faqs', payload)
+
+            const mapped: Faq = {
                 id: data.id,
-                order: data.order,
+                category:data.category,
+                contentTitle:data.contentTitle,
+                order:data.order,
+                status:data.status,
+                isActive:data.isActive,
+                contentType:data.contentType,
+                typeId:data.typeId,
+                color:data.color,
                 question: data.question,
                 answer: data.answer,
-                category: data.category?.displayName || data.category?.title || 'بدون دسته‌بندی',
-                status: data.isActive ? ('active' as const) : ('inactive' as const),
-                isActive: data.isActive,
+                createdAt:data.createdAt
             }
 
             faqs.value.unshift(mapped)
-            console.log('✅ سوال متداول ثبت شد')
+            console.log('✅ سوال ثبت شد')
         } catch (error) {
-            console.error('❌ خطا در ثبت سوال متداول:', error)
+            console.error('❌ خطا در ثبت سوال:', error)
         }
     }
 
-
-
-    const editFaq = async (updatedFaq: any & { id: string }) => {
+    // =====================================================================
+    // 📌 ویرایش سوال
+    // =====================================================================
+    const editFaq = async (updatedFaq: any & { id: number }) => {
         try {
-            const { id, ...body } = updatedFaq
-            const { data } = await axios.patch(`/v1/faqs/${id}`, body)
-
-            const mapped = {
-                id: data.id,
-                order: data.order,
-                question: data.question,
-                answer: data.answer,
-                category: data.category?.displayName || data.category?.title || 'بدون دسته‌بندی',
-                status: data.isActive ? ('active' as const) : ('inactive' as const),
-                isActive: data.isActive,
+            const payload = {
+                order:updatedFaq.order,
+                question: updatedFaq.question,
+                answer: updatedFaq.answer,
+                typeId:updatedFaq.typeId,
+                status:updatedFaq.status,
+                categoryId:updatedFaq.categoryId,
+                isActive:updatedFaq.isActive,
+                contentTitle:updatedFaq.contentTitle,
+                contentType:updatedFaq.contentType,
             }
 
-            const index = faqs.value.findIndex(f => f.id === data.id)
+            const { data } = await axios.patch(`/faqs/${updatedFaq.id}`, payload)
+
+            const mapped: Faq = {
+                id: data.id,
+                contentTitle:data.contentTitle,
+                order:data.order,
+                contentType:data.contentType,
+                typeId:data.typeId,
+                category:data.category,
+                color:data.color,
+                status:data.isActive?'active':'inactive',
+                isActive:data.isActive,
+                question: data.question,
+                answer: data.answer,
+                createdAt:data.createdAt
+            }
+
+            const index = faqs.value.findIndex(t => t.id === data.id)
             if (index !== -1) faqs.value[index] = mapped
 
             return data
         } catch (error) {
-            console.error('❌ خطا در ویرایش سوال متداول:', error)
+            console.error('❌ خطا در ویرایش سوال:', error)
         }
     }
 
+    // =====================================================================
+    // 📌 حذف سوال
+    // =====================================================================
+    const removeFaq = async (id: string) => {
+        try {
+            await axios.delete(`/faqs/${id}`)
+            faqs.value = faqs.value.filter(t => t.id !== id)
+            console.log('✅ سوال حذف شد')
+        } catch (error) {
+            console.error('❌ خطا در حذف سوال:', error)
+        }
+    }
 
 
 
     const toggleStatus = async (id: string, isActive: boolean) => {
         try {
-            const { data } = await axios.patch(`/v1/faqs/${id}/status`, { isActive })
+            const { data } = await axios.patch(`/faqs/${id}/status`, { isActive })
             const index = faqs.value.findIndex(f => f.id === id)
             if (index !== -1) faqs.value[index].isActive = data.isActive
             console.log(`✅ وضعیت سوال ${id} تغییر کرد به ${data.isActive}`)
         } catch (error) {
             console.error('❌ خطا در تغییر وضعیت سوال متداول:', error)
-        }
-    }
-
-
-
-    const removeFaq = async (id: string) => {
-        try {
-            await axios.delete(`/v1/faqs/${id}`)
-            faqs.value = faqs.value.filter(f => f.id !== id)
-            console.log('✅ سوال متداول حذف شد')
-        } catch (error) {
-            console.error('❌ خطا در حذف سوال متداول:', error)
         }
     }
 

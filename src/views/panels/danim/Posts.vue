@@ -843,7 +843,7 @@ const cancelDelete = () => {
 onMounted(async () => {
 
   await postStore.fetchPosts()
-  await categoryTypeStore.fetchType('danim')
+  await categoryTypeStore.fetchType('post')
   // Close dropdowns when clicking outside
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.relative')) {
@@ -857,7 +857,7 @@ watch(
     () => categoryTypeStore.selectedType,
     async (type) => {
       if (type?.id) {
-        await categoryStore.fetchCategories({typeId: type.id})
+        await categoryStore.fetchCategories({typeId: type.id,contentType:'danim'})
       }
     },
     {immediate: true}

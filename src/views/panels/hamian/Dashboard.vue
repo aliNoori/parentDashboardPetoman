@@ -317,7 +317,7 @@ const selectedPeriodLabel = computed(() => {
   return period ? period.label : 'ماه'
 })
 const projectStore = useKindnessMeetingStore()
-const topProjects = computed(() => projectStore.topProjectsForDashboard)
+
 // Top Projects
 /*const topProjects = ref([
   {
@@ -346,6 +346,11 @@ const topProjects = computed(() => projectStore.topProjectsForDashboard)
   }
 ])*/
 const donationStore = useDonationStore()
+const topProjects = computed(() => projectStore.topProjectsForDashboard)
+watchEffect(() => {
+  console.log('hhh',topProjects.value)
+  stats.value.topProjects = topProjects.value
+})
 const recentDonations = computed(() => donationStore.recentDonations)
 const todayDonations = computed(() => donationStore.todayDonations)
 watchEffect(() => {

@@ -193,10 +193,10 @@
 
                   <img v-if="user.avatar"
                       :src="user.avatar"
-                      :alt="user.name"
-                      class="w-10 h-10 rounded-full object-cover"
+                      :alt="user.name?.charAt(0)"
+                      class="w-10 h-10 rounded-full object-cover text-center content-center"
                   >
-                  <span v-else class="text-white text-sm font-medium">{{ user.name.charAt(0) }}</span>
+                  <span v-else class="text-white text-sm font-medium">{{ user.name?.charAt(0) }}</span>
                 </div>
                 <div>
                   <div class="text-sm font-medium text-gray-900">{{ user.name }}</div>
@@ -267,7 +267,7 @@
                   <img v-if="user.avatar"
                        :src="user.avatar"
                        :alt="user.name"
-                       class="w-10 h-10 rounded-full object-cover"
+                       class="12 h-12 rounded-full object-cover"
                   >
                   <span v-else class="text-white text-sm font-medium">{{ user.name.charAt(0) }}</span>
                 </div>
@@ -440,12 +440,12 @@
                   <div class="grid grid-cols-2 gap-3">
                     <label
                         class="relative flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-all"
-                        :class="formData.role === 'subscriber' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'"
+                        :class="formData.role === 'hamian_subscriber' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'"
                     >
                       <input
                           type="radio"
                           v-model="formData.role"
-                          value="subscriber"
+                          value="hamian_subscriber"
                           class="sr-only"
                       >
                       <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
@@ -527,7 +527,7 @@ import {useUserStore} from "@/stores/user.ts";
 import {toJalaliDate} from "@/utils/date.ts";
 import ImageUploader from "@/components/ImageUploader.vue";
 import ImageCropper from "@/components/ImageCropper.vue";
-
+import * as XLSX from "xlsx";
 // State
 const showAddModal = ref(false)
 const showEditModal = ref(false)
@@ -561,7 +561,7 @@ const formData = ref({
   email: '',
   phone: '',
   password: '',
-  role: 'user',
+  role: 'hamian_subscriber',
   isActive: true
 })
 const userStore = useUserStore()
@@ -569,12 +569,12 @@ const users = computed(() =>
     userStore.users.map(u => {
       // بررسی نقش‌ها
       const rolesArray = Array.isArray(u.roles) ? u.roles : []
-      let role = 'subscriber' // پیش‌فرض
+      let role = 'hamian_subscriber' // پیش‌فرض
 
       if (rolesArray.includes('supporter_admin')) {
         role = 'supporter_admin'
-      } else if (rolesArray.includes('subscriber')) {
-        role = 'subscriber'
+      } else if (rolesArray.includes('hamian_subscriber')) {
+        role = 'hamian_subscriber'
       }
 
       return {
@@ -596,7 +596,7 @@ const users = computed(() =>
 const roleOptions = ref([
   {value: 'all', label: 'همه نقش‌ها'},
   {value: 'supporter_admin', label: 'مدیران'},
-  {value: 'subscriber', label: 'کاربران عادی'}
+  {value: 'hamian_subscriber', label: 'کاربران عادی'}
 ])
 
 const statusOptions = ref([
@@ -695,7 +695,7 @@ const closeModal = () => {
     email: '',
     phone: '',
     password: '',
-    role: 'user',
+    role: 'hamian_subscriber',
     isActive: true
   }
 }
@@ -741,8 +741,8 @@ const saveUser = async () => {
       name: createdUser.fullName,
       phone: createdUser.phoneNumber,
       avatar:createdUser.avatar,
-      role: createdUser.roles?.[0] || 'user',
-      lastLogin: createdUser.lastLogin || new Date()
+      role: createdUser.roles?.[0] || 'hamian_subscriber',
+      createdAt: toJalaliDate(createdUser.createdAt)
     })
     showToast('کاربر جدید با موفقیت اضافه شد', 'success')
   }
@@ -790,8 +790,33 @@ const bulkDeactivate = async () => {
 }
 
 const exportToExcel = () => {
-  showToast('در حال آماده‌سازی فایل Excel...', 'info')
-  // Add Excel export logic here
+  if (!filteredUsers.value.length) {
+    showToast('هیچ کاربری برای خروجی گرفتن وجود ندارد', 'error')
+    return
+  }
+
+  const rows = filteredUsers.value.map(u => ({
+    "شناسه": u.id,
+    "نام و نام خانوادگی": u.name,
+    "نام کاربری": u.username,
+    "ایمیل": u.email,
+    "تلفن": u.phone,
+    "نقش": u.role,
+    "وضعیت": u.isActive ? "فعال" : "غیرفعال",
+    "تاریخ ثبت نام": u.createdAt,
+    "آخرین ورود": u.lastLogin || "-"
+  }))
+
+  const worksheet = XLSX.utils.json_to_sheet(rows)
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Users")
+
+  const date = new Date().toISOString().slice(0, 10)
+  const fileName = `users_${date}.xlsx`
+
+  XLSX.writeFile(workbook, fileName)
+
+  showToast('فایل Excel با موفقیت دانلود شد', 'success')
 }
 
 const showToast = (message, type = 'success') => {

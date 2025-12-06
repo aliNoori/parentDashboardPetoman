@@ -74,10 +74,10 @@
                 <div class="flex items-center gap-3">
                   <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-lg"
                        :style="{ backgroundColor: category.color }">
-                    {{ category.name.charAt(0) }}
+                    {{ category.title.charAt(0) }}
                   </div>
                   <div>
-                    <div class="font-medium text-gray-900">{{ category.name }}</div>
+                    <div class="font-medium text-gray-900">{{ category.title }}</div>
                     <div v-if="category.description" class="text-xs text-gray-500 mt-0.5">{{ category.description }}</div>
                   </div>
                 </div>
@@ -86,11 +86,11 @@
                 <span class="text-sm text-gray-600 font-mono bg-gray-100 px-3 py-1 rounded">{{ category.slug }}</span>
               </td>
               <td class="px-6 py-4">
-                <span v-if="category.parent" class="text-sm text-gray-600">{{ category.parent }}</span>
+                <span v-if="category.parent" class="text-sm text-gray-600">{{ category.parent.title }}</span>
                 <span v-else class="text-sm text-gray-400">—</span>
               </td>
               <td class="px-6 py-4">
-                <span class="text-sm text-gray-900 font-semibold">{{ category.count }}</span>
+                <span class="text-sm text-gray-900 font-semibold">{{ category.posts.length }}</span>
                 <span class="text-xs text-gray-500 mr-1">نوشته</span>
               </td>
               <td class="px-6 py-4">
@@ -150,7 +150,7 @@
                 نام دسته‌بندی <span class="text-red-500">*</span>
               </label>
               <input
-                v-model="form.name"
+                v-model="form.title"
                 @input="generateSlug"
                 type="text"
                 placeholder="مثال: آموزش، تکنولوژی، سرگرمی"
@@ -187,7 +187,7 @@
                   type="button"
                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all flex items-center justify-between"
                 >
-                  <span v-if="form.parent" class="text-gray-900">{{ form.parent }}</span>
+                  <span v-if="form.parent" class="text-gray-900">{{ form.parent.title }}</span>
                   <span v-else class="text-gray-400">بدون والد (دسته اصلی)</span>
                   <i class="ti ti-chevron-down text-gray-400"></i>
                 </button>
@@ -202,11 +202,11 @@
                   <li
                     v-for="cat in parentCategories"
                     :key="cat.id"
-                    @click="selectParent(cat.name)"
+                    @click="selectParent(cat)"
                     class="px-4 py-3 hover:bg-purple-50 cursor-pointer transition-colors"
-                    :class="{ 'bg-purple-100': form.parent === cat.name }"
+                    :class="{ 'bg-purple-100': form.parent === cat.title }"
                   >
-                    {{ cat.name }}
+                    {{ cat.title }}
                   </li>
                 </ul>
               </div>
@@ -298,28 +298,41 @@
 </template>
 
 <script setup>
-import { ref, computed, inject } from 'vue'
+import {ref, computed, inject, onMounted, watch} from 'vue'
+import {useCategoryTypeStore} from "@/stores/category-type.ts";
+import {useCategoryStore} from "@/stores/category.ts";
 
 const toast = inject('toast')
+const categoryTypeStore = useCategoryTypeStore()
+const categoryStore = useCategoryStore()
 
+const categories = computed(() =>
+    categoryStore.categories.map(cat => ({
+      ...cat,
+      status: cat.isActive ? 'active' : 'inactive'
+    }))
+)
+
+/*
+const stats = computed(() => {
+  const cats = categoryyStore.categories
+
+  return {
+    total: cats.length,
+    active: cats.filter(t => t.isActive === true).length,
+    totalPosts: 0//tags.reduce((sum, t) => sum + (t.count ?? 0), 0)
+  }
+})*/
 // Stats
-const stats = ref({
-  total: 8,
-  active: 7,
-  totalPosts: 145
-})
+const stats = computed(() => {
+  const cats = categoryStore.categories
 
-// Categories data
-const categories = ref([
-  { id: 1, name: 'آموزش', slug: 'education', parent: null, color: '#3b82f6', count: 42, status: 'active', description: 'مقالات آموزشی' },
-  { id: 2, name: 'تکنولوژی', slug: 'technology', parent: null, color: '#8b5cf6', count: 38, status: 'active', description: 'اخبار و مقالات تکنولوژی' },
-  { id: 3, name: 'برنامه‌نویسی', slug: 'programming', parent: 'تکنولوژی', color: '#10b981', count: 25, status: 'active', description: 'آموزش برنامه‌نویسی' },
-  { id: 4, name: 'سرگرمی', slug: 'entertainment', parent: null, color: '#f59e0b', count: 19, status: 'active', description: 'محتوای سرگرم‌کننده' },
-  { id: 5, name: 'سینما', slug: 'cinema', parent: 'سرگرمی', color: '#ef4444', count: 12, status: 'active', description: 'مقالات سینمایی' },
-  { id: 6, name: 'هنر', slug: 'art', parent: null, color: '#ec4899', count: 9, status: 'active', description: 'هنر و فرهنگ' },
-  { id: 7, name: 'ورزش', slug: 'sport', parent: null, color: '#06b6d4', count: 0, status: 'inactive', description: 'اخبار ورزشی' },
-  { id: 8, name: 'سلامت', slug: 'health', parent: null, color: '#84cc16', count: 15, status: 'active', description: 'سلامت و تندرستی' }
-])
+  return {
+    total: cats.length,
+    active: cats.filter(t => t.isActive === true).length,
+    totalPosts: cats.reduce((sum, t) => sum + (t.posts ?? 0), 0)
+  }
+})
 
 // Parent categories (only main categories)
 const parentCategories = computed(() => {
@@ -333,9 +346,10 @@ const parentDropdownOpen = ref(false)
 
 // Form data
 const form = ref({
-  name: '',
+  title: '',
   slug: '',
   parent: null,
+  parentId:'',
   color: '#9333ea',
   description: '',
   status: 'active'
@@ -353,7 +367,7 @@ const generateSlug = () => {
     'ن': 'n', 'و': 'v', 'ه': 'h', 'ی': 'i', 'ئ': 'i', 'ة': 'e', 'ى': 'a'
   }
   
-  let slug = form.value.name.toLowerCase()
+  let slug = form.value.title.toLowerCase()
   for (const [persian, english] of Object.entries(persianToEnglish)) {
     slug = slug.replace(new RegExp(persian, 'g'), english)
   }
@@ -362,8 +376,9 @@ const generateSlug = () => {
 }
 
 // Select parent
-const selectParent = (value) => {
-  form.value.parent = value
+const selectParent = (parent) => {
+  form.value.parent = parent
+  form.value.parentId=parent.id
   parentDropdownOpen.value = false
 }
 
@@ -371,9 +386,10 @@ const selectParent = (value) => {
 const openAddModal = () => {
   editMode.value = false
   form.value = {
-    name: '',
+    title: '',
     slug: '',
     parent: null,
+    parentId:'',
     color: '#9333ea',
     description: '',
     status: 'active'
@@ -394,8 +410,8 @@ const editCategory = (category) => {
 const validateForm = () => {
   errors.value = {}
   
-  if (!form.value.name) {
-    errors.value.name = 'نام دسته‌بندی الزامی است'
+  if (!form.value.title) {
+    errors.value.title = 'نام دسته‌بندی الزامی است'
   }
   
   if (!form.value.slug) {
@@ -406,53 +422,72 @@ const validateForm = () => {
 }
 
 // Save category
-const saveCategory = () => {
+const saveCategory = async () => {
+
   if (!validateForm()) {
     toast.warning('لطفا فیلدهای الزامی را تکمیل کنید')
     return
   }
-  
-  if (editMode.value) {
-    const index = categories.value.findIndex(c => c.id === form.value.id)
-    if (index !== -1) {
-      categories.value[index] = { ...form.value }
-      toast.success('دسته‌بندی با موفقیت بروزرسانی شد')
-    }
-  } else {
-    const newCategory = {
-      ...form.value,
-      id: categories.value.length + 1,
-      count: 0
-    }
-    categories.value.push(newCategory)
-    stats.value.total++
-    if (form.value.status === 'active') stats.value.active++
-    toast.success('دسته‌بندی جدید با موفقیت اضافه شد')
-  }
-  
   closeModal()
+
+  try{
+    if (editMode.value) {
+      const {id,count,posts, status,parent, ...rest} = form.value
+      const cleanPayload = {
+        ...rest,
+        //parentId: parent ? parent.id : null,
+        isActive: status === 'active',
+        contentType:'film'
+      }
+      await categoryStore.editCategory({id: form.value.id, ...cleanPayload})
+      const index = categories.value.findIndex(c => c.id === form.value.id)
+      if (index !== -1) {
+        categories.value[index] = {...form.value}
+        toast.success('دسته‌بندی با موفقیت بروزرسانی شد')
+      }
+    } else {
+      const newCategory = {
+        ...form.value,
+        id: categories.value.length + 1,
+        count: 0
+      }
+      const {id, status,count,parent, ...rest} = newCategory
+      const cleanPayload = {
+        ...rest,
+        typeId: categoryTypeStore.selectedType.id,
+        isActive: status === 'active',
+        contentType:'film'
+      }
+      await categoryStore.addCategory(cleanPayload)
+
+      toast.success('دسته‌بندی جدید با موفقیت اضافه شد')
+    }
+  }catch(err){
+    console.error(err)
+    toast.error('عملیات با خطا مواجه شد')
+  }
+
 }
 
 // Delete category
-const deleteCategory = (category) => {
+const deleteCategory = async (category) => {
   if (category.count > 0) {
     toast.error('امکان حذف دسته‌بندی با نوشته وجود ندارد')
     return
   }
-  
+
   // Check if any category has this as parent
-  const hasChildren = categories.value.some(c => c.parent === category.name)
+  const hasChildren = categories.value.some(c => c.parent === category.title)
   if (hasChildren) {
     toast.error('ابتدا باید دسته‌های فرعی را حذف یا منتقل کنید')
     return
   }
-  
-  if (confirm(`آیا از حذف دسته‌بندی "${category.name}" اطمینان دارید؟`)) {
+
+  if (confirm(`آیا از حذف دسته‌بندی "${category.title}" اطمینان دارید؟`)) {
+    await categoryStore.removeCategory(category.id)
     const index = categories.value.findIndex(c => c.id === category.id)
     if (index !== -1) {
       categories.value.splice(index, 1)
-      stats.value.total--
-      if (category.status === 'active') stats.value.active--
       toast.success('دسته‌بندی با موفقیت حذف شد')
     }
   }
@@ -463,4 +498,17 @@ const closeModal = () => {
   showModal.value = false
   parentDropdownOpen.value = false
 }
+onMounted(async () => {
+  await categoryTypeStore.fetchType('post')
+})
+watch(
+    () => categoryTypeStore.selectedType,
+    async (type) => {
+      if (type?.id) {
+        await categoryStore.fetchCategories({typeId:type.id,contentType:'film'})
+
+      }
+    },
+    {immediate: true}
+)
 </script>
