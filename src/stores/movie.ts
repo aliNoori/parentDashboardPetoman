@@ -38,11 +38,13 @@ export interface Movie {
     categoryId?: string
     views?: number
     likes?: number
+    uploadProgress?: number
 }
 
 export const useMovieStore = defineStore('movieStore', () => {
     const movies = ref<Movie[]>([])
     const movie = ref<Movie | null>(null)
+    const uploadProgress = ref<number>(0)
     const fetched = ref(false)
 
     const axios = inject<AxiosInstance>(axiosKey)
@@ -110,10 +112,12 @@ export const useMovieStore = defineStore('movieStore', () => {
                 posterUrl = await uploader.uploadImage(posterFile)
             }
             if (videoFile) {
-                videoUrl = await uploader.uploadVideo(videoFile)
+                videoUrl = await uploader.uploadChunkedVideo(videoFile,(percent: number) => {
+                    uploadProgress.value = percent
+                })
             }
 
-            const {videoFile: _v, ...cleanMovie} = newMovie
+            const { videoFile: _v, uploadProgress: _p, ...cleanMovie } = newMovie
 
             const payload = {
                 ...cleanMovie,
@@ -209,6 +213,7 @@ export const useMovieStore = defineStore('movieStore', () => {
         movies,
         movie,
         fetched,
+        uploadProgress,
         fetchMovies,
         fetchMovie,
         findById,

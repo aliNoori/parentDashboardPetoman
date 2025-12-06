@@ -15,6 +15,7 @@ export interface Episode {
     quality: string
     videoUrl?: string
     videoFile?: File
+    uploadProgress?: number
 }
 
 export interface Season {
@@ -166,13 +167,19 @@ export const useSeriesStore = defineStore('seriesStore', () => {
                     let videoUrl = ep.videoUrl
 
                     if (ep.sourceType === 'upload' && ep.videoFile) {
-                        videoUrl = await uploader.uploadVideo(ep.videoFile)
+                        videoUrl = await uploader.uploadChunkedVideo(ep.videoFile, (percent: number) => {
+                            ep.uploadProgress = percent
+                        })
                     }
 
+                    const { title, duration, sourceType, quality } = ep
+
                     processedEpisodes.push({
-                        ...ep,
+                        title,
+                        duration,
+                        sourceType,
+                        quality,
                         videoUrl,
-                        videoFile: undefined,
                     })
                 }
 
@@ -222,7 +229,9 @@ export const useSeriesStore = defineStore('seriesStore', () => {
                     let videoUrl = ep.videoUrl
 
                     if (ep.sourceType === 'upload' && ep.videoFile) {
-                        videoUrl = await uploader.uploadVideo(ep.videoFile)
+                        videoUrl = await uploader.uploadChunkedVideo(ep.videoFile, (percent: number) => {
+                            ep.uploadProgress = percent
+                        })
                     }
 
                     processedEpisodes.push({

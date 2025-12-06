@@ -246,6 +246,11 @@
                   class="hidden"
                   @change="handleVideoUpload"
               >
+              <div v-if="movieStore.uploadProgress > 0">
+                <progress class="w-full" :value="movieStore.uploadProgress" max="100"></progress>
+                {{ movieStore.uploadProgress }}%
+              </div>
+
             </div>
 
             <!-- Link Section -->

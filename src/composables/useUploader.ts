@@ -54,7 +54,7 @@ export function useUploader() {
     }
 
     // 📌 آپلود ویدیو
-    const uploadVideo = async (input: File | string): Promise<string> => {
+   /* const uploadVideo = async (input: File | string): Promise<string> => {
         let file: File
         if (typeof input === 'string' && input.startsWith('data:video')) {
             file = await base64ToFile(input, 'video.mp4')
@@ -64,7 +64,51 @@ export function useUploader() {
             throw new Error('Invalid input for uploadVideo')
         }
         return upload(file, '/v1/uploads/video')
+    }*/
+    const uploadChunkedVideo = async (
+        file: File,
+        onProgress?: (percent: number) => void,   // 🟩 اضافه شد
+        chunkSize = 5 * 1024 * 1024
+    ): Promise<string> => {
+        uploading.value = true
+        progress.value = 0
+
+        const totalChunks = Math.ceil(file.size / chunkSize)
+        let uploadedBytes = 0
+        let videoId: string | null = null
+
+        for (let i = 0; i < totalChunks; i++) {
+            const start = i * chunkSize
+            const end = Math.min(file.size, start + chunkSize)
+            const chunk = file.slice(start, end)
+
+            const formData = new FormData()
+            formData.append('chunk', chunk)
+            formData.append('index', i.toString())
+            formData.append('total', totalChunks.toString())
+            if (videoId) formData.append('videoId', videoId)
+
+            const res = await axios.post('/v1/uploads/video-chunk', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+                onUploadProgress: (e) => {
+                    uploadedBytes = start + e.loaded
+                    const percent = Math.round((uploadedBytes / file.size) * 100)
+                    progress.value = percent
+                    onProgress?.(percent)   // 🟩 ارسال درصد به بیرون
+                }
+            })
+
+            if (!videoId && res.data.videoId) {
+                videoId = res.data.videoId
+            }
+        }
+
+        // 📌 بعد از آپلود همه chunk ها، درخواست merge
+        const finalizeRes = await axios.post('/v1/uploads/video-merge', { videoId })
+        uploading.value = false
+        return finalizeRes.data.url
     }
+
 
     // 📌 آپلود فایل عمومی
     const uploadFile = async (input: File | string): Promise<string> => {
@@ -83,7 +127,8 @@ export function useUploader() {
         uploading,
         progress,
         uploadImage,
-        uploadVideo,
+        //uploadVideo,
+        uploadChunkedVideo,
         uploadFile,
     }
 }

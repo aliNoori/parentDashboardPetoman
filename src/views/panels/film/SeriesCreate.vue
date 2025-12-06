@@ -1,5 +1,6 @@
 <template>
   <div class="space-y-6">
+
     <!-- Header -->
     <div class="flex items-center justify-between">
       <div>
@@ -307,6 +308,13 @@
                                 class="hidden"
                                 @change="handleEpisodeFileUpload($event, sIndex, eIndex)"
                             />
+                            <!-- 🟩 نمایش progress -->
+                            <div  v-if="episode.videoFile">
+                              <progress class="w-full" :value="episode.uploadProgress || 0" max="100"></progress>
+                              <span class="text-xs text-gray-600 ml-2">
+                               {{ episode.uploadProgress || 0 }}%
+                              </span>
+                            </div>
                           </div>
 
                           <!-- Quality Selection -->
