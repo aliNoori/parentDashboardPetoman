@@ -282,8 +282,7 @@
                             >
                           </template>
                           <template v-else>
-
-                            <span v-else class="text-white text-sm font-medium">{{ user.fullName?.charAt(0) }}</span>
+                            <span class="text-white text-sm font-medium">{{ user.fullName?.charAt(0) }}</span>
                           </template>
                         </div>
                         <div>
@@ -366,8 +365,7 @@
                   >
                 </template>
                 <template v-else>
-
-                  <span v-else class="text-white text-sm font-medium">{{ user.fullName?.charAt(0) }}</span>
+                  <span class="text-white text-sm font-medium">{{ user.fullName?.charAt(0) }}</span>
                 </template>
               </div>
               <div>
