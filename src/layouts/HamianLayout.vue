@@ -275,12 +275,16 @@
                       <div class="flex items-center gap-3">
                         <div
                             class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
-                          <img v-if="user?.avatar"
-                               :src="user?.avatar"
-                               :alt="user.fullName?.charAt(0)"
-                               class="w-12 h-12 rounded-full object-cover text-center content-center"
-                          >
-                          <span v-else class="text-white text-sm font-medium">{{ user.fullName?.charAt(0) }}</span>
+                          <template v-if="user?.avatar">
+                            <img :src="user.avatar"
+                                 :alt="user.fullName?.charAt(0)"
+                                 class="w-12 h-12 rounded-full object-cover text-center content-center"
+                            >
+                          </template>
+                          <template v-else>
+
+                            <span v-else class="text-white text-sm font-medium">{{ user.fullName?.charAt(0) }}</span>
+                          </template>
                         </div>
                         <div>
                           <p class="font-bold text-gray-900">{{ user.fullName }}</p>
@@ -355,12 +359,16 @@
             <div class="flex items-center gap-4">
               <div
                   class="w-16 h-16 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
-                <img v-if="user?.avatar"
-                     :src="user?.avatar"
-                     :alt="user?.fullName.charAt(0)"
-                     class="w-16 h-16 rounded-full object-cover"
-                >
-                <span v-else class="text-white text-sm font-medium">{{ user.fullName?.charAt(0) }}</span>
+                <template v-if="user?.avatar">
+                  <img :src="user.avatar"
+                       :alt="user.fullName?.charAt(0)"
+                       class="w-12 h-12 rounded-full object-cover text-center content-center"
+                  >
+                </template>
+                <template v-else>
+
+                  <span v-else class="text-white text-sm font-medium">{{ user.fullName?.charAt(0) }}</span>
+                </template>
               </div>
               <div>
                 <h3 class="text-lg font-bold text-gray-900">{{ user.fullName }}</h3>
@@ -711,7 +719,7 @@ onMounted(async () => {
   await userStore.fetchUser()
   const user = JSON.parse(localStorage.getItem('user') || '{}')
   const userId = user.id
-  await notificationStore.fetchNotifications(userId,'hamian')
+  await notificationStore.fetchNotifications(userId, 'hamian')
   window.addEventListener('navigate-to-supporters', handleNavigateToSupporters)
   window.addEventListener('navigate-to-donation-create', handleNavigateToDonationCreate)
   window.addEventListener('navigate-to-donation-edit', handleNavigateToDonationEdit)
@@ -870,6 +878,7 @@ defineExpose({
 .fade-leave-active {
   transition: all 0.3s ease;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
