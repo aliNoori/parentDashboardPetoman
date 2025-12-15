@@ -11,6 +11,13 @@
         <div>
           <label class="block text-sm font-medium mb-2">لوگوی فوتر</label>
           <div class="flex items-center gap-2">
+            <!-- Preview -->
+            <div v-if="section.data.footerLogo" class="w-24 h-24 rounded-lg border-2 border-gray-200 overflow-hidden flex-shrink-0">
+              <img :src="section.data.footerLogo" alt="لوگوی فوتر" class="w-full h-full object-contain" />
+            </div>
+            <div v-else class="w-24 h-24 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center flex-shrink-0">
+              <i class="ti ti-photo text-3xl text-gray-400"></i>
+            </div>
             <input
               type="file"
               accept="image/*"

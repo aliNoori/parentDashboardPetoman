@@ -114,7 +114,7 @@
 </template>
 
 <script setup>
-import {computed, onMounted, ref} from 'vue'
+import {computed, onMounted, ref, watch} from 'vue'
 import SliderSettings from './page-builder/SliderSettings.vue'
 import BannerSettings from './page-builder/BannerSettings.vue'
 import PostsSettings from './page-builder/PostsSettings.vue'
@@ -123,20 +123,25 @@ import HeaderSettings from './page-builder/HeaderSettings.vue'
 import FooterSettings from './page-builder/FooterSettings.vue'
 import AddSectionModal from './page-builder/AddSectionModal.vue'
 import {useDanimSettingStore} from "@/stores/danim-setting.ts";
+import {useCategoryTypeStore} from "@/stores/category-type.ts";
+import {useCategoryStore} from "@/stores/category.ts";
 
+const categoryTypeStore = useCategoryTypeStore()
+const categoryStore = useCategoryStore()
 // State
 const settingStore = useDanimSettingStore()
 const showAddSectionModal = ref(false)
 const draggedIndex = ref(null)
 const pageSections = computed(() => settingStore.pageSections)
 
-const availableCategories = ref([
-  {id: 1, name: 'مراقبت از سگ', icon: 'ti ti-paw', count: 15},
-  {id: 2, name: 'مراقبت از گربه', icon: 'ti ti-cat', count: 12},
-  {id: 3, name: 'تغذیه', icon: 'ti ti-apple', count: 10},
-  {id: 4, name: 'سلامت', icon: 'ti ti-heart', count: 8}
-])
-
+const availableCategories = computed(() =>
+    categoryStore.categories.map(cat => ({
+      id: cat.id,
+      name: cat.title,
+      icon: cat.logo || 'ti ti-folder',
+      count: cat.posts?.length || 0
+    }))
+)
 // Helper Functions
 const getSectionLabel = (type) => {
   const labels = {
@@ -329,9 +334,21 @@ const saveHomepage = async () => {
 }
 
 onMounted(async () => {
+  await categoryTypeStore.fetchType('post')
   await settingStore.fetchPageSections()
 
 })
+
+watch(
+    () => categoryTypeStore.selectedType,
+    async (type) => {
+      if (type?.id) {
+        //newCategory.value.typeId = type.id
+        await categoryStore.fetchCategories({typeId: type.id,contentType:'danim'})
+      }
+    },
+    {immediate: true}
+)
 
 </script>
 

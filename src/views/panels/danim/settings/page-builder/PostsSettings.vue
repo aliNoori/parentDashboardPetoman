@@ -8,8 +8,13 @@
       <label class="block text-sm font-medium mb-2">دسته‌بندی</label>
       <select v-model="section.data.categoryId" class="input-field">
         <option value="">همه</option>
-        <option value="1">مراقبت از سگ</option>
-        <option value="2">مراقبت از گربه</option>
+        <option
+            v-for="cat in availableCategories"
+            :key="cat.id"
+            :value="cat.id"
+        >
+          {{ cat.name }}
+        </option>
       </select>
     </div>
     <div>
@@ -27,12 +32,44 @@
 </template>
 
 <script setup>
+import {computed, onMounted, watch} from "vue";
+
 defineProps({
   section: {
     type: Object,
     required: true
   }
 })
+
+import {useCategoryTypeStore} from "@/stores/category-type.ts";
+import {useCategoryStore} from "@/stores/category.ts";
+
+const categoryTypeStore = useCategoryTypeStore()
+const categoryStore = useCategoryStore()
+
+// دسته‌بندی‌های داینامیک
+const availableCategories = computed(() =>
+    categoryStore.categories.map(cat => ({
+      id: cat.id,
+      name: cat.title,
+      icon: cat.logo || 'ti ti-folder',
+      count: cat.posts?.length || 0
+    }))
+)
+
+onMounted(async () => {
+  await categoryTypeStore.fetchType('post')
+})
+
+watch(
+    () => categoryTypeStore.selectedType,
+    async (type) => {
+      if (type?.id) {
+        await categoryStore.fetchCategories({typeId: type.id, contentType: 'danim'})
+      }
+    },
+    {immediate: true}
+)
 </script>
 
 <style scoped>

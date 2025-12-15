@@ -394,28 +394,28 @@ router.beforeEach((to, from, next) => {
   if (to.path === '/' && token) {
     // هدایت بر اساس نقش
     if (userRoles.includes('supporter_admin')) {
-      return next('/dashboard/hamian')
+      return next('/dashboard')
     }
 
     if (userRoles.includes('danim_admin')) {
-      return next('/dashboard/danim')
+      return next('/dashboard')
     }
 
     if (userRoles.includes('film_admin')) {
-      return next('/dashboard/film')
+      return next('/dashboard')
     }
     if (userRoles.includes('vet_admin')) {
-      return next('/dashboard/dampezeshki')
+      return next('/dashboard')
     }
     if (userRoles.includes('market_admin')) {
-      return next('/dashboard/market')
+      return next('/dashboard')
     }
 
   }
 
   // بررسی نقش مسیر (اختیاری)
   if (to.meta.role && !userRoles.includes(to.meta.role)) {
-    return next('/')
+    return next('/dashboard')
   }
 
   next()
