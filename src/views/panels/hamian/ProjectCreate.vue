@@ -553,7 +553,7 @@ const form = ref({
   current: 0,
   // Volunteer fields
   location: '',
-  eventDate: '1404/02/28',
+  eventDate: '',
   eventTime: '',
   // Common fields
   manager: '',

@@ -39,6 +39,9 @@
       
       <!-- Settings -->
       <Settings v-else-if="currentView === 'settings'" />
+
+      <!-- Requests -->
+      <Requests v-else-if="currentView === 'requests'" />
       
       <!-- Default -->
       <Dashboard v-else />
@@ -66,6 +69,7 @@ import PageCreate from './PageCreate.vue'
 import Reports from './Reports.vue'
 import Settings from './Settings.vue'
 import Users from './Users.vue'
+import Requests from "./Requests.vue";
 
 defineEmits(['back'])
 

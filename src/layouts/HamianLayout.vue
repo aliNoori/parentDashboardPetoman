@@ -572,6 +572,9 @@ const navigateTo = (viewId) => {
     case 'settings':
       router.push('/dashboard/hamian/settings')
       break
+    case 'requests':
+      router.push('/dashboard/hamian/requests')
+      break
     default:
       router.push('/dashboard/hamian')
   }
@@ -646,7 +649,8 @@ const menuItems = ref([
   {id: 'pages', label: 'صفحات', icon: 'ti ti-file-text'},
   {id: 'users', label: 'مدیریت کاربران', icon: 'ti ti-users'},
   {id: 'reports', label: 'تراکنش‌ها', icon: 'ti ti-receipt'},
-  {id: 'settings', label: 'تنظیمات', icon: 'ti ti-settings'}
+  {id: 'settings', label: 'تنظیمات', icon: 'ti ti-settings'},
+  { id: 'requests', label: 'مشارکت ها', icon: 'ti ti-message' }
 ])
 
 const bottomNavItems = ref([
@@ -776,7 +780,8 @@ const getPageDescription = () => {
     'add-supporter': 'ثبت حامی جدید',
     'supporter-create': 'ثبت حامی جدید',
     reports: 'تراکنش‌ها و گزارش‌های مالی',
-    settings: 'تنظیمات سیستم حمایت'
+    settings: 'تنظیمات سیستم حمایت',
+    requests: 'مدیریت درخواست ها'
   }
   return descriptions[currentView.value] || ''
 }

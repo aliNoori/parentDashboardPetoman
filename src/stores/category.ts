@@ -216,6 +216,7 @@ export const useCategoryStore = defineStore('categoryStore', () => {
         try {
             const { id, ...body } = updatedCategory
             delete body.type
+            delete body.documents
             delete body.createdAt
             delete body.updatedAt
             delete body.deletedAt

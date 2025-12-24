@@ -212,6 +212,12 @@ const routes = [
         component: { template: '<div></div>' },
         meta: { activePanel: 'hamian', activeSection: 'settings', role: 'supporter_admin' }
       },
+      {
+        path: 'hamian/requests',
+        name: 'HamianRequests',
+        component: { template: '<div></div>' },
+        meta: { activePanel: 'hamian', activeSection: 'requests', role: 'supporter_admin' }
+      },
       // Film Routes
       {
         path: 'film',
