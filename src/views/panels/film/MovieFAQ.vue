@@ -115,10 +115,15 @@
 
               <div class="flex items-center gap-4 text-sm">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                      :class="faq.contentType === 'movie' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'">
-                  <i class="ti ml-1" :class="faq.contentType === 'movie' ? 'ti-movie' : 'ti-device-tv'"></i>
-                  {{ faq.contentType === 'movie' ? 'فیلم' : 'سریال' }}
+                      :class="faq.contentType === 'movie' ? 'bg-blue-100 text-blue-800' :
+                       faq.contentType === 'series' ? 'bg-green-100 text-green-800' :
+                       'bg-gray-100 text-gray-800'">
+                  <i class="ti ml-1" :class="faq.contentType === 'movie' ? 'ti-movie' :
+                                             faq.contentType === 'series' ? 'ti-device-tv' : 'ti-help'"></i>
+                  {{ faq.contentType === 'movie' ? 'فیلم' :
+                                    faq.contentType === 'series' ? 'سریال' : 'عمومی' }}
                 </span>
+
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
                       :class="faq.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'">
                   {{ faq.status === 'active' ? 'فعال' : 'غیرفعال' }}
@@ -155,7 +160,9 @@
                   class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between"
               >
                 <span>{{
-                    modalForm.contentType === 'movie' ? 'فیلم' : modalForm.contentType === 'series' ? 'سریال' : 'انتخاب کنید'
+                    modalForm.contentType === 'movie' ? 'فیلم' :
+                        modalForm.contentType === 'series' ? 'سریال' :
+                            modalForm.contentType === 'general' ? 'عمومی' : 'انتخاب کنید'
                   }}</span>
                 <i class="ti ti-chevron-down text-sm"></i>
               </button>
@@ -177,6 +184,15 @@
                       :class="modalForm.contentType === 'series' ? 'bg-purple-50 text-purple-600' : 'text-gray-700'"
                   >
                     سریال
+                  </button>
+                </li>
+                <li>
+                  <button
+                      @click="selectModalContentType('general')"
+                      class="w-full px-4 py-2 text-sm text-right hover:bg-gray-50"
+                      :class="modalForm.contentType === 'general' ? 'bg-purple-50 text-purple-600' : 'text-gray-700'"
+                  >
+                    عمومی
                   </button>
                 </li>
               </ul>
@@ -264,7 +280,8 @@ const selectedStatus = ref({value: 'all', label: 'همه وضعیت‌ها'})
 const contentTypes = [
   {value: 'all', label: 'همه محتواها'},
   {value: 'movie', label: 'فیلم'},
-  {value: 'series', label: 'سریال'}
+  {value: 'series', label: 'سریال'},
+  {value: 'general', label: 'عمومی'}
 ]
 
 const statuses = [

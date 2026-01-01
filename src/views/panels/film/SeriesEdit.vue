@@ -249,12 +249,76 @@
                                 class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-xs"
                             />
                           </div>
-                          <input
-                              v-model="episode.videoUrl"
-                              type="url"
-                              placeholder="لینک ویدیو..."
-                              class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-xs"
-                          />
+                          <!-- Video Source Type -->
+                          <div class="flex gap-3 mb-2">
+                            <label class="flex items-center gap-1 cursor-pointer text-xs">
+                              <input
+                                  v-model="episode.sourceType"
+                                  type="radio"
+                                  value="link"
+                                  class="w-3 h-3 text-purple-600 focus:ring-purple-500"
+                              >
+                              <span class="text-gray-700">لینک</span>
+                            </label>
+                            <label class="flex items-center gap-1 cursor-pointer text-xs">
+                              <input
+                                  v-model="episode.sourceType"
+                                  type="radio"
+                                  value="upload"
+                                  class="w-3 h-3 text-purple-600 focus:ring-purple-500"
+                              >
+                              <span class="text-gray-700">آپلود</span>
+                            </label>
+                          </div>
+
+                          <!-- Link Input -->
+                          <div v-if="episode.sourceType === 'link'">
+                            <input
+                                v-model="episode.videoUrl"
+                                type="url"
+                                placeholder="لینک ویدیو..."
+                                class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-xs"
+                                dir="ltr"
+                            />
+                          </div>
+
+                          <!-- Upload Input -->
+                          <div v-else-if="episode.sourceType === 'upload'">
+                            <div
+                                @click="triggerEpisodeFileInput(sIndex, eIndex)"
+                                class="border border-dashed border-gray-300 rounded-lg p-2 text-center cursor-pointer hover:border-purple-500 hover:bg-purple-50 transition-all"
+                            >
+                              <div v-if="!episode.videoFile" class="text-xs text-gray-500">
+                                <i class="ti ti-upload text-lg"></i>
+                                <p>کلیک برای آپلود</p>
+                              </div>
+                              <div v-else class="flex items-center justify-center gap-1 text-xs">
+                                <i class="ti ti-file-video text-purple-600"></i>
+                                <span class="text-gray-900">{{ episode.videoFile.name }}</span>
+                                <button
+                                    @click.stop="removeEpisodeFile(sIndex, eIndex)"
+                                    class="text-red-600 hover:text-red-700"
+                                >
+                                  <i class="ti ti-x"></i>
+                                </button>
+                              </div>
+                            </div>
+                            <input
+                                :ref="el => setEpisodeFileInput(sIndex, eIndex, el)"
+                                type="file"
+                                accept="video/*"
+                                class="hidden"
+                                @change="handleEpisodeFileUpload($event, sIndex, eIndex)"
+                            />
+                            <!-- 🟩 نمایش progress -->
+                            <div  v-if="episode.videoFile">
+                              <progress class="w-full" :value="episode.uploadProgress || 0" max="100"></progress>
+                              <span class="text-xs text-gray-600 ml-2">
+                               {{ episode.uploadProgress || 0 }}%
+                              </span>
+                            </div>
+                          </div>
+
                         </div>
                         <button
                             @click="removeEpisode(sIndex, eIndex)"
@@ -514,12 +578,21 @@ const mapSeriesToForm = (item) => {
     actors: item.actors || '',
     poster: item.poster || '',
     category: item.category.title || '',
+    categoryId: item.category.id || '',
     status: item.status || 'ongoing',
     rating: item.rating || 0,
     published: item.status === 'published', // یا هر منطق دلخواه
     views: item.views || 0,
     likes: item.likes || 0,
-    seasons: item.seasonsList || [] // از fetchSeries می‌آد
+    seasons: (item.seasonsList || []).map(season => ({
+      ...season,
+      episodes: (season.episodes || []).map(ep => ({
+        ...ep,
+        sourceType: ep.videoUrl ? 'link' : 'upload',
+        videoFile: null,
+        uploadProgress: 0
+      }))
+    }))
   }
 }
 // Initialize
@@ -532,7 +605,7 @@ watch(
     () => categoryTypeStore.selectedType,
     async (type) => {
       if (type?.id) {
-        await categoryStore.fetchCategories({typeId: type.id,contentType:'series'})
+        await categoryStore.fetchCategories({typeId: type.id})
       }
     },
     {immediate: true}
@@ -545,16 +618,48 @@ const loadSeries = async () => {
   const series = seriesStore.findById(String(seriesId))
 
   if (series == null) {
-    router.push('/dashboard/film/series')
+    await router.push('/dashboard/film/series')
   }
   selectedCategory.value = series.category.title
+
   if (series) {
     form.value = mapSeriesToForm(series)
   }
   loading.value = false
 }
+const episodeFileInputs = ref({})
+const setEpisodeFileInput = (sIndex, eIndex, el) => {
+  const key = `${sIndex}-${eIndex}`
+  episodeFileInputs.value[key] = el
+}
 
+const triggerEpisodeFileInput = (sIndex, eIndex) => {
+  const key = `${sIndex}-${eIndex}`
+  if (episodeFileInputs.value[key]) {
+    episodeFileInputs.value[key].click()
+  }
+}
+const removeEpisodeFile = (sIndex, eIndex) => {
+  form.value.seasons[sIndex].episodes[eIndex].videoFile = null
+}
 
+const handleEpisodeFileUpload = (event, sIndex, eIndex) => {
+  const file = event.target.files[0]
+  if (!file) return
+
+  if (file.size > 2 * 1024 * 1024 * 1024) { // 2GB
+    toast.error('حجم فایل نباید بیشتر از 2 گیگابایت باشد')
+    return
+  }
+
+  if (!file.type.startsWith('video/')) {
+    toast.error('لطفاً یک فایل ویدیویی انتخاب کنید')
+    return
+  }
+
+  form.value.seasons[sIndex].episodes[eIndex].videoFile = file
+  toast.success('فایل ویدیو با موفقیت انتخاب شد')
+}
 const selectCategory = (category) => {
   form.value.categoryId = category.id
   selectedCategory.value = category.title
@@ -649,29 +754,34 @@ const removeEpisode = async (seasonIndex, episodeIndex) => {
 
 
 const updateSeries = async () => {
+  // اعتبارسنجی
   if (!form.value.title) {
-    toast.warning('لطفاً عنوان سریال را وارد کنید', 'عنوان الزامی است')
+    toast.warning('لطفاً عنوان سریال را وارد کنید')
     return
   }
 
   if (!form.value.description) {
-    toast.warning('لطفاً خلاصه داستان را وارد کنید', 'خلاصه داستان الزامی است')
+    toast.warning('لطفاً خلاصه داستان را وارد کنید')
     return
   }
 
   if (!form.value.categoryId) {
-    toast.warning('لطفاً دسته‌بندی را انتخاب کنید', 'انتخاب دسته‌بندی الزامی است')
+    toast.warning('لطفاً دسته‌بندی را انتخاب کنید')
     return
   }
 
-  console.log('Updating series:', form.value)
+  // فقط payload اصلی رو می‌سازیم
+  const cleanPayload = {
+    ...form.value,
+    seasons: form.value.seasons // 👈 استور خودش اپیزودها رو پردازش می‌کنه
+  }
 
-  await seriesStore.updateSeries(form.value, form.value.poster)
+  await seriesStore.updateSeries(cleanPayload, form.value.poster)
   toast.success('سریال با موفقیت به‌روزرسانی شد!', 'تغییرات ذخیره گردید')
-  setTimeout(() => {
-    router.push('/dashboard/film/series')
-  }, 1000)
+  await router.push('/dashboard/film/series')
 }
+
+
 
 const deleteSeries = async () => {
   if (confirm('آیا از حذف این سریال اطمینان دارید؟ این عمل غیرقابل بازگشت است!')) {

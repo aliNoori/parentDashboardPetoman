@@ -27,6 +27,9 @@
       
       <!-- Comments -->
       <Comments v-else-if="currentView === 'comments'" />
+
+      <!-- Reports -->
+      <Reports v-else-if="currentView === 'reports'" />
       
       <!-- Users -->
       <Users v-else-if="currentView === 'users'" />
@@ -72,6 +75,7 @@ import Users from './Users.vue'
 
 // Settings
 import NewSettings from './NewSettings.vue'
+import Reports from "./Reports.vue";
 
 const emit = defineEmits(['back'])
 const filmLayout = ref(null)

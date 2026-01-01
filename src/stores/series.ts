@@ -234,18 +234,21 @@ export const useSeriesStore = defineStore('seriesStore', () => {
                         })
                     }
 
+                    // حذف فیلدهای اضافی
+                    const { id, videoFile, uploadProgress, sourceType, ...restEp } = ep
                     processedEpisodes.push({
-                        ...ep,
+                        ...restEp,
                         videoUrl,
-                        videoFile: undefined,
                     })
                 }
 
+                const { id, ...restSeason } = season // 👈 id حذف میشه
                 processedSeasons.push({
-                    ...season,
+                    ...restSeason,
                     episodes: processedEpisodes,
                 })
             }
+
 
             const cleanPayload = {
                 title: payload.title,

@@ -534,6 +534,9 @@ const navigateTo = (viewId) => {
     case 'comments':
       router.push('/dashboard/film/comments')
       break
+    case 'reports':
+      router.push('/dashboard/film/reports')
+      break
     case 'settings':
       router.push('/dashboard/film/settings')
       break
@@ -590,6 +593,7 @@ const menuItems = ref([
     ]
   },
   { id: 'comments', label: 'نظرات', icon: 'ti ti-message-circle', badge: '12' },
+  { id: 'reports', label: 'گزارشات', icon: 'ti ti-message-circle', badge: '12' },
   { id: 'users', label: 'مدیریت کاربران', icon: 'ti ti-users' },
   { id: 'settings', label: 'تنظیمات', icon: 'ti ti-settings' }
 ])

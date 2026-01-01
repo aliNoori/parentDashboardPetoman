@@ -1031,8 +1031,8 @@ const settings = ref({
     showSocialMedia: true
   },
   seo: {
-    metaTitle: '',
-    metaDescription: '',
+    metaTitle: 'عنوان متا',
+    metaDescription: 'توصیحات متا',
     keywords: '',
     canonicalUrl: ''
   },

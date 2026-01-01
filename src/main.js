@@ -304,6 +304,12 @@ const routes = [
         meta: { activePanel: 'film', activeSection: 'comments', role: 'film_admin' }
       },
       {
+        path: 'film/reports',
+        name: 'FilmReports',
+        component: { template: '<div></div>' },
+        meta: { activePanel: 'film', activeSection: 'reports', role: 'film_admin' }
+      },
+      {
         path: 'film/posts',
         name: 'FilmPosts',
         component: { template: '<div></div>' },

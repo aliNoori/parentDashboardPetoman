@@ -791,7 +791,7 @@ watch(
     () => categoryTypeStore.selectedType,
     async (type) => {
       if (type?.id) {
-        await categoryStore.fetchCategories({typeId: type.id,contentType:'series'})
+        await categoryStore.fetchCategories({typeId: type.id})
       }
     },
     {immediate: true}

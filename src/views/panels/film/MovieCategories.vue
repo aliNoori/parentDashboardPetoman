@@ -163,6 +163,44 @@
 
           <!-- Modal Body -->
           <div class="p-6 space-y-6">
+            <!-- Icon Selector -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">
+                آیکون دسته‌بندی
+              </label>
+              <div class="relative">
+                <button
+                    @click="iconDropdownOpen = !iconDropdownOpen"
+                    type="button"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all flex items-center justify-between"
+                >
+                  <span v-if="form.icon" class="flex items-center gap-2">
+                    <i :class="form.icon"></i>
+                    {{ iconOptions.find(i => i.value === form.icon)?.label }}
+                  </span>
+                  <span v-else class="text-gray-400">انتخاب آیکون</span>
+                  <i class="ti ti-chevron-down text-gray-400"></i>
+                </button>
+
+                <!-- Dropdown -->
+                <ul
+                    v-if="iconDropdownOpen"
+                    class="absolute z-10 w-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                >
+                  <li
+                      v-for="option in iconOptions"
+                      :key="option.value"
+                      @click="selectIcon(option.value)"
+                      class="px-4 py-3 hover:bg-purple-50 cursor-pointer transition-colors flex items-center gap-2"
+                      :class="{ 'bg-purple-100': form.icon === option.value }"
+                  >
+                    <i :class="option.value"></i>
+                    <span>{{ option.label }}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
             <!-- Name -->
             <div>
               <label class="block text-sm font-semibold text-gray-700 mb-2">
@@ -318,27 +356,66 @@
 </template>
 
 <script setup>
-import {ref, inject, onMounted, watch, computed} from 'vue'
+import {ref, inject, onMounted, watch, computed, reactive} from 'vue'
 import {useCategoryTypeStore} from "@/stores/category-type.ts";
 import {useCategoryStore} from "@/stores/category.ts";
 
 const toast = inject('toast')
+const iconOptions = [
+  { value: 'ti ti-deer', label: 'گوزن' },
+  { value: 'ti ti-fish', label: 'ماهی' },
+  { value: 'ti ti-feather', label: 'پر' },
+  { value: 'ti ti-paw', label: 'پنجه' },
+  { value: 'ti ti-bug', label: 'حشره' },
+  { value: 'ti ti-milk', label: 'مزرعه' },
+  { value: 'ti ti-snake', label: 'مار' },
+  { value: 'ti ti-tree', label: 'درخت' },
+  { value: 'ti ti-snowflake', label: 'برف' },
+]
+const iconDropdownOpen = ref(false)
+
+function selectIcon(icon) {
+  form.icon = icon
+  iconDropdownOpen.value = false
+}
 
 
 const categoryTypeStore = useCategoryTypeStore()
 const categoryStore = useCategoryStore()
 const categories = computed(() =>
-    categoryStore.categories.map(cat => ({
-      id: cat.id,
-      title: cat.title,
-      slug: cat.slug,
-      contentType: cat.contentType??'movie',
-      color: cat.color,
-      count: cat.count??0,
-      status: cat.isActive?'active':'inactive',
-      description: cat.description
-    }))
+    categoryStore.categories.map(cat => {
+      let count = 0
+
+      if (cat.contentType === 'movie') {
+        count = cat.movies?.length ?? 0
+      } else if (cat.contentType === 'series') {
+        count = cat.series?.length ?? 0
+      } else if (cat.contentType === 'post') {
+        count = cat.posts?.length ?? 0
+      } else if (cat.contentType === 'document') {
+        count = cat.documents?.length ?? 0
+      } else {
+        // حالت پیش‌فرض
+        count =
+            (cat.movies?.length ?? 0) +
+            (cat.series?.length ?? 0) +
+            (cat.posts?.length ?? 0) +
+            (cat.documents?.length ?? 0)
+      }
+
+      return {
+        id: cat.id,
+        title: cat.title,
+        slug: cat.slug,
+        contentType: cat.contentType ?? 'movie',
+        color: cat.color,
+        count,
+        status: cat.isActive ? 'active' : 'inactive',
+        description: cat.description
+      }
+    })
 )
+
 
 const stats = computed(() => {
   const categories = categoryStore.categories
@@ -370,9 +447,10 @@ const editMode = ref(false)
 const typeDropdownOpen = ref(false)
 
 // Form data
-const form = ref({
+const form = reactive({
   title: '',
   slug: '',
+  icon:'',
   contentType: '',
   color: '#9333ea',
   description: '',
@@ -398,31 +476,33 @@ const generateSlug = () => {
     'ن': 'n', 'و': 'v', 'ه': 'h', 'ی': 'i', 'ئ': 'i', 'ة': 'e', 'ى': 'a'
   }
   
-  let slug = form.value.title.toLowerCase()
+  let slug = form.title.toLowerCase()
   for (const [persian, english] of Object.entries(persianToEnglish)) {
     slug = slug.replace(new RegExp(persian, 'g'), english)
   }
   slug = slug.replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-  form.value.slug = slug
+  form.slug = slug
 }
 
 // Select type
 const selectType = (value) => {
-  form.value.contentType = value
+  form.contentType = value
   typeDropdownOpen.value = false
 }
 
 // Open add modal
 const openAddModal = () => {
   editMode.value = false
-  form.value = {
+  Object.assign(form, {
     title: '',
+    icon:'',
     slug: '',
     contentType: '',
     color: '#9333ea',
     description: '',
     status: 'active'
-  }
+  })
+
   errors.value = {}
   showModal.value = true
 }
@@ -430,7 +510,7 @@ const openAddModal = () => {
 // Edit category
 const editCategory = (category) => {
   editMode.value = true
-  form.value = { ...category }
+  Object.assign(form, category)
   errors.value = {}
   showModal.value = true
 }
@@ -439,15 +519,15 @@ const editCategory = (category) => {
 const validateForm = () => {
   errors.value = {}
   
-  if (!form.value.title) {
+  if (!form.title) {
     errors.value.name = 'نام دسته‌بندی الزامی است'
   }
   
-  if (!form.value.slug) {
+  if (!form.slug) {
     errors.value.slug = 'نامک الزامی است'
   }
   
-  if (!form.value.contentType) {
+  if (!form.contentType) {
     errors.value.type = 'انتخاب نوع محتوا الزامی است'
   }
   
@@ -461,20 +541,20 @@ const saveCategory = async () => {
   }
 
   if (editMode.value) {
-    const { count, status, ...rest } = form.value
+    const { count, status, ...rest } = form
     const cleanPayload = {
       ...rest,
       isActive: status === 'active'
     }
-    await categoryStore.editCategory({id:form.value.id,...cleanPayload})
-    const index = categories.value.findIndex(c => c.id === form.value.id)
+    await categoryStore.editCategory({id:form.id,...cleanPayload})
+    const index = categories.value.findIndex(c => c.id === form.id)
     if (index !== -1) {
-      categories.value[index] = {...form.value}
+      categories.value[index] = {...form}
       toast.success('دسته‌بندی با موفقیت بروزرسانی شد')
     }
   } else {
     const newCategory = {
-      ...form.value,
+      ...form,
       typeId:categoryTypeStore.selectedType.id,
       id: categories.value.length + 1,
       count: 0
