@@ -83,7 +83,7 @@ export function useUploader() {
             const chunk = file.slice(start, end)
 
             const formData = new FormData()
-            formData.append('chunk', chunk)
+            formData.append('chunk', chunk, `${videoId}-${i}.mp4`)
             formData.append('index', i.toString())
             formData.append('total', totalChunks.toString())
             if (videoId) formData.append('videoId', videoId)
