@@ -103,9 +103,9 @@ export function useUploader() {
                 }
             })
 
-            if (!videoId && res.data.videoId) {
+            /*if (!videoId && res.data.videoId) {
                 videoId = res.data.videoId
-            }
+            }*/
         }
 
         // 📌 بعد از آپلود همه chunk ها، درخواست merge
