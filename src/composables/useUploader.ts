@@ -70,12 +70,17 @@ export function useUploader() {
         onProgress?: (percent: number) => void,   // 🟩 اضافه شد
         chunkSize = 5 * 1024 * 1024
     ): Promise<string> => {
+
+        const initRes = await axios.post('/v1/uploads/init-video');
+
+        let videoId = initRes.data.videoId;
+
         uploading.value = true
         progress.value = 0
 
         const totalChunks = Math.ceil(file.size / chunkSize)
         let uploadedBytes = 0
-        let videoId: string | null = null
+        //let videoId: string | null = null
 
         for (let i = 0; i < totalChunks; i++) {
             const start = i * chunkSize
@@ -84,9 +89,9 @@ export function useUploader() {
 
             const formData = new FormData()
             formData.append('chunk', chunk, `${videoId}-${i}.mp4`)
-            formData.append('index', i.toString())
+            //formData.append('index', i.toString())
             formData.append('total', totalChunks.toString())
-            if (videoId) formData.append('videoId', videoId)
+            //if (videoId) formData.append('videoId', videoId)
 
             const res = await axios.post('/v1/uploads/video-chunk', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
